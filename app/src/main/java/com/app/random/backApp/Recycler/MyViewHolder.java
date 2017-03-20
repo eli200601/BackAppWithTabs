@@ -20,8 +20,6 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
 
     ItemClickListener itemClickListener;
 
-
-
     public MyViewHolder(View itemView) {
         super(itemView);
 
@@ -35,7 +33,6 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
     }
 
 
-
     public void setItemClickListener(ItemClickListener itemClickListener){
         this.itemClickListener = itemClickListener;
     }
@@ -44,8 +41,5 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
     public void onClick(View view) {
         this.itemClickListener.onDataItemClick(view, getLayoutPosition());
     }
-
-
-
 
 }

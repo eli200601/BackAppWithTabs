@@ -113,9 +113,6 @@ public class AppsDataUtils {
             catch (Exception e) {
                 Log.e(TAG, e.getMessage());
             }
-//            catch (NullPointerException e){
-//                Log.e(TAG, e.getMessage());
-//            }
         }
 
         return appsList;

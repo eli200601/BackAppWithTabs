@@ -32,7 +32,7 @@ public class DeviceAppsFragment  extends Fragment {
     private MyRecyclerAdapter mAdapter;
     private RecyclerView mRecyclerView;
 
-//    @Nullable
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
 
@@ -61,10 +61,8 @@ public class DeviceAppsFragment  extends Fragment {
             appsDataUtils.startGettingInfo();
             appsListInfo = appsDataUtils.getAppInfoList();
             appsListData = appsDataUtils.getAppDataList();
-
-            mAdapter = new MyRecyclerAdapter(getContext(), appsListData);
-
             return null;
+
         }
 
         @Override
@@ -74,8 +72,11 @@ public class DeviceAppsFragment  extends Fragment {
 
         @Override
         protected void onPostExecute(Void result) {
-            mRecyclerView.setAdapter(mAdapter);
+//            mRecyclerView.setAdapter(mAdapter);
             progress.dismiss();
+            mAdapter.setItems(appsListData);
+            mAdapter.notifyDataSetChanged();
+
 
 //            try {
 //                selectedAmountHolder.setText(String.valueOf(selectedApps.size())+ "/" + String.valueOf(appsListAI.size()));

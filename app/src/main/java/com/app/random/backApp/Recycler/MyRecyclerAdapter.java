@@ -5,24 +5,28 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import com.app.random.backApp.R;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 
 public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
     Context context;
     ArrayList <AppDataItem> appsListData;
 
-    private HashSet<String> selectedAppsList = new HashSet<String>();
+    private HashSet<String> selectedAppsList = new HashSet<>();
 
     public MyRecyclerAdapter(Context context, ArrayList<AppDataItem> appsListData) {
         this.context = context;
         this.appsListData = appsListData;
+    }
+
+    public void setItems(ArrayList<AppDataItem> appDataItemList){
+        this.appsListData = appDataItemList;
     }
 
 //    Initialize Holder
@@ -36,6 +40,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 //    Bind data to view
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
+
         holder.appName.setText(appsListData.get(holder.getAdapterPosition()).getName());
         holder.packageName.setText((appsListData.get(holder.getAdapterPosition()).getPackageName()));
 
@@ -76,15 +81,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
         });
 
-//        holder.setItemClickListener();
-
-//        holder.checkBox.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View arg0) {
-//                final boolean isChecked = ((CheckBox)arg0).isChecked();
-//                // Do something here.
-//            }
-//        });
 
     }
 
