@@ -1,7 +1,9 @@
 package com.app.random.backApp.Recycler;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +22,24 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private HashSet<String> selectedAppsList = new HashSet<>();
 
+    private PackageManager packageManager;
+
+    private static String TAG = "MyRecyclerAdapter";
+
+    UpdateBottomBar updateBottomBar;
+
     public MyRecyclerAdapter(Context context, ArrayList<AppDataItem> appsListData) {
         this.context = context;
         this.appsListData = appsListData;
+        this.packageManager = context.getPackageManager();
     }
 
     public void setItems(ArrayList<AppDataItem> appDataItemList){
         this.appsListData = appDataItemList;
+    }
+
+    public int getSelectedAppsListSize() {
+        return selectedAppsList.size();
     }
 
 //    Initialize Holder
@@ -37,12 +50,25 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
         return holder;
     }
 
+    public void setUpdateBottomBar (UpdateBottomBar updateBottomBar) {
+        this.updateBottomBar = updateBottomBar;
+    }
+
+
 //    Bind data to view
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
         holder.appName.setText(appsListData.get(holder.getAdapterPosition()).getName());
         holder.packageName.setText((appsListData.get(holder.getAdapterPosition()).getPackageName()));
+//        viewHolder.iconView.setImageDrawable(data.loadIcon(packageManager));
+        try {
+            holder.appIcon.setImageDrawable(packageManager.getApplicationIcon(appsListData.get(holder.getAdapterPosition()).getPackageName()));
+        }
+        catch (PackageManager.NameNotFoundException error) {
+            Log.e(TAG, error.getMessage());
+        }
+
 
         if (selectedAppsList.contains(appsListData.get(holder.getAdapterPosition()).getPackageName())){
             holder.checkBox.setChecked(true);
@@ -61,12 +87,14 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 {
                     checkBoxView.setChecked(true);
                     selectedAppsList.add(appsListData.get(holder.getAdapterPosition()).getPackageName());
+                    updateBottomBar.onCheckBoxClick(selectedAppsList.size());
                 }
                 else
                 {
                     checkBoxView.setChecked(false);
                     if (selectedAppsList.contains(appsListData.get(holder.getAdapterPosition()).getPackageName())){
                         selectedAppsList.remove(appsListData.get(holder.getAdapterPosition()).getPackageName());
+                        updateBottomBar.onCheckBoxClick(selectedAppsList.size());
                     }
                 }
             }

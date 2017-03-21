@@ -58,7 +58,7 @@ public class AppsListFragment extends Fragment implements MyListener {
 
         PACKEG_NAME = getContext().getPackageName();
 
-        listAmountHolder = (TextView) container.findViewById(R.id.itemsInListValueTest);
+        listAmountHolder = (TextView) container.findViewById(R.id.itemsInListValueText);
         selectedAmountHolder = (TextView) container.findViewById(R.id.ItemsSelectedValueText);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);

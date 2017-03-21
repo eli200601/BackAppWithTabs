@@ -27,17 +27,17 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         // getItem is called to instantiate the fragment for the given page.
         // Return a PlaceholderFragment (defined as a static inner class below).
         Fragment fragment = fragmentsMap.get(position);
-        if (fragment == null) {
-            switch (position) {
-                case 0:
-                    fragment = new DeviceAppsFragment();
-                case 1:
-                    fragment = AppsListFragment.newInstance();
-                case 2:
-                    fragment = new AppsListFragment();
-            }
-            fragmentsMap.put(position,fragment);
-        }
+//        if (fragment == null) {
+//            switch (position) {
+//                case 0:
+//                    fragment = new DeviceAppsFragment();
+//                case 1:
+//                    fragment = AppsListFragment.newInstance();
+//                case 2:
+//                    fragment = new AppsListFragment();
+//            }
+//            fragmentsMap.put(position,fragment);
+//        }
         return fragment;
     }
 
@@ -51,11 +51,11 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "SECTION 1";
+                return "Device Apps";
             case 1:
-                return "SECTION 2";
+                return "Cloud";
             case 2:
-                return "SECTION 3";
+                return "TBD";
         }
         return null;
     }
