@@ -119,7 +119,7 @@ public class AppsDataUtils {
         for (ApplicationInfo info : appsListInfo) {
             try {
                 if ((info.flags & info.FLAG_SYSTEM) == 0) {
-                    Log.d("Package1: ", "PACKEG_NAME=" + PACKAGE_NAME + " info=" + info.packageName);
+                    Log.d("Package1: ", "PACKAGE_NAME=" + PACKAGE_NAME + " info=" + info.packageName);
                     if ( !info.packageName.equals(PACKAGE_NAME) ) {
                         appsList.add(info);
                     }
