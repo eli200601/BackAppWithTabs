@@ -116,4 +116,5 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
     public int getItemCount() {
         return appsListData.size();
     }
+
 }

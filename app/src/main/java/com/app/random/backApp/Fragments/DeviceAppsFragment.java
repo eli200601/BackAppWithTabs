@@ -6,10 +6,15 @@ import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,7 +27,7 @@ import com.app.random.backApp.Utils.AppsDataUtils;
 import java.util.ArrayList;
 
 
-public class DeviceAppsFragment  extends Fragment {
+public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryTextListener{
 
     private ArrayList<ApplicationInfo> appsListInfo =  new ArrayList<>();
     private ArrayList<AppDataItem> appsListData = new ArrayList<>();
@@ -78,6 +83,77 @@ public class DeviceAppsFragment  extends Fragment {
         listAmountTextField.setText(appsListSize);
         selectedAmountTextField.setText(selectedAppsListSize + "/" + appsListSize);
         
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.apps_frag_menu, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setOnQueryTextListener(this);
+
+//        searchView.OnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                appsListData = appsDataUtils.getFilteredListByString(query);
+//                mAdapter.setItems(appsListData);
+//                mAdapter.notifyDataSetChanged();
+//                return true;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                appsListData = appsDataUtils.getFilteredListByString(newText);
+//                mAdapter.setItems(appsListData);
+//                mAdapter.notifyDataSetChanged();
+//                return true;
+//            }
+//
+//        });
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean result = true;
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_sort_a_z: {
+                sortType = 0;
+                appsListData = appsDataUtils.updateSort(sortType);
+                mAdapter.setItems(appsListData);
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+            case R.id.action_sort_z_a: {
+                sortType = 1;
+                appsListData = appsDataUtils.updateSort(sortType);
+                mAdapter.setItems(appsListData);
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+            default:
+                result = super.onOptionsItemSelected(item);
+                break;
+        }
+        return result;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        appsListData = appsDataUtils.getFilteredListByString(query);
+        mAdapter.setItems(appsListData);
+        mAdapter.notifyDataSetChanged();
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        appsListData = appsDataUtils.getFilteredListByString(newText);
+        mAdapter.setItems(appsListData);
+        mAdapter.notifyDataSetChanged();
+        return true;
     }
 
 

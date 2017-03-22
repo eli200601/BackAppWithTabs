@@ -1,6 +1,7 @@
 package com.app.random.backApp.Utils;
 
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
@@ -34,8 +35,6 @@ public class AppsDataUtils {
     }
 
 
-
-
     public void startGettingInfo(){
 
         appsListInfo = new ArrayList(packageManager.getInstalledApplications(PackageManager.GET_META_DATA));
@@ -52,38 +51,52 @@ public class AppsDataUtils {
 
     }
 
-    public void updateSort(int sortType) {
+    public ArrayList<AppDataItem> updateSort(int sortType) {
         this.sortType = sortType;
         appsListInfo = sortApplicationList(appsListInfo);
         appsListData.clear();
         createAppDataItemList();
+        return appsListData;
     }
 
     public void createAppDataItemList() {
+
         String name;
         String packageName;
+        String sourceDir;
+
+
         for (ApplicationInfo info : appsListInfo){
 
             name = packageManager.getApplicationLabel(info).toString();
             packageName = info.packageName;
-            
-
-
-//            try {
-//                ApplicationInfo applicationInfo = packageManager.getApplicationInfo(packageName, 0);
-//                File file = new File(applicationInfo.publicSourceDir);
-//                long size = file.length();
-//                Log.d("Eliran Here", "App name is: " + name + " Cache size is: " + String.valueOf(size));
-//            }
-//            catch (PackageManager.NameNotFoundException error) {
-//                Log.e(TAG, error.getMessage());
-//            }
+            sourceDir = info.sourceDir;
 
             AppDataItem appsListItem = new AppDataItem(name,packageName);
 
             appsListData.add(appsListItem);
         }
 
+    }
+
+    public ArrayList<AppDataItem> getFilteredListByString(String query) {
+        String name;
+        String packageName;
+        appsListData.clear();
+
+        for (ApplicationInfo info : appsListInfo){
+
+            name = packageManager.getApplicationLabel(info).toString();
+            packageName = info.packageName;
+//            sourceDir = info.sourceDir;
+
+            if(name.toLowerCase().contains(query.toLowerCase())) {
+                AppDataItem appsListItem = new AppDataItem(name,packageName);
+                appsListData.add(appsListItem);
+            }
+
+        }
+        return appsListData;
     }
 
     public ArrayList<AppDataItem> getAppDataList() {
