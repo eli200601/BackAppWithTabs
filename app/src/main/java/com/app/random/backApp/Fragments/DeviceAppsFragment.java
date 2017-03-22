@@ -92,24 +92,6 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(this);
 
-//        searchView.OnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                appsListData = appsDataUtils.getFilteredListByString(query);
-//                mAdapter.setItems(appsListData);
-//                mAdapter.notifyDataSetChanged();
-//                return true;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                appsListData = appsDataUtils.getFilteredListByString(newText);
-//                mAdapter.setItems(appsListData);
-//                mAdapter.notifyDataSetChanged();
-//                return true;
-//            }
-//
-//        });
         super.onCreateOptionsMenu(menu, inflater);
     }
 
