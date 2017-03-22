@@ -37,7 +37,7 @@ public class AppsDataUtils {
 
     public void startGettingInfo(){
 
-        appsListInfo = new ArrayList(packageManager.getInstalledApplications(PackageManager.GET_META_DATA));
+        appsListInfo = new ArrayList<>(packageManager.getInstalledApplications(PackageManager.GET_META_DATA));
         Log.d(TAG, appsListInfo.toString());
 
         appsListInfo = filterApplicationList(appsListInfo);
