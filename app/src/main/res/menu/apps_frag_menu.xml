@@ -17,8 +17,20 @@
 
     <item
         android:id="@+id/action_sort_z_a"
-        android:orderInCategory="100"
+        android:orderInCategory="101"
         android:title="@string/sort_list_z_a"
+        app:showAsAction="never" />
+
+    <item
+        android:title="@string/select_all"
+        android:orderInCategory="102"
+        android:id="@+id/menuSelectAll"
+        app:showAsAction="never" />
+
+    <item
+        android:title="@string/unselected_all"
+        android:orderInCategory="103"
+        android:id="@+id/menuUnSelectAll"
         app:showAsAction="never" />
 
 </menu>

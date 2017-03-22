@@ -15,5 +15,7 @@
     <string name="sort_list_a_z">Sort List A-Z</string>
     <string name="sort_list_z_a">Sort List Z-A</string>
     <string name="search_menu">Search</string>
+    <string name="select_all">Select All</string>
+    <string name="unselected_all">Unselect All</string>
 
 </resources>

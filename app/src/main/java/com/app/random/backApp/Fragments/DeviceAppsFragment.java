@@ -115,6 +115,16 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                 mAdapter.notifyDataSetChanged();
                 break;
             }
+            case R.id.menuSelectAll: {
+                mAdapter.setAllListSelected();
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+            case R.id.menuUnSelectAll: {
+                mAdapter.clearSelectedList();
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
             default:
                 result = super.onOptionsItemSelected(item);
                 break;

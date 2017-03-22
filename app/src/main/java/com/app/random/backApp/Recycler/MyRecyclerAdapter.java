@@ -141,7 +141,22 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
         });
     }
 
+    public void setAllListSelected(){
+        HashSet<String> selectedList = new HashSet<>();
 
+        for (AppDataItem info: appsListData){
+            selectedList.add(info.getPackageName());
+        }
+        selectedAppsList = selectedList;
+        updateBottomBar.onCheckBoxClick(selectedList.size());
+
+
+    }
+
+    public void clearSelectedList() {
+        selectedAppsList.clear();
+        updateBottomBar.onCheckBoxClick(0);
+    }
 
 
     @Override
