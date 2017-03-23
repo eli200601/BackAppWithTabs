@@ -1,12 +1,20 @@
-package com.app.random.backApp;
+package com.app.random.backApp.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.app.random.backApp.R;
+import com.app.random.backApp.Utils.DropBoxUtils;
+import com.dropbox.core.DbxException;
+
+import java.io.IOException;
 
 
 /**
@@ -22,6 +30,8 @@ public class CloudFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    DropBoxUtils dropbox;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -48,6 +58,7 @@ public class CloudFragment extends Fragment {
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
+
         return fragment;
     }
 
@@ -58,13 +69,19 @@ public class CloudFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        new LoadAppListCloud().execute();
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+
         return inflater.inflate(R.layout.fragment_cloud, container, false);
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -74,22 +91,22 @@ public class CloudFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
+//    }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//        mListener = null;
+//    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -104,5 +121,43 @@ public class CloudFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private class LoadAppListCloud extends AsyncTask<Void, Void, Void> {
+        private ProgressDialog progress = null;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                dropbox.main();
+            } catch (DbxException e) {
+                e.printStackTrace();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
+            return null;
+
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            progress.dismiss();
+            super.onPostExecute(result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progress = ProgressDialog.show(getContext(), null,
+                    "Loading application info...");
+
+            super.onPreExecute();
+        }
     }
 }
