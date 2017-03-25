@@ -2,6 +2,8 @@ package com.app.random.backApp.Fragments;
 
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -49,6 +51,9 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         View view = inflater.inflate(R.layout.fragment_apps_list, null);
 
         setHasOptionsMenu(true);
+
+        SharedPreferences preferences = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        int sortType = preferences.getInt(getString(R.string.sortType_key), 0);
 
         PACKAGE_NAME = getContext().getPackageName();
         appsDataUtils = new AppsDataUtils(getContext().getPackageManager(), PACKAGE_NAME, sortType);
@@ -102,15 +107,27 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         switch (id) {
             case R.id.action_sort_a_z: {
-                sortType = 0;
-                appsListData = appsDataUtils.updateSort(sortType);
+                SharedPreferences preferences = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+
+                editor.putInt(getString(R.string.sortType_key),0);
+                editor.apply();
+
+//                sortType = 0;
+                appsListData = appsDataUtils.updateSort(preferences.getInt(getString(R.string.sortType_key),0));
                 mAdapter.setItems(appsListData);
                 mAdapter.notifyDataSetChanged();
                 break;
             }
             case R.id.action_sort_z_a: {
-                sortType = 1;
-                appsListData = appsDataUtils.updateSort(sortType);
+                SharedPreferences preferences = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+
+                editor.putInt(getString(R.string.sortType_key),1);
+                editor.apply();
+
+//                sortType = 1;
+                appsListData = appsDataUtils.updateSort(preferences.getInt(getString(R.string.sortType_key),1));
                 mAdapter.setItems(appsListData);
                 mAdapter.notifyDataSetChanged();
                 break;

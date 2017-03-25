@@ -18,4 +18,9 @@
     <string name="select_all">Select All</string>
     <string name="unselected_all">Unselect All</string>
 
+
+    <!-- SharedPreferences Key's -->
+    <!-- Int: -->
+    <string name="sortType_key">SortType</string>
+
 </resources>
