@@ -52,7 +52,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         setHasOptionsMenu(true);
 
-        SharedPreferences preferences = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.name_sharedPref), Context.MODE_PRIVATE);
         int sortType = preferences.getInt(getString(R.string.sortType_key), 0);
 
         PACKAGE_NAME = getContext().getPackageName();

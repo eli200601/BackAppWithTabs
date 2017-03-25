@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.util.SparseArray;
 
 import com.app.random.backApp.Fragments.CloudFragment;
+import com.app.random.backApp.Fragments.CloudMainFragment;
 import com.app.random.backApp.Fragments.DeviceAppsFragment;
 
 /**
@@ -19,7 +20,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public SectionsPagerAdapter(FragmentManager fm) {
         super(fm);
         fragmentsMap.put(0, new DeviceAppsFragment());
-        fragmentsMap.put(1, new CloudFragment());
+        fragmentsMap.put(1,CloudMainFragment.newInstance("1","2"));
         fragmentsMap.put(2, new DeviceAppsFragment());
     }
 

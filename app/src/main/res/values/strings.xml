@@ -5,7 +5,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    
+
     <!-- Activity Titles -->
     <string name="title_activity_main_screen">Back-App</string>
     <string name="title_activity_settings">Settings</string>
@@ -20,6 +20,7 @@
 
 
     <!-- SharedPreferences Key's -->
+    <string name="name_sharedPref">Settings</string>
     <!-- Int: -->
     <string name="sortType_key">SortType</string>
 
