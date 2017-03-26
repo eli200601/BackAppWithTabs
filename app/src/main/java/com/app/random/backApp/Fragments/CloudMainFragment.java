@@ -86,6 +86,18 @@ public class CloudMainFragment extends Fragment {
         AndroidAuthSession session = new AndroidAuthSession(appKeys);
         mDBApi = new DropboxAPI<AndroidAuthSession>(session);
 
+        SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.name_sharedPref), Context.MODE_PRIVATE);
+//        String key;
+//        String secret;
+        String accessToken;
+
+        accessToken = preferences.getString("accessToken", null);
+//        key = preferences.getString("key", null);
+//        secret = preferences.getString("secret", null);
+
+        if (accessToken == null) {
+            mDBApi.getSession().startOAuth2Authentication(this.getActivity());
+        }
     }
 
     @Override
@@ -95,32 +107,33 @@ public class CloudMainFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_cloud_main, container, false);
     }
 
-    private AndroidAuthSession buildSession() {
-        AppKeyPair appKeyPair = new AppKeyPair(DROPBOX_APP_KEY,DROPBOX_APP_SECRET);
-        AndroidAuthSession session;
-
-//        String[] stored = getKeys();
-        SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.name_sharedPref), Context.MODE_PRIVATE);
-        String key;
-        String secret;
-        key = preferences.getString("key", null);
-        secret = preferences.getString("secret", null);
-
-        if (key != null) {
-            flag = true;
-            AccessTokenPair accessToken = new AccessTokenPair(key,secret);
-            session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE,accessToken);
-        } else {
-            session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
-        }
-        return session;
-    }
+//    private AndroidAuthSession buildSession() {
+//        AppKeyPair appKeyPair = new AppKeyPair(DROPBOX_APP_KEY,DROPBOX_APP_SECRET);
+//        AndroidAuthSession session;
+//
+////        String[] stored = getKeys();
+//        SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.name_sharedPref), Context.MODE_PRIVATE);
+//        String key;
+//        String secret;
+//
+//        key = preferences.getString("key", null);
+//        secret = preferences.getString("secret", null);
+//
+//        if (key != null) {
+//            flag = true;
+//            AccessTokenPair accessToken = new AccessTokenPair(key,secret);
+//            session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE,accessToken);
+//        } else {
+//            session = new AndroidAuthSession(appKeyPair, ACCESS_TYPE);
+//        }
+//        return session;
+//    }
 
 
     @Override
     public void onResume() {
 
-        AndroidAuthSession session = (AndroidAuthSession) mApi.getSession();
+//        AndroidAuthSession session = (AndroidAuthSession) mApi.getSession();
 
         if (mDBApi.getSession().authenticationSuccessful()) {
             try {
@@ -128,15 +141,17 @@ public class CloudMainFragment extends Fragment {
                 mDBApi.getSession().finishAuthentication();
                 String accessToken = mDBApi.getSession().getOAuth2AccessToken();
 
-                session.finishAuthentication();
+//                session.finishAuthentication();
 
                 TokenPair tokens = mDBApi.getSession().getAccessTokenPair();
 //                storeKeys(tokens.key, tokens.secret);
                 SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.name_sharedPref), Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
-
-                editor.putString("key", tokens.key);
-                editor.putString("secret", tokens.secret);
+                editor.putString("accessToken", accessToken);
+                if (tokens != null) {
+                    editor.putString("key", tokens.key);
+                    editor.putString("secret", tokens.secret);
+                }
                 editor.apply();
 
                 flag = true;
@@ -144,18 +159,18 @@ public class CloudMainFragment extends Fragment {
                 Log.e("CloudMain", e.getMessage());
             }
         }
-        DropboxAPI.Entry direct = null;
-        try {
-            direct = mApi.metadata("/", 1000, null, true, null);
-        } catch (DropboxException e) {
-            e.printStackTrace();
-        }
-        files = new ArrayList<DropboxAPI.Entry>();
-        dir = new ArrayList<String>();
-        for (com.dropbox.client2.DropboxAPI.Entry ent : direct.contents) {
-            files.add(ent);
-            dir.add(new String(ent.path));
-        }
+//        DropboxAPI.Entry direct = null;
+//        try {
+//            direct = mDBApi.metadata("/", 1000, null, true, null);
+//        } catch (DropboxException e) {
+//            e.printStackTrace();
+//        }
+//        files = new ArrayList<DropboxAPI.Entry>();
+//        dir = new ArrayList<String>();
+//        for (com.dropbox.client2.DropboxAPI.Entry ent : direct.contents) {
+//            files.add(ent);
+//            dir.add(new String(ent.path));
+//        }
         super.onResume();
     }
 
