@@ -26,6 +26,9 @@ import com.app.random.backApp.Recycler.AppDataItem;
 import com.app.random.backApp.Recycler.MyRecyclerAdapter;
 import com.app.random.backApp.Recycler.UpdateBottomBar;
 import com.app.random.backApp.Utils.AppsDataUtils;
+import com.app.random.backApp.Utils.Keys;
+import com.app.random.backApp.Utils.SharedPrefsUtils;
+
 import java.util.ArrayList;
 
 
@@ -52,10 +55,9 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         setHasOptionsMenu(true);
 
-        SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.name_sharedPref), Context.MODE_PRIVATE);
-        int sortType = preferences.getInt(getString(R.string.sortType_key), 0);
-
         PACKAGE_NAME = getActivity().getPackageName();
+        sortType = SharedPrefsUtils.getIntegerPreference(getActivity().getApplicationContext(), Keys.SORT_TYPE, 0);
+
         appsDataUtils = new AppsDataUtils(getActivity().getPackageManager(), PACKAGE_NAME, sortType);
 
         //Bottom Bar init
@@ -107,27 +109,17 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         switch (id) {
             case R.id.action_sort_a_z: {
-                SharedPreferences preferences = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-
-                editor.putInt(getString(R.string.sortType_key),0);
-                editor.apply();
-
-//                sortType = 0;
-                appsListData = appsDataUtils.updateSort(preferences.getInt(getString(R.string.sortType_key),0));
+//              sortType = 0;
+                SharedPrefsUtils.setIntegerPreference(getActivity().getApplicationContext(), Keys.SORT_TYPE, 0);
+                appsListData = appsDataUtils.updateSort(0);
                 mAdapter.setItems(appsListData);
                 mAdapter.notifyDataSetChanged();
                 break;
             }
             case R.id.action_sort_z_a: {
-                SharedPreferences preferences = getActivity().getSharedPreferences("Settings", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-
-                editor.putInt(getString(R.string.sortType_key),1);
-                editor.apply();
-
-//                sortType = 1;
-                appsListData = appsDataUtils.updateSort(preferences.getInt(getString(R.string.sortType_key),1));
+//              sortType = 1;
+                SharedPrefsUtils.setIntegerPreference(getActivity().getApplicationContext(), Keys.SORT_TYPE, 1);
+                appsListData = appsDataUtils.updateSort(1);
                 mAdapter.setItems(appsListData);
                 mAdapter.notifyDataSetChanged();
                 break;

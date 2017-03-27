@@ -12,21 +12,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.random.backApp.R;
 
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.exception.DropboxException;
-import com.dropbox.client2.session.AccessTokenPair;
 import com.dropbox.client2.session.AppKeyPair;
 import com.dropbox.client2.session.Session.AccessType;
-import com.dropbox.client2.session.TokenPair;
 
-import java.util.ArrayList;
-import com.app.random.backApp.Utils.Constants;
+import com.app.random.backApp.Utils.Keys;
 
 
 /**
@@ -86,20 +81,20 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener 
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        AppKeyPair appKeys = new AppKeyPair(Constants.DROPBOX_APP_KEY, Constants.DROPBOX_APP_SECRET);
-        AndroidAuthSession session = new AndroidAuthSession(appKeys);
-        mDBApi = new DropboxAPI<AndroidAuthSession>(session);
-
-        SharedPreferences preferences = getActivity().getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE);
-        String accessToken;
-        accessToken = preferences.getString("accessToken", null);
-        if (accessToken == null) {
-            Log.d(TAG,"New User as arrived");
-            mDBApi.getSession().startOAuth2Authentication(this.getActivity());
-        }
-        else{
-            mDBApi.getSession().setOAuth2AccessToken(accessToken);
-        }
+//        AppKeyPair appKeys = new AppKeyPair(Keys.DROPBOX_APP_KEY, Keys.DROPBOX_APP_SECRET);
+//        AndroidAuthSession session = new AndroidAuthSession(appKeys);
+//        mDBApi = new DropboxAPI<AndroidAuthSession>(session);
+//
+//        SharedPreferences preferences = getActivity().getSharedPreferences(Keys.PREF_NAME, Context.MODE_PRIVATE);
+//        String accessToken;
+//        accessToken = preferences.getString("accessToken", null);
+//        if (accessToken == null) {
+//            Log.d(TAG,"New User as arrived");
+//            mDBApi.getSession().startOAuth2Authentication(this.getActivity());
+//        }
+//        else{
+//            mDBApi.getSession().setOAuth2AccessToken(accessToken);
+//        }
     }
 
     @Override
@@ -115,28 +110,28 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener 
     }
 
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (mDBApi.getSession().authenticationSuccessful()) {
-            try {
-                mDBApi.getSession().finishAuthentication();
-
-                String accessToken = mDBApi.getSession().getOAuth2AccessToken();
-                Log.d(TAG, "Access Token: " + accessToken);
-
-                SharedPreferences preferences = getActivity().getSharedPreferences(Constants.PREF_NAME, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putString("accessToken", accessToken);
-
-                editor.apply();
-
-            } catch (IllegalStateException e) {
-                Log.i("DbAuthLog","Error authenticating",e);
-            }
-        }
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//
+//        if (mDBApi.getSession().authenticationSuccessful()) {
+//            try {
+//                mDBApi.getSession().finishAuthentication();
+//
+//                String accessToken = mDBApi.getSession().getOAuth2AccessToken();
+//                Log.d(TAG, "Access Token: " + accessToken);
+//
+//                SharedPreferences preferences = getActivity().getSharedPreferences(Keys.PREF_NAME, Context.MODE_PRIVATE);
+//                SharedPreferences.Editor editor = preferences.edit();
+//                editor.putString("accessToken", accessToken);
+//
+//                editor.apply();
+//
+//            } catch (IllegalStateException e) {
+//                Log.i("DbAuthLog","Error authenticating",e);
+//            }
+//        }
+//    }
 
     @Override
     public void onClick(View view) {
@@ -144,52 +139,52 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener 
         switch (id) {
             case R.id.button:
 
-                new LoadDataDropbox().execute();
+//                new LoadDataDropbox().execute();
 
                 break;
         }
     }
 
-    private class LoadDataDropbox extends AsyncTask<Void, Void, Void> {
-        private ProgressDialog progress = null;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                Log.d(TAG, mDBApi.accountInfo().displayName);
-                Log.d(TAG, mDBApi.accountInfo().country);
-                Log.d(TAG, mDBApi.accountInfo().referralLink);
-            } catch (DropboxException e) {
-                e.printStackTrace();
-            }
-            return null;
-
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            progress.dismiss();
-
-
-            super.onPostExecute(result);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            progress = ProgressDialog.show(getActivity(), null,
-                    "Loading data from dropbox...");
-
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            super.onProgressUpdate(values);
-        }
-    }
+//    private class LoadDataDropbox extends AsyncTask<Void, Void, Void> {
+//        private ProgressDialog progress = null;
+//
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//            try {
+//                Log.d(TAG, mDBApi.accountInfo().displayName);
+//                Log.d(TAG, mDBApi.accountInfo().country);
+//                Log.d(TAG, mDBApi.accountInfo().referralLink);
+//            } catch (DropboxException e) {
+//                e.printStackTrace();
+//            }
+//            return null;
+//
+//        }
+//
+//        @Override
+//        protected void onCancelled() {
+//            super.onCancelled();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void result) {
+//            progress.dismiss();
+//
+//
+//            super.onPostExecute(result);
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            progress = ProgressDialog.show(getActivity(), null,
+//                    "Loading data from dropbox...");
+//
+//            super.onPreExecute();
+//        }
+//
+//        @Override
+//        protected void onProgressUpdate(Void... values) {
+//            super.onProgressUpdate(values);
+//        }
+//    }
 }

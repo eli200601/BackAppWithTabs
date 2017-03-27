@@ -1,9 +1,9 @@
 package com.app.random.backApp.Utils;
 
 
-public class Constants {
+public class Keys {
 
-    public static final String SOME_TEXT = "This is a constant";
+    public static final String SORT_TYPE = "sortType";
 
 
     /*  SharedPreferences Key's   */
@@ -14,4 +14,5 @@ public class Constants {
     public final static String DROPBOX_NAME = "BackAppFolder";
     public final static String DROPBOX_APP_KEY = "r1qzs8cbwnhlnlb";
     public final static String DROPBOX_APP_SECRET = "abfz67yh01qz456";
+    public final static String DROPBOX_ACCESS_TOKEN = "accessToken";
 }

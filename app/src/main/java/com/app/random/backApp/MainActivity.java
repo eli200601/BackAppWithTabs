@@ -1,16 +1,25 @@
 package com.app.random.backApp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.inputmethodservice.Keyboard;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.app.random.backApp.Utils.Keys;
+import com.app.random.backApp.Utils.SharedPrefsUtils;
+import com.dropbox.client2.DropboxAPI;
+import com.dropbox.client2.android.AndroidAuthSession;
+import com.dropbox.client2.session.AppKeyPair;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,7 +31,12 @@ public class MainActivity extends AppCompatActivity {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
+    private static final String TAG = "MainActivity";
     private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    private DropboxAPI<AndroidAuthSession> mDBApi;
+
+    private SharedPrefsUtils prefsUtils;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -33,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        loginDropBox();
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -57,6 +74,43 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
+    }
+
+    public DropboxAPI<AndroidAuthSession> createSession(){
+        AppKeyPair appKeys = new AppKeyPair(Keys.DROPBOX_APP_KEY, Keys.DROPBOX_APP_SECRET);
+        AndroidAuthSession session = new AndroidAuthSession(appKeys);
+        return new DropboxAPI<AndroidAuthSession>(session);
+    }
+
+    public void loginDropBox() {
+        mDBApi = createSession();
+        String accessToken = SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.DROPBOX_ACCESS_TOKEN);
+        if (accessToken == null) {
+            Log.d(TAG,"New User as arrived");
+            mDBApi.getSession().startOAuth2Authentication(this);
+        }
+        else{
+            mDBApi.getSession().setOAuth2AccessToken(accessToken);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mDBApi.getSession().authenticationSuccessful()) {
+            try {
+                mDBApi.getSession().finishAuthentication();
+
+                String accessToken = mDBApi.getSession().getOAuth2AccessToken();
+                Log.d(TAG, "Access Token: " + accessToken);
+
+                SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.DROPBOX_ACCESS_TOKEN, accessToken);
+
+            } catch (IllegalStateException e) {
+                Log.i("DbAuthLog","Error authenticating",e);
+            }
+        }
     }
 
 
