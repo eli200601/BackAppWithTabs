@@ -55,8 +55,8 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         SharedPreferences preferences = getActivity().getSharedPreferences(getString(R.string.name_sharedPref), Context.MODE_PRIVATE);
         int sortType = preferences.getInt(getString(R.string.sortType_key), 0);
 
-        PACKAGE_NAME = getContext().getPackageName();
-        appsDataUtils = new AppsDataUtils(getContext().getPackageManager(), PACKAGE_NAME, sortType);
+        PACKAGE_NAME = getActivity().getPackageName();
+        appsDataUtils = new AppsDataUtils(getActivity().getPackageManager(), PACKAGE_NAME, sortType);
 
         //Bottom Bar init
         listAmountTextField = (TextView) view.findViewById(R.id.itemsInListValueText);
@@ -199,7 +199,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         @Override
         protected void onPreExecute() {
-            progress = ProgressDialog.show(getContext(), null,
+            progress = ProgressDialog.show(getActivity(), null,
                     "Loading application info...");
 
             super.onPreExecute();

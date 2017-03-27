@@ -56,7 +56,7 @@ public class AppsListFragment extends Fragment implements MyListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_apps_list, container, false);
 
-        PACKEG_NAME = getContext().getPackageName();
+        PACKEG_NAME = getActivity().getPackageName();
 
         listAmountHolder = (TextView) container.findViewById(R.id.itemsInListValueText);
         selectedAmountHolder = (TextView) container.findViewById(R.id.ItemsSelectedValueText);
@@ -64,7 +64,7 @@ public class AppsListFragment extends Fragment implements MyListener {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(container.getContext());
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mAdapter = new AppsListRecyclerAdapter(getContext(), appsItemsList, selectedApps, this);
+        mAdapter = new AppsListRecyclerAdapter(getActivity(), appsItemsList, selectedApps, this);
         mRecyclerView.setAdapter(mAdapter);
 
         //async
@@ -153,7 +153,7 @@ public class AppsListFragment extends Fragment implements MyListener {
         @Override
         protected Void doInBackground(Void... params) {
             MyListener ca = newInstance();
-            packageManager = getContext().getPackageManager();
+            packageManager = getActivity().getPackageManager();
             appsListAI = checkForLaunchIntent(packageManager.getInstalledApplications(PackageManager.GET_META_DATA));
             if (appsListAI != null) {
                 listSize = appsListAI.size();
@@ -174,7 +174,7 @@ public class AppsListFragment extends Fragment implements MyListener {
             }
 
             Log.d("First item is:", appsItemsList.get(0).getAppName());
-            mAdapter = new AppsListRecyclerAdapter(getContext(), appsItemsList, selectedApps, ca);
+            mAdapter = new AppsListRecyclerAdapter(getActivity(), appsItemsList, selectedApps, ca);
 
             return null;
         }
@@ -208,7 +208,7 @@ public class AppsListFragment extends Fragment implements MyListener {
 
         @Override
         protected void onPreExecute() {
-            progress = ProgressDialog.show(getContext(), null,
+            progress = ProgressDialog.show(getActivity(), null,
                     "Loading application info...");
 
             super.onPreExecute();

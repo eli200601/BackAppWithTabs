@@ -34,4 +34,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile files('src/main/dropbox-android-sdk-1.6.2.jar')
     compile files('src/main/android-support-v4.jar')
+    compile files('libs/json-simple-1.1.jar')
 }

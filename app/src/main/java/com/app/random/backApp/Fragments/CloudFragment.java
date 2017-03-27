@@ -155,7 +155,7 @@ public class CloudFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-            progress = ProgressDialog.show(getContext(), null,
+            progress = ProgressDialog.show(getActivity(), null,
                     "Loading application info...");
 
             super.onPreExecute();
