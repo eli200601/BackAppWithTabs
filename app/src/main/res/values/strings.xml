@@ -23,5 +23,6 @@
     <string name="name_sharedPref">Settings</string>
     <!-- Int: -->
     <string name="sortType_key">SortType</string>
+    <string name="menu_action_logout">Logout</string>
 
 </resources>

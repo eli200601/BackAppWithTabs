@@ -1,9 +1,11 @@
 package com.app.random.backApp;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.inputmethodservice.Keyboard;
+import android.os.AsyncTask;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,6 +21,7 @@ import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.android.AndroidAuthSession;
+import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.session.AppKeyPair;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
 
     private DropboxAPI<AndroidAuthSession> mDBApi;
 
-    private SharedPrefsUtils prefsUtils;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -49,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         loginDropBox();
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -111,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("DbAuthLog","Error authenticating",e);
             }
         }
+        // More Actions...
     }
 
 
@@ -118,6 +120,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+//        if (mDBApi.getSession().isLinked()) {
+//            menu.getItem(R.id.action_logout).setVisible(true);
+//        }
         return true;
     }
 
@@ -127,12 +132,23 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+        switch (id){
+            case R.id.action_settings: {
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return true;
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+            }
+//            case R.id.action_logout: {
+//
+//                mDBApi.getSession().unlink();
+//                MenuItem m = (MenuItem) findViewById(R.id.action_logout);
+//                m.setVisible(false);
+//                this.invalidateOptionsMenu();
+//                break;
+//            }
+
         }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -171,7 +187,49 @@ public class MainActivity extends AppCompatActivity {
 //            return rootView;
 //        }
 //    }
+    private class LoadDataDropbox extends AsyncTask<Void, Void, Void> {
+    private ProgressDialog progress = null;
 
+    @Override
+    protected Void doInBackground(Void... params) {
+        try {
+            String name,country;
+
+            name = mDBApi.accountInfo().displayName;
+            country = mDBApi.accountInfo().country;
+
+            Log.d(TAG, mDBApi.accountInfo().displayName);
+            Log.d(TAG, mDBApi.accountInfo().country);
+            Log.d(TAG, mDBApi.accountInfo().referralLink);
+        } catch (DropboxException e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+
+    @Override
+    protected void onPostExecute(Void result) {
+        progress.dismiss();
+
+
+        super.onPostExecute(result);
+    }
+
+    @Override
+    protected void onPreExecute() {
+        progress = ProgressDialog.show(getApplicationContext(), null,
+                "Loading User info from dropbox...");
+
+        super.onPreExecute();
+    }
+
+    @Override
+    protected void onProgressUpdate(Void... values) {
+        super.onProgressUpdate(values);
+    }
+}
 
 
 }
