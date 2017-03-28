@@ -15,4 +15,5 @@ public class Keys {
     public final static String DROPBOX_APP_KEY = "r1qzs8cbwnhlnlb";
     public final static String DROPBOX_APP_SECRET = "abfz67yh01qz456";
     public final static String DROPBOX_ACCESS_TOKEN = "accessToken";
+    public static final String DROPBOX_USER_NAME = "userName";
 }

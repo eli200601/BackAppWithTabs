@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "Main Activity";
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private DropboxAPI<AndroidAuthSession> mDBApi;
@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public DropboxAPI<AndroidAuthSession> createSession(){
+    public DropboxAPI<AndroidAuthSession> createSession() {
         AppKeyPair appKeys = new AppKeyPair(Keys.DROPBOX_APP_KEY, Keys.DROPBOX_APP_SECRET);
         AndroidAuthSession session = new AndroidAuthSession(appKeys);
         return new DropboxAPI<AndroidAuthSession>(session);
@@ -87,13 +88,11 @@ public class MainActivity extends AppCompatActivity {
         mDBApi = createSession();
         String accessToken = SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.DROPBOX_ACCESS_TOKEN);
         if (accessToken == null) {
-            Log.d(TAG,"New User as arrived");
+            Log.d(TAG, "New User as arrived");
             mDBApi.getSession().startOAuth2Authentication(this);
-        }
-        else{
+        } else {
             mDBApi.getSession().setOAuth2AccessToken(accessToken);
         }
-
     }
 
     @Override
@@ -107,11 +106,14 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "Access Token: " + accessToken);
 
                 SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.DROPBOX_ACCESS_TOKEN, accessToken);
+                new LoadDataDropbox().execute();
 
             } catch (IllegalStateException e) {
-                Log.i("DbAuthLog","Error authenticating",e);
+                Log.i("DbAuthLog", "Error authenticating", e);
             }
         }
+
+        invalidateOptionsMenu();
         // More Actions...
     }
 
@@ -120,9 +122,24 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-//        if (mDBApi.getSession().isLinked()) {
-//            menu.getItem(R.id.action_logout).setVisible(true);
-//        }
+
+        MenuItem logoutButton = menu.findItem(R.id.action_logout);
+        MenuItem loginButton = menu.findItem(R.id.action_login);
+        MenuItem user_name_text = menu.findItem((R.id.user_name_text));
+        boolean isLogIn = mDBApi.getSession().isLinked();
+
+        logoutButton.setVisible(isLogIn);
+        loginButton.setVisible(!isLogIn);
+
+        String user_name = SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.DROPBOX_USER_NAME);
+        if (user_name != null && isLogIn) {
+            user_name_text.setVisible(true);
+            user_name_text.setTitle(user_name);
+        } else {
+            user_name_text.setVisible(false);
+        }
+
+
         return true;
     }
 
@@ -132,24 +149,28 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        switch (id){
+        switch (id) {
             case R.id.action_settings: {
 
                 startActivity(new Intent(this, SettingsActivity.class));
                 break;
             }
-//            case R.id.action_logout: {
-//
-//                mDBApi.getSession().unlink();
-//                MenuItem m = (MenuItem) findViewById(R.id.action_logout);
-//                m.setVisible(false);
-//                this.invalidateOptionsMenu();
-//                break;
-//            }
+            case R.id.action_logout: {
+                Log.d(TAG, "Logout Clicked");
 
+                mDBApi.getSession().unlink();
+                SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.DROPBOX_ACCESS_TOKEN, null);
+                SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.DROPBOX_USER_NAME, null);
+                invalidateOptionsMenu();
+                break;
+            }
+            case R.id.action_login: {
+                loginDropBox();
+                Log.d(TAG, "Login Clicked");
+                invalidateOptionsMenu();
+                break;
+            }
         }
-
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -187,49 +208,34 @@ public class MainActivity extends AppCompatActivity {
 //            return rootView;
 //        }
 //    }
-    private class LoadDataDropbox extends AsyncTask<Void, Void, Void> {
-    private ProgressDialog progress = null;
+    private class LoadDataDropbox extends AsyncTask<Void, Void, String> {
 
-    @Override
-    protected Void doInBackground(Void... params) {
-        try {
-            String name,country;
+        @Override
+        protected String doInBackground(Void... params) {
+            String name = null;
 
-            name = mDBApi.accountInfo().displayName;
-            country = mDBApi.accountInfo().country;
+            try {
 
-            Log.d(TAG, mDBApi.accountInfo().displayName);
-            Log.d(TAG, mDBApi.accountInfo().country);
-            Log.d(TAG, mDBApi.accountInfo().referralLink);
-        } catch (DropboxException e) {
-            e.printStackTrace();
+                name = mDBApi.accountInfo().displayName;
+                Log.d(TAG, "Trying to fetch name = " + name);
+                Log.d(TAG, name);
+            } catch (DropboxException e) {
+                e.printStackTrace();
+            }
+
+            return name;
         }
-        return null;
 
+        @Override
+        protected void onPostExecute(String result) {
+            if (result != null) {
+                String arr[] = result.split(" ", 2);
+                String username = "hi, " + arr[0];
+                Log.d(TAG, "Finished background, name is: " + username);
+                SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.DROPBOX_USER_NAME, username);
+                invalidateOptionsMenu();
+            }
+            super.onPostExecute(result);
+        }
     }
-
-
-    @Override
-    protected void onPostExecute(Void result) {
-        progress.dismiss();
-
-
-        super.onPostExecute(result);
-    }
-
-    @Override
-    protected void onPreExecute() {
-        progress = ProgressDialog.show(getApplicationContext(), null,
-                "Loading User info from dropbox...");
-
-        super.onPreExecute();
-    }
-
-    @Override
-    protected void onProgressUpdate(Void... values) {
-        super.onProgressUpdate(values);
-    }
-}
-
-
 }
