@@ -1,21 +1,13 @@
 package com.app.random.backApp.Fragments;
 
-import android.app.ProgressDialog;
-
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.content.Context;
 
 import com.app.random.backApp.R;
-import com.app.random.backApp.Utils.DropBoxUtils;
-import com.dropbox.core.DbxException;
-
-import java.io.IOException;
 
 
 /**
@@ -32,7 +24,7 @@ public class CloudFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    DropBoxUtils dropbox;
+//    DropBoxManager dropbox;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -71,7 +63,7 @@ public class CloudFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        new LoadAppListCloud().execute();
+//        new LoadAppListCloud().execute();
 
     }
 
@@ -124,41 +116,41 @@ public class CloudFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private class LoadAppListCloud extends AsyncTask<Void, Void, Void> {
-        private ProgressDialog progress = null;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                dropbox.main();
-            } catch (DbxException e) {
-                e.printStackTrace();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-
-            }
-            return null;
-
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            progress.dismiss();
-            super.onPostExecute(result);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            progress = ProgressDialog.show(getActivity(), null,
-                    "Loading application info...");
-
-            super.onPreExecute();
-        }
-    }
+//    private class LoadAppListCloud extends AsyncTask<Void, Void, Void> {
+//        private ProgressDialog progress = null;
+//
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//            try {
+////                dropbox.main();
+//            } catch (DbxException e) {
+//                e.printStackTrace();
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//
+//            }
+//            return null;
+//
+//        }
+//
+//        @Override
+//        protected void onCancelled() {
+//            super.onCancelled();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void result) {
+//            progress.dismiss();
+//            super.onPostExecute(result);
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            progress = ProgressDialog.show(getActivity(), null,
+//                    "Loading application info...");
+//
+//            super.onPreExecute();
+//        }
+//    }
 }

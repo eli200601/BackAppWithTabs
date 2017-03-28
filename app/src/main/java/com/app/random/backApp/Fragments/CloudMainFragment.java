@@ -48,19 +48,11 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener 
     private String mParam2;
 
 
-
     public CloudMainFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment CloudMainFragment.
-     */
+
     // TODO: Rename and change types and number of parameters
     public static CloudMainFragment newInstance(String param1, String param2) {
         CloudMainFragment fragment = new CloudMainFragment();
@@ -81,20 +73,6 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener 
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-//        AppKeyPair appKeys = new AppKeyPair(Keys.DROPBOX_APP_KEY, Keys.DROPBOX_APP_SECRET);
-//        AndroidAuthSession session = new AndroidAuthSession(appKeys);
-//        mDBApi = new DropboxAPI<AndroidAuthSession>(session);
-//
-//        SharedPreferences preferences = getActivity().getSharedPreferences(Keys.PREF_NAME, Context.MODE_PRIVATE);
-//        String accessToken;
-//        accessToken = preferences.getString("accessToken", null);
-//        if (accessToken == null) {
-//            Log.d(TAG,"New User as arrived");
-//            mDBApi.getSession().startOAuth2Authentication(this.getActivity());
-//        }
-//        else{
-//            mDBApi.getSession().setOAuth2AccessToken(accessToken);
-//        }
     }
 
     @Override
@@ -110,81 +88,14 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener 
     }
 
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//
-//        if (mDBApi.getSession().authenticationSuccessful()) {
-//            try {
-//                mDBApi.getSession().finishAuthentication();
-//
-//                String accessToken = mDBApi.getSession().getOAuth2AccessToken();
-//                Log.d(TAG, "Access Token: " + accessToken);
-//
-//                SharedPreferences preferences = getActivity().getSharedPreferences(Keys.PREF_NAME, Context.MODE_PRIVATE);
-//                SharedPreferences.Editor editor = preferences.edit();
-//                editor.putString("accessToken", accessToken);
-//
-//                editor.apply();
-//
-//            } catch (IllegalStateException e) {
-//                Log.i("DbAuthLog","Error authenticating",e);
-//            }
-//        }
-//    }
-
     @Override
     public void onClick(View view) {
         int id = view.getId();
         switch (id) {
-            case R.id.button:
-
-//                new LoadDataDropbox().execute();
-
+            case R.id.button: {
                 break;
+            }
         }
     }
 
-//    private class LoadDataDropbox extends AsyncTask<Void, Void, Void> {
-//        private ProgressDialog progress = null;
-//
-//        @Override
-//        protected Void doInBackground(Void... params) {
-//            try {
-//                Log.d(TAG, mDBApi.accountInfo().displayName);
-//                Log.d(TAG, mDBApi.accountInfo().country);
-//                Log.d(TAG, mDBApi.accountInfo().referralLink);
-//            } catch (DropboxException e) {
-//                e.printStackTrace();
-//            }
-//            return null;
-//
-//        }
-//
-//        @Override
-//        protected void onCancelled() {
-//            super.onCancelled();
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Void result) {
-//            progress.dismiss();
-//
-//
-//            super.onPostExecute(result);
-//        }
-//
-//        @Override
-//        protected void onPreExecute() {
-//            progress = ProgressDialog.show(getActivity(), null,
-//                    "Loading data from dropbox...");
-//
-//            super.onPreExecute();
-//        }
-//
-//        @Override
-//        protected void onProgressUpdate(Void... values) {
-//            super.onProgressUpdate(values);
-//        }
-//    }
 }
