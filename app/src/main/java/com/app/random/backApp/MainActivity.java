@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.app.random.backApp.Dropbox.DropBoxManager;
+import com.app.random.backApp.Dropbox.DropboxCallBackListener;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 import com.dropbox.client2.DropboxAPI;
@@ -19,7 +21,9 @@ import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.session.AppKeyPair;
 
-public class MainActivity extends AppCompatActivity {
+import java.lang.ref.WeakReference;
+
+public class MainActivity extends AppCompatActivity implements DropboxCallBackListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -34,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
 
     private DropboxAPI<AndroidAuthSession> mDBApi;
 
+    private DropBoxManager dropBoxManager = null;
+
+
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -45,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        loginDropBox();
+        dropBoxManager = DropBoxManager.getInstance(getApplicationContext(), new WeakReference<DropboxCallBackListener>(this));
+        dropBoxManager.loginDropbox();
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -80,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loginDropBox() {
-        mDBApi = createSession();
+//        mDBApi = createSession();
         String accessToken = SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.DROPBOX_ACCESS_TOKEN);
         if (accessToken == null) {
             Log.d(TAG, "New User as arrived");
@@ -93,21 +102,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (mDBApi.getSession().authenticationSuccessful()) {
-            try {
-                mDBApi.getSession().finishAuthentication();
-
-                String accessToken = mDBApi.getSession().getOAuth2AccessToken();
-                Log.d(TAG, "Access Token: " + accessToken);
-
-                SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.DROPBOX_ACCESS_TOKEN, accessToken);
-                new LoadDataDropbox().execute();
-
-            } catch (IllegalStateException e) {
-                Log.i("DbAuthLog", "Error authenticating", e);
-            }
-        }
-
+        dropBoxManager.onResumeManager();
         invalidateOptionsMenu();
         // More Actions...
     }
@@ -121,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
         MenuItem logoutButton = menu.findItem(R.id.action_logout);
         MenuItem loginButton = menu.findItem(R.id.action_login);
         MenuItem user_name_text = menu.findItem((R.id.user_name_text));
-        boolean isLogIn = mDBApi.getSession().isLinked();
+
+        boolean isLogIn = dropBoxManager.isLoginToDropbox();
 
         logoutButton.setVisible(isLogIn);
         loginButton.setVisible(!isLogIn);
@@ -133,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
         } else {
             user_name_text.setVisible(false);
         }
-
 
         return true;
     }
@@ -152,21 +147,23 @@ public class MainActivity extends AppCompatActivity {
             }
             case R.id.action_logout: {
                 Log.d(TAG, "Logout Clicked");
-
-                mDBApi.getSession().unlink();
-                SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.DROPBOX_ACCESS_TOKEN, null);
-                SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.DROPBOX_USER_NAME, null);
+                dropBoxManager.unlinkDropbox();
                 invalidateOptionsMenu();
                 break;
             }
             case R.id.action_login: {
-                loginDropBox();
+                dropBoxManager.loginDropbox();
                 Log.d(TAG, "Login Clicked");
                 invalidateOptionsMenu();
                 break;
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onUserNameRecived() {
+        invalidateOptionsMenu();
     }
 
     /**
