@@ -2,8 +2,6 @@ package com.app.random.backApp.Fragments;
 
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -21,6 +19,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.app.random.backApp.Dropbox.DropBoxManager;
+import com.app.random.backApp.Dropbox.DropboxCallBackListener;
 import com.app.random.backApp.R;
 import com.app.random.backApp.Recycler.AppDataItem;
 import com.app.random.backApp.Recycler.MyRecyclerAdapter;
@@ -30,12 +30,15 @@ import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 
-public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryTextListener{
+public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryTextListener, DropboxCallBackListener{
 
     private ArrayList<ApplicationInfo> appsListInfo =  new ArrayList<>();
     private ArrayList<AppDataItem> appsListData = new ArrayList<>();
+
+    private static final String TAG = "DeviceAppsFragment";
 
     private AppsDataUtils appsDataUtils;
     private String PACKAGE_NAME;
@@ -46,6 +49,15 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
     private TextView listAmountTextField;
     private TextView selectedAmountTextField;
+
+    private DropBoxManager dropBoxManager = null;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        dropBoxManager = DropBoxManager.getInstance(getActivity().getApplicationContext());
+
+    }
 
 
     @Override
@@ -89,15 +101,29 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         listAmountTextField.setText(appsListSize);
         selectedAmountTextField.setText(selectedAppsListSize + "/" + appsListSize);
+
+        getActivity().invalidateOptionsMenu();
         
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.apps_frag_menu, menu);
+
         MenuItem searchItem = menu.findItem(R.id.action_search);
+        MenuItem uploadItem = menu.findItem(R.id.action_upload);
+
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+
         searchView.setOnQueryTextListener(this);
+
+        if (mAdapter.getSelectedAppsListSize() > 0) {
+            uploadItem.setVisible(true);
+        }
+        else {
+            uploadItem.setVisible(false);
+        }
 
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -134,6 +160,12 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                 mAdapter.notifyDataSetChanged();
                 break;
             }
+            case R.id.action_upload: {
+                HashSet<String> selectedPackageNameList;
+                selectedPackageNameList = mAdapter.getSelectedPackageNamesList();
+                appsDataUtils.get
+                break;
+            }
             default:
                 result = super.onOptionsItemSelected(item);
                 break;
@@ -155,6 +187,30 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         mAdapter.setItems(appsListData);
         mAdapter.notifyDataSetChanged();
         return true;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        dropBoxManager.removeDropboxListener(TAG);
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "Adding " + TAG + " TO Listener List");
+        dropBoxManager.addDropboxListener(this, TAG);
+    }
+
+    @Override
+    public void onUserNameReceived() {
+
+    }
+
+    @Override
+    public void onFinishUploadFiles() {
+
     }
 
 

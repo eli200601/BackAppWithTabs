@@ -16,7 +16,6 @@ import com.app.random.backApp.R;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 
 public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
@@ -162,6 +161,21 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
     @Override
     public int getItemCount() {
         return appsListData.size();
+    }
+
+    public HashSet<String> getSelectedPackageNamesList(){
+         return selectedAppsList;
+
+
+
+//        ArrayList<String> apk_list = new ArrayList<>();
+//
+//        for (String app_name : selectedAppsList) {
+//
+//            appsListData.
+//        }
+//
+//        return selectedAppsList.contains()
     }
 
 }

@@ -1,13 +1,11 @@
 package com.app.random.backApp.Utils;
 
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
 import com.app.random.backApp.Recycler.AppDataItem;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -77,6 +75,15 @@ public class AppsDataUtils {
             appsListData.add(appsListItem);
         }
 
+    }
+
+    public String getAPKPathFromPackageName(String packageName) {
+        for (ApplicationInfo info : appsListInfo){
+            if (info.packageName.equals(packageName)) {
+                return info.sourceDir;
+            }
+        }
+        return null;
     }
 
     public ArrayList<AppDataItem> getFilteredListByString(String query) {

@@ -10,6 +10,14 @@
         android:orderInCategory="70"
         app:actionViewClass="android.support.v7.widget.SearchView"/>
 
+
+    <item
+        android:id="@+id/action_upload"
+        android:title="Upload"
+        android:orderInCategory="99"
+        app:showAsAction="never"
+        />
+
     <item
         android:id="@+id/action_sort_a_z"
         android:orderInCategory="100"

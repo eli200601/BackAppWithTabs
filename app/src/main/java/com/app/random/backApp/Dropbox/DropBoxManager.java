@@ -11,7 +11,7 @@ import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.session.AppKeyPair;
 
-import java.lang.ref.WeakReference;
+import java.util.HashMap;
 
 public class DropBoxManager {
 
@@ -20,31 +20,41 @@ public class DropBoxManager {
     }
     private static String TAG = "DropBoxManager";
 
-    private WeakReference<DropboxCallBackListener> dropboxCallBackListener;
-
     private static DropBoxManager instance;
     private static Context context;
+
+    private HashMap<String, DropboxCallBackListener> dropboxCallBackListenerHashMap;
 
     public DropboxAPI<AndroidAuthSession> mDBApi;
     public boolean isLogIn;
     public State accountInfoState;
 
-    public static DropBoxManager getInstance(Context context, WeakReference<DropboxCallBackListener> dropboxCallBackListener) {
+    public static DropBoxManager getInstance(Context context) {
         if (instance == null) {
-            instance = new DropBoxManager(context, dropboxCallBackListener);
+            instance = new DropBoxManager(context);
         }
         return instance;
     }
 
-    private DropBoxManager(Context context, WeakReference<DropboxCallBackListener> dropboxCallBackListener) {
+    private DropBoxManager(Context context) {
         this.mDBApi = initSession();
         this.context = context;
         this.isLogIn = false;
-        this.dropboxCallBackListener = dropboxCallBackListener;
+        dropboxCallBackListenerHashMap = new HashMap();
         this.accountInfoState = State.CREATED;
     }
 
     private DropBoxManager() { }
+
+    public void addDropboxListener(DropboxCallBackListener dropboxCallBackListener, String origin) {
+        dropboxCallBackListenerHashMap.put(origin, dropboxCallBackListener);
+    }
+
+    public void removeDropboxListener (String origin) {
+        Log.d(TAG, "Trying to remove " + origin + " From list");
+        dropboxCallBackListenerHashMap.remove(origin);
+    }
+
 
     public State getAccountInfoState() {
         return accountInfoState;
@@ -124,13 +134,18 @@ public class DropBoxManager {
 
         @Override
         protected void onPostExecute(String result) {
+            String listenTo = "MainActivity";
             if (result != null) {
                 String arr[] = result.split(" ", 2);
                 String username = "hi, " + arr[0];
                 Log.d(TAG, "Finished background, name is: " + username);
                 SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_USER_NAME, username);
                 accountInfoState = State.DONE;
-                dropboxCallBackListener.get().onUserNameRecived();
+//                dropboxCallBackListener.get().onUserNameReceived();
+                if (dropboxCallBackListenerHashMap.containsKey(listenTo)) {
+                    dropboxCallBackListenerHashMap.get(listenTo).onUserNameReceived();
+                }
+//                dropboxCallBackListenerArrayList.get(0).onUserNameReceived();
 
             }
             super.onPostExecute(result);

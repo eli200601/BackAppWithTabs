@@ -1,7 +1,6 @@
 package com.app.random.backApp;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -16,12 +15,6 @@ import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
-import com.dropbox.client2.DropboxAPI;
-import com.dropbox.client2.android.AndroidAuthSession;
-import com.dropbox.client2.exception.DropboxException;
-import com.dropbox.client2.session.AppKeyPair;
-
-import java.lang.ref.WeakReference;
 
 public class MainActivity extends AppCompatActivity implements DropboxCallBackListener {
 
@@ -33,14 +26,10 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private static final String TAG = "Main Activity";
+    private static final String TAG = "MainActivity";
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    private DropboxAPI<AndroidAuthSession> mDBApi;
-
     private DropBoxManager dropBoxManager = null;
-
-
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -52,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dropBoxManager = DropBoxManager.getInstance(getApplicationContext(), new WeakReference<DropboxCallBackListener>(this));
+        dropBoxManager = DropBoxManager.getInstance(getApplicationContext());
         dropBoxManager.loginDropbox();
 
 
@@ -82,30 +71,22 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
     }
 
-    public DropboxAPI<AndroidAuthSession> createSession() {
-        AppKeyPair appKeys = new AppKeyPair(Keys.DROPBOX_APP_KEY, Keys.DROPBOX_APP_SECRET);
-        AndroidAuthSession session = new AndroidAuthSession(appKeys);
-        return new DropboxAPI<AndroidAuthSession>(session);
-    }
-
-    public void loginDropBox() {
-//        mDBApi = createSession();
-        String accessToken = SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.DROPBOX_ACCESS_TOKEN);
-        if (accessToken == null) {
-            Log.d(TAG, "New User as arrived");
-            mDBApi.getSession().startOAuth2Authentication(this);
-        } else {
-            mDBApi.getSession().setOAuth2AccessToken(accessToken);
-        }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dropBoxManager.removeDropboxListener(TAG);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.d(TAG, "Adding " + TAG + " TO Listener List");
+        dropBoxManager.addDropboxListener(this, TAG);
         dropBoxManager.onResumeManager();
         invalidateOptionsMenu();
         // More Actions...
     }
+
 
 
     @Override
@@ -162,8 +143,13 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
     }
 
     @Override
-    public void onUserNameRecived() {
+    public void onUserNameReceived() {
         invalidateOptionsMenu();
+    }
+
+    @Override
+    public void onFinishUploadFiles() {
+
     }
 
     /**
@@ -200,34 +186,5 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 //            return rootView;
 //        }
 //    }
-    private class LoadDataDropbox extends AsyncTask<Void, Void, String> {
 
-        @Override
-        protected String doInBackground(Void... params) {
-            String name = null;
-
-            try {
-
-                name = mDBApi.accountInfo().displayName;
-                Log.d(TAG, "Trying to fetch name = " + name);
-                Log.d(TAG, name);
-            } catch (DropboxException e) {
-                e.printStackTrace();
-            }
-
-            return name;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if (result != null) {
-                String arr[] = result.split(" ", 2);
-                String username = "hi, " + arr[0];
-                Log.d(TAG, "Finished background, name is: " + username);
-                SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.DROPBOX_USER_NAME, username);
-                invalidateOptionsMenu();
-            }
-            super.onPostExecute(result);
-        }
-    }
 }
