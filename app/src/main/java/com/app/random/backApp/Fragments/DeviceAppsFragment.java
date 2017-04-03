@@ -162,8 +162,15 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
             }
             case R.id.action_upload: {
                 HashSet<String> selectedPackageNameList;
+
                 selectedPackageNameList = mAdapter.getSelectedPackageNamesList();
-                appsDataUtils.get
+
+                Log.d(TAG, "Path ArrayList:::::::::::::::::::");
+                Log.d(TAG, appsDataUtils.getAPKArrayListFromPackageNames(selectedPackageNameList).toString());
+
+// TODO Hare i am - need to get full ditailed list
+
+
                 break;
             }
             default:

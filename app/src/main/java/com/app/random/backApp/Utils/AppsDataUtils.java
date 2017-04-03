@@ -9,6 +9,7 @@ import com.app.random.backApp.Recycler.AppDataItem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 
 
 public class AppsDataUtils {
@@ -70,12 +71,36 @@ public class AppsDataUtils {
             packageName = info.packageName;
             sourceDir = info.sourceDir;
 
-            AppDataItem appsListItem = new AppDataItem(name,packageName);
+            AppDataItem appsListItem = new AppDataItem(name,packageName,sourceDir);
 
             appsListData.add(appsListItem);
         }
 
     }
+
+    public ArrayList<AppDataItem> getAPKArrayListFromPackageNames(HashSet<String> packageList) {
+        ArrayList<AppDataItem> apkPathList = new ArrayList<>();
+
+
+        for (String packageName: packageList) {
+            AppDataItem item = getAppInfoToUpload(packageName);
+            if (item != null) {
+                apkPathList.add(item);
+            }
+        }
+        return apkPathList;
+
+    }
+
+    public AppDataItem getAppInfoToUpload(String packageName) {
+        for (AppDataItem item: appsListData) {
+            if (item.getPackageName().equals(packageName)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
 
     public String getAPKPathFromPackageName(String packageName) {
         for (ApplicationInfo info : appsListInfo){
@@ -89,16 +114,17 @@ public class AppsDataUtils {
     public ArrayList<AppDataItem> getFilteredListByString(String query) {
         String name;
         String packageName;
+        String sourceDir;
         appsListData.clear();
 
         for (ApplicationInfo info : appsListInfo){
 
             name = packageManager.getApplicationLabel(info).toString();
             packageName = info.packageName;
-//            sourceDir = info.sourceDir;
+            sourceDir = info.sourceDir;
 
             if(name.toLowerCase().contains(query.toLowerCase())) {
-                AppDataItem appsListItem = new AppDataItem(name,packageName);
+                AppDataItem appsListItem = new AppDataItem(name, packageName, sourceDir);
                 appsListData.add(appsListItem);
             }
 

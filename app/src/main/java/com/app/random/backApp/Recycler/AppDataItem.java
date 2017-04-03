@@ -5,11 +5,20 @@ public class AppDataItem {
 
     private String name;
     private String packageName;
+    private String sourceDir;
 
+    public String getSourceDir() {
+        return sourceDir;
+    }
 
-    public AppDataItem(String name, String packageName) {
+    public void setSourceDir(String sourceDir) {
+        this.sourceDir = sourceDir;
+    }
+
+    public AppDataItem(String name, String packageName, String sourceDir) {
         this.name = name;
         this.packageName = packageName;
+        this.sourceDir = sourceDir;
     }
 
     public String getName() {
