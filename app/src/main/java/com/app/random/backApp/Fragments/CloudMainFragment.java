@@ -3,18 +3,25 @@ package com.app.random.backApp.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
 import com.app.random.backApp.R;
+import com.app.random.backApp.Recycler.AppDataItem;
+import com.app.random.backApp.Recycler.MyRecyclerAdapter;
+import com.app.random.backApp.Utils.Keys;
+import com.app.random.backApp.Utils.SharedPrefsUtils;
 import com.dropbox.client2.session.Session.AccessType;
+
+import java.util.ArrayList;
 
 
 /**
@@ -33,6 +40,13 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
     private static final String TAG = "CloudMainFragment";
 
     private DropBoxManager dropBoxManager = null;
+
+    private MyRecyclerAdapter mAdapter;
+    private RecyclerView mRecyclerView;
+
+    private ArrayList<AppDataItem> appsListData = new ArrayList<>();
+
+    public int sortType = 0; // 1 = Dsc | 0 = Asc
 
 
     // TODO: Rename and change types of parameters
@@ -77,9 +91,20 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cloud_main, container, false);
 
-        Button button = (Button) view.findViewById(R.id.button);
+        sortType = SharedPrefsUtils.getIntegerPreference(getActivity().getApplicationContext(), Keys.SORT_TYPE, 0);
 
-        button.setOnClickListener(this);
+        //RecyclerView - Apps list
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_cloud);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData);
+        mRecyclerView.setAdapter(mAdapter);
+
+
+
+//        dropBoxManager.getDropBoxFileListMethod();
+//        Button button = (Button) view.findViewById(R.id.button);
+//
+//        button.setOnClickListener(this);
 
         return view;
     }
@@ -107,12 +132,14 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        switch (id) {
-            case R.id.button: {
-
-                break;
-            }
-        }
+//        switch (id) {
+//            case R.id.button: {
+//
+//                dropBoxManager.getDropBoxFileListMethod();
+//
+//                break;
+//            }
+//        }
     }
 
     @Override
@@ -124,4 +151,13 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
     public void onFinishUploadFiles() {
 
     }
+
+    @Override
+    public void onFinishGeneratingCloudList(ArrayList<AppDataItem> cloudList) {
+        appsListData = cloudList;
+        mAdapter.setItems(appsListData);
+        mAdapter.notifyDataSetChanged();
+    }
+
+
 }

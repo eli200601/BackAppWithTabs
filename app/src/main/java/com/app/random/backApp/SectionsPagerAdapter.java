@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.SparseArray;
 
-import com.app.random.backApp.Fragments.CloudFragment;
 import com.app.random.backApp.Fragments.CloudMainFragment;
 import com.app.random.backApp.Fragments.DeviceAppsFragment;
 
@@ -21,7 +20,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         fragmentsMap.put(0, new DeviceAppsFragment());
         fragmentsMap.put(1,CloudMainFragment.newInstance("1","2"));
-        fragmentsMap.put(2, new DeviceAppsFragment());
+//        fragmentsMap.put(2, new DeviceAppsFragment());
     }
 
     @Override
@@ -46,7 +45,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // Show 3 total pages.
-        return 3;
+        return fragmentsMap.size();
     }
 
     @Override
@@ -56,8 +55,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                 return "Device Apps";
             case 1:
                 return "Cloud";
-            case 2:
-                return "TBD";
+//            case 2:
+//                return "TBD";
         }
         return null;
     }

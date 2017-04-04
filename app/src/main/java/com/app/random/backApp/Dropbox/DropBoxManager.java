@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.app.random.backApp.Recycler.AppDataItem;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 import com.dropbox.client2.DropboxAPI;
@@ -11,23 +12,30 @@ import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.session.AppKeyPair;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class DropBoxManager {
 
     public enum State {
         CREATED, IN_PROGRESS, DONE
     }
+
     private static String TAG = "DropBoxManager";
 
     private static DropBoxManager instance;
-    private static Context context;
+    private Context context;
 
     private HashMap<String, DropboxCallBackListener> dropboxCallBackListenerHashMap;
 
     public DropboxAPI<AndroidAuthSession> mDBApi;
     public boolean isLogIn;
     public State accountInfoState;
+
+    ArrayList<AppDataItem> cloudAppsList;
+
+
 
     public static DropBoxManager getInstance(Context context) {
         if (instance == null) {
@@ -40,7 +48,8 @@ public class DropBoxManager {
         this.mDBApi = initSession();
         this.context = context;
         this.isLogIn = false;
-        dropboxCallBackListenerHashMap = new HashMap();
+        this.dropboxCallBackListenerHashMap = new HashMap();
+        this.cloudAppsList = new ArrayList<>();
         this.accountInfoState = State.CREATED;
     }
 
@@ -76,6 +85,7 @@ public class DropBoxManager {
         else {
             isLogIn = true;
             mDBApi.getSession().setOAuth2AccessToken(accessToken);
+            getDropBoxFileListMethod();
 //            mDBApi.getSession().finishAuthentication();
         }
     }
@@ -99,6 +109,7 @@ public class DropBoxManager {
 
                 SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_ACCESS_TOKEN, accessToken);
                 new LoadDataDropbox().execute();
+                getDropBoxFileListMethod();
                 isLogIn = true;
 
             }
@@ -111,6 +122,98 @@ public class DropBoxManager {
 
     public boolean isLoginToDropbox() {
         return isLogIn;
+    }
+
+    public void getDropBoxFileListMethod() {
+        Log.i("CloudMainFragment", "Starting to gets file list!");
+        new GetDropBoxFileList().execute();
+
+    }
+
+    public static String deCamelCasealize(String camelCasedString) {
+        if (camelCasedString == null || camelCasedString.isEmpty())
+            return camelCasedString;
+
+        StringBuilder result = new StringBuilder();
+        result.append(camelCasedString.charAt(0));
+        for (int i = 1; i < camelCasedString.length(); i++) {
+            if (Character.isUpperCase(camelCasedString.charAt(i))) result.append(" ");
+            result.append(camelCasedString.charAt(i));
+        }
+        return result.toString();
+    }
+
+    public void generateCloudAppsList(List<DropboxAPI.Entry> cloudFilesList) {
+        // apk file contain appName_appPackageName_version.apk
+        String separator = "_";
+        cloudAppsList.clear();
+
+        if (cloudFilesList == null) {
+            // TODO: generate empty state list
+        }
+        else {
+
+            for (DropboxAPI.Entry entry: cloudFilesList) {
+                if (!entry.isDeleted) {
+                    if (!entry.isDir) {
+                        if (entry.fileName().contains(".apk")) {
+                            String appName;
+                            String appPackageName;
+                            String appVersion;
+                            String[] fileNameOutput;
+
+                            fileNameOutput = entry.fileName().split(separator);
+                            appName = deCamelCasealize(fileNameOutput[0].trim());
+                            appPackageName = fileNameOutput[1].trim();
+                            appVersion = fileNameOutput[2].trim().replace(".apk", "");
+
+                            Log.d(TAG, "appName = " + appName);
+                            Log.d(TAG, "appPackageName = " + appPackageName);
+                            Log.d(TAG, "appVersion = " + appVersion);
+
+                            AppDataItem appItem = new AppDataItem(appName, appPackageName, "/");
+                            cloudAppsList.add(appItem);
+                        }
+                    }
+                }
+            }
+
+//            for (AppDataItem appItem: cloudAppsList) {
+//                Log.d(TAG, "appName = " + appItem.getName());
+//                Log.d(TAG, "appPackageName = " + appItem.getPackageName());
+////                Log.d(TAG, "appVersion = " + appVersion);
+//            }
+
+        }
+        String listenTo = "CloudMainFragment";
+        dropboxCallBackListenerHashMap.get(listenTo).onFinishGeneratingCloudList(cloudAppsList);
+
+
+    }
+
+    private class GetDropBoxFileList extends AsyncTask<Void, Void, List<DropboxAPI.Entry>> {
+
+        @Override
+        protected List<DropboxAPI.Entry> doInBackground(Void... param) {
+            DropboxAPI.Entry entries = null;
+            Log.i("CloudMainFragment", "New Tread started...");
+            try {
+                entries = mDBApi.metadata("/", 100, null, true, null);
+            } catch (DropboxException e) {
+                e.printStackTrace();
+
+            }
+
+            return entries.contents;
+        }
+
+        @Override
+        protected void onPostExecute(List<DropboxAPI.Entry> cloudFilesList) {
+
+            generateCloudAppsList(cloudFilesList);
+
+            super.onPostExecute(cloudFilesList);
+        }
     }
 
     private class LoadDataDropbox extends AsyncTask<Void, Void, String> {

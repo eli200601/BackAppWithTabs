@@ -13,8 +13,11 @@ import android.view.MenuItem;
 
 import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
+import com.app.random.backApp.Recycler.AppDataItem;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements DropboxCallBackListener {
 
@@ -149,6 +152,11 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
     @Override
     public void onFinishUploadFiles() {
+
+    }
+
+    @Override
+    public void onFinishGeneratingCloudList(ArrayList<AppDataItem> arrayList) {
 
     }
 

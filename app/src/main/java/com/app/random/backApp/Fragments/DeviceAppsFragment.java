@@ -220,6 +220,11 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
     }
 
+    @Override
+    public void onFinishGeneratingCloudList(ArrayList<AppDataItem> arrayList) {
+
+    }
+
 
     private class LoadApplications extends AsyncTask<Void, Void, Void> {
         private ProgressDialog progress = null;
