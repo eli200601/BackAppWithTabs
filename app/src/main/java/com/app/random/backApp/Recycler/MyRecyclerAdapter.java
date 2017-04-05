@@ -20,7 +20,7 @@ import java.util.HashSet;
 
 public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
     Context context;
-    ArrayList <AppDataItem> appsListData;
+    public ArrayList<AppDataItem> appsListData;
 
     private HashSet<String> selectedAppsList = new HashSet<>();
 
@@ -56,6 +56,16 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
         this.updateBottomBar = updateBottomBar;
     }
 
+    public ArrayList<AppDataItem> getSelectedAppsListCloud() {
+        ArrayList<AppDataItem> selectedList = new ArrayList<>();
+
+        for (AppDataItem item: appsListData) {
+            if (selectedAppsList.contains(item.getPackageName())) {
+                selectedList.add(item);
+            }
+        }
+        return selectedList;
+    }
 
 //    Bind data to view
     @Override
@@ -89,14 +99,14 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 {
                     checkBoxView.setChecked(true);
                     selectedAppsList.add(appsListData.get(holder.getAdapterPosition()).getPackageName());
-                    updateBottomBar.onCheckBoxClick(selectedAppsList.size());
+                    updateBottomBar.onCheckBoxClick();
                 }
                 else
                 {
                     checkBoxView.setChecked(false);
                     if (selectedAppsList.contains(appsListData.get(holder.getAdapterPosition()).getPackageName())){
                         selectedAppsList.remove(appsListData.get(holder.getAdapterPosition()).getPackageName());
-                        updateBottomBar.onCheckBoxClick(selectedAppsList.size());
+                        updateBottomBar.onCheckBoxClick();
                     }
                 }
             }
@@ -147,14 +157,14 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
             selectedList.add(info.getPackageName());
         }
         selectedAppsList = selectedList;
-        updateBottomBar.onCheckBoxClick(selectedList.size());
+        updateBottomBar.onCheckBoxClick();
 
 
     }
 
     public void clearSelectedList() {
         selectedAppsList.clear();
-        updateBottomBar.onCheckBoxClick(0);
+        updateBottomBar.onCheckBoxClick();
     }
 
 

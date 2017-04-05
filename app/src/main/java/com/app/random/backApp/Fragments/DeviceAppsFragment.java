@@ -86,7 +86,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
             @Override
-            public void onCheckBoxClick(int selectedAppsListSize) {
+            public void onCheckBoxClick() {
                 updateBottomBar();
             }
         });
@@ -125,7 +125,6 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
             uploadItem.setVisible(false);
         }
 
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -225,6 +224,10 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
     }
 
+    @Override
+    public void onFinishDeletingFiles() {
+
+    }
 
     private class LoadApplications extends AsyncTask<Void, Void, Void> {
         private ProgressDialog progress = null;

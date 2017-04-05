@@ -33,6 +33,7 @@ public class DropBoxManager {
     public boolean isLogIn;
     public State accountInfoState;
 
+    // Hold the cloud file list
     ArrayList<AppDataItem> cloudAppsList;
 
 
@@ -125,6 +126,7 @@ public class DropBoxManager {
     }
 
     public void getDropBoxFileListMethod() {
+        // This method starting the flow of getting the cloud list
         Log.i("CloudMainFragment", "Starting to gets file list!");
         new GetDropBoxFileList().execute();
 
@@ -170,26 +172,70 @@ public class DropBoxManager {
                             Log.d(TAG, "appName = " + appName);
                             Log.d(TAG, "appPackageName = " + appPackageName);
                             Log.d(TAG, "appVersion = " + appVersion);
+                            Log.d(TAG, "path = " + entry.path);
 
-                            AppDataItem appItem = new AppDataItem(appName, appPackageName, "/");
+                            AppDataItem appItem = new AppDataItem(appName, appPackageName, entry.path, appVersion, true);
                             cloudAppsList.add(appItem);
                         }
                     }
                 }
             }
 
-//            for (AppDataItem appItem: cloudAppsList) {
-//                Log.d(TAG, "appName = " + appItem.getName());
-//                Log.d(TAG, "appPackageName = " + appItem.getPackageName());
-////                Log.d(TAG, "appVersion = " + appVersion);
-//            }
-
         }
+        if (cloudAppsList.size() == 0) {
+            AppDataItem appItem = new AppDataItem("There is no applications", "Please backup your apps", "/");
+            cloudAppsList.add(appItem);
+        }
+
         String listenTo = "CloudMainFragment";
         dropboxCallBackListenerHashMap.get(listenTo).onFinishGeneratingCloudList(cloudAppsList);
 
+    }
+
+
+
+    public void deleteFileListFromCloud(List<AppDataItem> appDataItems) {
+        ArrayList<String> dirList = new ArrayList<>();
+//        String[] dirList;
+        for (AppDataItem item: appDataItems) {
+            String dir = item.getSourceDir();
+            dirList.add(dir);
+        }
+        new DeleteFileFromCloud(dirList).execute();
 
     }
+
+    private class DeleteFileFromCloud extends AsyncTask<Void, Void, Void> {
+
+        private ArrayList<String> dirList;
+
+        public DeleteFileFromCloud (ArrayList<String> dirList) {
+            this.dirList = dirList;
+        }
+
+        @Override
+        protected Void doInBackground(Void... strings) {
+            for (String dir: dirList) {
+                try {
+                    mDBApi.delete(dir);
+                } catch (DropboxException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            String cloudFragListener = "CloudMainFragment";
+            if (dropboxCallBackListenerHashMap.containsKey(cloudFragListener)) {
+                dropboxCallBackListenerHashMap.get(cloudFragListener).onFinishDeletingFiles();
+            }
+            super.onPostExecute(result);
+        }
+
+    }
+
 
     private class GetDropBoxFileList extends AsyncTask<Void, Void, List<DropboxAPI.Entry>> {
 
@@ -237,7 +283,8 @@ public class DropBoxManager {
 
         @Override
         protected void onPostExecute(String result) {
-            String listenTo = "MainActivity";
+            String mainActivityListener = "MainActivity";
+            String cloudFragListener = "CloudMainFragment";
             if (result != null) {
                 String arr[] = result.split(" ", 2);
                 String username = "hi, " + arr[0];
@@ -245,8 +292,11 @@ public class DropBoxManager {
                 SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_USER_NAME, username);
                 accountInfoState = State.DONE;
 //                dropboxCallBackListener.get().onUserNameReceived();
-                if (dropboxCallBackListenerHashMap.containsKey(listenTo)) {
-                    dropboxCallBackListenerHashMap.get(listenTo).onUserNameReceived();
+                if (dropboxCallBackListenerHashMap.containsKey(mainActivityListener)) {
+                    dropboxCallBackListenerHashMap.get(mainActivityListener).onUserNameReceived();
+                }
+                if (dropboxCallBackListenerHashMap.containsKey(cloudFragListener)) {
+                    dropboxCallBackListenerHashMap.get(cloudFragListener).onUserNameReceived();
                 }
 //                dropboxCallBackListenerArrayList.get(0).onUserNameReceived();
 

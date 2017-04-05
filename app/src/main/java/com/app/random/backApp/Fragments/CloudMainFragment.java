@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -17,9 +18,10 @@ import com.app.random.backApp.Dropbox.DropboxCallBackListener;
 import com.app.random.backApp.R;
 import com.app.random.backApp.Recycler.AppDataItem;
 import com.app.random.backApp.Recycler.MyRecyclerAdapter;
+import com.app.random.backApp.Recycler.UpdateBottomBar;
+import com.app.random.backApp.Utils.AppsDataUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
-import com.dropbox.client2.session.Session.AccessType;
 
 import java.util.ArrayList;
 
@@ -35,7 +37,6 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    final static private AccessType ACCESS_TYPE = AccessType.APP_FOLDER;
 
     private static final String TAG = "CloudMainFragment";
 
@@ -43,6 +44,7 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
 
     private MyRecyclerAdapter mAdapter;
     private RecyclerView mRecyclerView;
+    private AppsDataUtils appsDataUtils;
 
     private ArrayList<AppDataItem> appsListData = new ArrayList<>();
 
@@ -75,9 +77,11 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setHasOptionsMenu(true);
+
         dropBoxManager = DropBoxManager.getInstance(getActivity().getApplicationContext());
 
-
+        appsDataUtils = AppsDataUtils.getInstance();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -99,7 +103,12 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
         mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData);
         mRecyclerView.setAdapter(mAdapter);
 
-
+        mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
+            @Override
+            public void onCheckBoxClick() {
+                // Do stuff when clicking on checkbox
+            }
+        });
 
 //        dropBoxManager.getDropBoxFileListMethod();
 //        Button button = (Button) view.findViewById(R.id.button);
@@ -111,8 +120,70 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.cloud_frag_menu, menu);
 
+        MenuItem refreshItem = menu.findItem(R.id.action_refresh);
+        MenuItem deleteItem = menu.findItem(R.id.action_delete);
+//        MenuItem sort_a_zItem = menu.findItem(R.id.action_sort_a_z_cloud);
+//        MenuItem sort_z_aItem = menu.findItem(R.id.action_sort_z_a_cloud);
+        MenuItem selectAllItem = menu.findItem(R.id.menuSelectAll_cloud);
+        MenuItem unSelectAllItem = menu.findItem(R.id.menuUnSelectAll_cloud);
+
+
+        Log.d(TAG, "dropbox is login? " + String.valueOf(dropBoxManager.isLoginToDropbox()));
+
+        refreshItem.setVisible(dropBoxManager.isLoginToDropbox());
+        deleteItem.setVisible(dropBoxManager.isLoginToDropbox());
+//        sort_a_zItem.setVisible(dropBoxManager.isLoginToDropbox());
+//        sort_z_aItem.setVisible(dropBoxManager.isLoginToDropbox());
+        selectAllItem.setVisible(dropBoxManager.isLoginToDropbox());
+        unSelectAllItem.setVisible(dropBoxManager.isLoginToDropbox());
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean result = true;
+        int id = item.getItemId();
+
+        switch (id) {
+            case R.id.action_refresh: {
+                dropBoxManager.getDropBoxFileListMethod();
+                mAdapter.clearSelectedList();
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+//            case R.id.action_sort_a_z_cloud: {
+//
+//                break;
+//            }
+//            case R.id.action_sort_z_a: {
+//
+//                break;
+//            }
+            case R.id.menuSelectAll_cloud: {
+                mAdapter.setAllListSelected();
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+            case R.id.menuUnSelectAll_cloud: {
+                mAdapter.clearSelectedList();
+                mAdapter.notifyDataSetChanged();
+                break;
+            }
+
+
+            case R.id.action_delete: {
+                dropBoxManager.deleteFileListFromCloud(mAdapter.getSelectedAppsListCloud());
+                mAdapter.clearSelectedList();
+                //Continue here !!!!!!!!!!!!!!!!!!!!!!!!!!
+            }
+
+            default:
+                result = super.onOptionsItemSelected(item);
+                break;
+        }
+        return result;
     }
 
     @Override
@@ -157,7 +228,11 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
         appsListData = cloudList;
         mAdapter.setItems(appsListData);
         mAdapter.notifyDataSetChanged();
+        getActivity().invalidateOptionsMenu();
     }
 
-
+    @Override
+    public void onFinishDeletingFiles() {
+        dropBoxManager.getDropBoxFileListMethod();
+    }
 }

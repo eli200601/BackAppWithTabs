@@ -17,6 +17,8 @@
     <string name="search_menu">Search</string>
     <string name="select_all">Select All</string>
     <string name="unselected_all">Unselect All</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_delete_marked">Delete marked</string>
 
 
     <!-- SharedPreferences Key's -->
@@ -24,5 +26,7 @@
     <!-- Int: -->
     <string name="sortType_key">SortType</string>
     <string name="menu_action_logout">Logout</string>
+
+
 
 </resources>

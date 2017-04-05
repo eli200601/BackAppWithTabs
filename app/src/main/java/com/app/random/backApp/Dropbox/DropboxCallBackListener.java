@@ -10,5 +10,6 @@ public interface DropboxCallBackListener {
     void onUserNameReceived();
     void onFinishUploadFiles();
     void onFinishGeneratingCloudList(ArrayList<AppDataItem> arrayList);
+    void onFinishDeletingFiles();
 
 }

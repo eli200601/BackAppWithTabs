@@ -160,6 +160,11 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
     }
 
+    @Override
+    public void onFinishDeletingFiles() {
+
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */

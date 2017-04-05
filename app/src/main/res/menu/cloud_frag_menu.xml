@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_refresh"
+        android:orderInCategory="100"
+        android:title="@string/action_refresh"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_delete"
+        android:orderInCategory="101"
+        android:title="@string/action_delete_marked"
+        app:showAsAction="never" />
+
+    <!--<item-->
+        <!--android:id="@+id/action_sort_a_z_cloud"-->
+        <!--android:orderInCategory="102"-->
+        <!--android:title="@string/sort_list_a_z"-->
+        <!--app:showAsAction="never" />-->
+
+    <!--<item-->
+        <!--android:id="@+id/action_sort_z_a_cloud"-->
+        <!--android:orderInCategory="103"-->
+        <!--android:title="@string/sort_list_z_a"-->
+        <!--app:showAsAction="never" />-->
+
+    <item
+        android:title="@string/select_all"
+        android:orderInCategory="104"
+        android:id="@+id/menuSelectAll_cloud"
+        app:showAsAction="never" />
+
+    <item
+        android:title="@string/unselected_all"
+        android:orderInCategory="105"
+        android:id="@+id/menuUnSelectAll_cloud"
+        app:showAsAction="never" />
+
+
+</menu>

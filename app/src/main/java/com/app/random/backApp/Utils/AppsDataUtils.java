@@ -1,6 +1,7 @@
 package com.app.random.backApp.Utils;
 
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
@@ -23,6 +24,15 @@ public class AppsDataUtils {
     private int sortType = 0; // 1 = Dsc | 0 = Asc
     private int listSize;
     PackageManager packageManager;
+
+    private static AppsDataUtils instance;
+
+    public static AppsDataUtils getInstance() {
+//        if (instance == null) {
+//            instance = new AppsDataUtils(context);
+//        }
+        return instance;
+    }
 
 
     //Constructor
@@ -63,6 +73,8 @@ public class AppsDataUtils {
         String name;
         String packageName;
         String sourceDir;
+        String version = null;
+        boolean isCloudApp = false;
 
 
         for (ApplicationInfo info : appsListInfo){
@@ -71,7 +83,17 @@ public class AppsDataUtils {
             packageName = info.packageName;
             sourceDir = info.sourceDir;
 
-            AppDataItem appsListItem = new AppDataItem(name,packageName,sourceDir);
+            try {
+                PackageInfo packageInfo = packageManager.getPackageInfo(packageName, 0);
+                version = packageInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            Log.d(TAG, "*** adding application to list ***");
+            Log.d(TAG, name + packageName + sourceDir + version + String.valueOf(isCloudApp));
+
+            AppDataItem appsListItem = new AppDataItem(name,packageName,sourceDir, version, isCloudApp);
 
             appsListData.add(appsListItem);
         }
@@ -115,16 +137,21 @@ public class AppsDataUtils {
         String name;
         String packageName;
         String sourceDir;
-        appsListData.clear();
+        String version = null;
+        boolean isCloudApp = false;
 
+        appsListData.clear();
+        //TOdo: need to change it to modify the current list source, from appListData
         for (ApplicationInfo info : appsListInfo){
 
             name = packageManager.getApplicationLabel(info).toString();
             packageName = info.packageName;
             sourceDir = info.sourceDir;
+//            version = info.
+
 
             if(name.toLowerCase().contains(query.toLowerCase())) {
-                AppDataItem appsListItem = new AppDataItem(name, packageName, sourceDir);
+                AppDataItem appsListItem = new AppDataItem(name, packageName, sourceDir , version, isCloudApp);
                 appsListData.add(appsListItem);
             }
 
