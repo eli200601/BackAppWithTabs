@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        String origin = savedInstanceState.getString("origin");
+
         setContentView(R.layout.activity_main);
 
         dropBoxManager = DropBoxManager.getInstance(getApplicationContext());
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
@@ -90,7 +93,10 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         // More Actions...
     }
 
+    public void setTabPaging(int page) {
+        mViewPager.setCurrentItem(2);
 
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

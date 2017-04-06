@@ -39,7 +39,7 @@ public class DropboxUploadIntentService extends IntentService {
     private NotificationManager mNotifyManager;
     private Builder mBuilder;
     int id = 1;
-    
+
 
     public DropboxUploadIntentService() {
         super(TAG);

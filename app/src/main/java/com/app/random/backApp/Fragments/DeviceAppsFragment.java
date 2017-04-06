@@ -167,6 +167,8 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
                 selectedPackageNameList = mAdapter.getSelectedPackageNamesList();
 
+
+
                 ArrayList<String> dirList = new ArrayList<>();
 
                 Log.d(TAG, "Path ArrayList:::::::::::::::::::");
@@ -189,11 +191,8 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
                 getActivity().startService(intent);
 
-
-
-// TODO Hare i am - need to get full ditailed list
-
-
+                mAdapter.clearSelectedList();
+                mAdapter.notifyDataSetChanged();
                 break;
             }
             default:

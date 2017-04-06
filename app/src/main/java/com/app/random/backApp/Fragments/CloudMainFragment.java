@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 
 import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
+import com.app.random.backApp.MainActivity;
 import com.app.random.backApp.R;
 import com.app.random.backApp.Recycler.AppDataItem;
 import com.app.random.backApp.Recycler.MyRecyclerAdapter;
@@ -241,6 +243,9 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
 
     @Override
     public void onFinishDeletingFiles() {
+        View view = getView();
+        assert view != null;
+        Snackbar.make(view, "Files deleted...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
         dropBoxManager.getDropBoxFileListMethod();
     }
 
@@ -248,6 +253,9 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
         dropBoxManager.getDropBoxFileListMethod();
         mAdapter.clearSelectedList();
         mAdapter.notifyDataSetChanged();
+        View view = getView();
+        assert view != null;
+        Snackbar.make(view, "Uploaded successfully", Snackbar.LENGTH_LONG).setAction("Action", null).show();
     }
 
 
