@@ -1,7 +1,9 @@
 package com.app.random.backApp.Recycler;
 
 
-public class AppDataItem {
+import java.io.Serializable;
+
+public class AppDataItem implements Serializable {
 
     private String name;
     private String packageName;

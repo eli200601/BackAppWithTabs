@@ -2,6 +2,7 @@ package com.app.random.backApp.Fragments;
 
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.app.random.backApp.R;
 import com.app.random.backApp.Recycler.AppDataItem;
 import com.app.random.backApp.Recycler.MyRecyclerAdapter;
 import com.app.random.backApp.Recycler.UpdateBottomBar;
+import com.app.random.backApp.Services.DropboxIntentService;
 import com.app.random.backApp.Utils.AppsDataUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
@@ -161,11 +163,33 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
             }
             case R.id.action_upload: {
                 HashSet<String> selectedPackageNameList;
+                ArrayList<AppDataItem> itemsToUpload;
 
                 selectedPackageNameList = mAdapter.getSelectedPackageNamesList();
 
+                ArrayList<String> dirList = new ArrayList<>();
+
                 Log.d(TAG, "Path ArrayList:::::::::::::::::::");
                 Log.d(TAG, appsDataUtils.getAPKArrayListFromPackageNames(selectedPackageNameList).toString());
+
+                itemsToUpload = appsDataUtils.getAPKArrayListFromPackageNames(selectedPackageNameList);
+
+//                for (AppDataItem appItem: itemsToUpload) {
+//                    dirList.add(appItem.getSourceDir());
+//                }
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(Keys.DIR_TO_UPLOAD_LIST, itemsToUpload);
+
+
+                Intent intent = new Intent(getActivity().getApplicationContext(), DropboxIntentService.class);
+                intent.putExtras(bundle);
+
+                Log.d("DropboxIntentService", "Starting the intent....");
+
+                getActivity().startService(intent);
+
+
 
 // TODO Hare i am - need to get full ditailed list
 
