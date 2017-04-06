@@ -103,20 +103,28 @@ public class DropboxIntentService extends IntentService {
 
                             }
                         });
-            } catch (Exception e) {
+
+                Log.d(TAG, "New file is: " + newEntry.fileName() + " #### " + newEntry.path);
+            }
+            catch (Exception e) {
                 Log.e(TAG, "Unable to upload, " + e.getMessage());
-            } finally {
+            }
+            finally {
                 if (inputStream != null) {
                     try {
                         inputStream.close();
                     } catch (IOException e) {}
                 }
             }
-            mBuilder.setContentText("Upload completed :)");
+            mBuilder.setContentTitle("Upload completed");
+            mBuilder.setContentText(item.getName() + " successfully uploaded.");
+
             // Removes the progress bar
             mBuilder.setProgress(0, 0, false);
             mNotifyManager.notify(id, mBuilder.build());
+
             Log.d(TAG, "Done upload app: " + fileName);
+
 
         }
     }
