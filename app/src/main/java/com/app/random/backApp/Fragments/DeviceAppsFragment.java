@@ -26,7 +26,7 @@ import com.app.random.backApp.R;
 import com.app.random.backApp.Recycler.AppDataItem;
 import com.app.random.backApp.Recycler.MyRecyclerAdapter;
 import com.app.random.backApp.Recycler.UpdateBottomBar;
-import com.app.random.backApp.Services.DropboxIntentService;
+import com.app.random.backApp.Services.DropboxUploadIntentService;
 import com.app.random.backApp.Utils.AppsDataUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
@@ -182,10 +182,10 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                 bundle.putSerializable(Keys.DIR_TO_UPLOAD_LIST, itemsToUpload);
 
 
-                Intent intent = new Intent(getActivity().getApplicationContext(), DropboxIntentService.class);
+                Intent intent = new Intent(getActivity().getApplicationContext(), DropboxUploadIntentService.class);
                 intent.putExtras(bundle);
 
-                Log.d("DropboxIntentService", "Starting the intent....");
+                Log.d(TAG, "Starting the intent....");
 
                 getActivity().startService(intent);
 

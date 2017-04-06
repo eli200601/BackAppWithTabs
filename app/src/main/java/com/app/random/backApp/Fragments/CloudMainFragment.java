@@ -1,6 +1,10 @@
 package com.app.random.backApp.Fragments;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -32,6 +36,8 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class CloudMainFragment extends Fragment implements View.OnClickListener, DropboxCallBackListener {
+
+    private OnFinishUploadReceiver onFinishUploadReceiver;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -76,7 +82,7 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        onFinishUploadReceiver = new OnFinishUploadReceiver();
         setHasOptionsMenu(true);
 
         dropBoxManager = DropBoxManager.getInstance(getActivity().getApplicationContext());
@@ -190,6 +196,7 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
     public void onPause() {
         super.onPause();
         dropBoxManager.removeDropboxListener(TAG);
+        getActivity().unregisterReceiver(onFinishUploadReceiver);
 
     }
 
@@ -198,6 +205,7 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
         super.onResume();
         Log.d(TAG, "Adding " + TAG + " TO Listener List");
         dropBoxManager.addDropboxListener(this, TAG);
+        getActivity().registerReceiver(onFinishUploadReceiver,new IntentFilter("com.app.random.backApp.OnFinishUploadReceiver"));
     }
 
     @Override
@@ -235,4 +243,24 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
     public void onFinishDeletingFiles() {
         dropBoxManager.getDropBoxFileListMethod();
     }
+
+    public void updateUIList(Intent intent) {
+        dropBoxManager.getDropBoxFileListMethod();
+        mAdapter.clearSelectedList();
+        mAdapter.notifyDataSetChanged();
+    }
+
+
+    public class OnFinishUploadReceiver extends BroadcastReceiver {
+
+//        public OnFinishUploadReceiver() { super();}
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "BroadcastReceiver finish upload");
+            updateUIList(intent);
+
+        }
+    }
+
 }

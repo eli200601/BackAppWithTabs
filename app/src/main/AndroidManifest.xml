@@ -49,8 +49,10 @@
         </activity>
 
         <service
-            android:name=".Services.DropboxIntentService"
-            android:exported="false"></service>
+            android:name=".Services.DropboxUploadIntentService"
+            android:exported="false" />
+
+
     </application>
 
 </manifest>

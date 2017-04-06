@@ -2,12 +2,16 @@ package com.app.random.backApp.Services;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat.Builder;
+import android.text.format.Formatter;
 import android.util.Log;
 
 import com.app.random.backApp.Dropbox.DropBoxManager;
+import com.app.random.backApp.MainActivity;
 import com.app.random.backApp.R;
 import com.app.random.backApp.Recycler.AppDataItem;
 import com.app.random.backApp.Utils.Keys;
@@ -26,17 +30,18 @@ import java.util.ArrayList;
  * TODO: Customize class - update intent actions, extra parameters and static
  * helper methods.
  */
-public class DropboxIntentService extends IntentService {
+public class DropboxUploadIntentService extends IntentService {
 
-    private static String TAG = "DropboxIntentService";
+    private static String TAG = "UploadIntentService";
 
     private DropBoxManager dropBoxManager;
 
     private NotificationManager mNotifyManager;
     private Builder mBuilder;
     int id = 1;
+    
 
-    public DropboxIntentService() {
+    public DropboxUploadIntentService() {
         super(TAG);
         // TODO Auto-generated constructor stub
     }
@@ -51,9 +56,11 @@ public class DropboxIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG,"onHandleIntent() started");
-
-        dropBoxManager = DropBoxManager.getInstance(getApplicationContext());
+        Context context;
+        context = getApplicationContext();
+        dropBoxManager = DropBoxManager.getInstance(context);
         Bundle bundle = intent.getExtras();
+        int icon = R.mipmap.ic_launcher;
 
         ArrayList<AppDataItem> dirList = (ArrayList<AppDataItem>) bundle.getSerializable(Keys.DIR_TO_UPLOAD_LIST);
 
@@ -61,16 +68,21 @@ public class DropboxIntentService extends IntentService {
         Log.d(TAG, "Starting to Upload....");
 
         long totalUploadSize = 0;
+        int i=1;
+
         for (AppDataItem item: dirList) {
             File temp = new File(item.getSourceDir());
             totalUploadSize = totalUploadSize + temp.length();
         }
+        Log.d(TAG, "Total upload size = " + Formatter.formatShortFileSize(context, totalUploadSize));
 
-        mNotifyManager = (NotificationManager) getSystemService(getApplicationContext().NOTIFICATION_SERVICE);
+        mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mBuilder = new Builder(this);
-        mBuilder.setContentTitle("Uploading...")
-                .setContentText("Uploading in progress")
-                .setSmallIcon(R.mipmap.ic_launcher);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        mBuilder.setContentIntent(contentIntent);
+        mBuilder.setAutoCancel(true);
+
 
         for (AppDataItem item: dirList) {
 
@@ -85,6 +97,17 @@ public class DropboxIntentService extends IntentService {
                 Log.d(TAG, "Starting to upload: " + fileName);
                 Log.d(TAG, "APK size is: " + file.length());
 
+                if (dirList.size()==1) {
+                    mBuilder.setContentTitle("Uploading...");
+                    mBuilder.setContentText(item.getName() + " in progress");
+                    mBuilder.setSmallIcon(icon);
+                }
+                else {
+                    mBuilder.setContentTitle("Uploading " + item.getName());
+                    mBuilder.setContentText("Uploading: " + String.valueOf(i) + "/" + String.valueOf(dirList.size()));
+                }
+
+                mBuilder.setSmallIcon(icon);
                 mBuilder.setProgress(100, 0, false);
                 mNotifyManager.notify(id, mBuilder.build());
 
@@ -122,11 +145,17 @@ public class DropboxIntentService extends IntentService {
             // Removes the progress bar
             mBuilder.setProgress(0, 0, false);
             mNotifyManager.notify(id, mBuilder.build());
-
+            i++;
             Log.d(TAG, "Done upload app: " + fileName);
 
 
         }
+        mBuilder.setContentTitle("Upload completed!");
+        mBuilder.setContentText("successfully uploaded " + String.valueOf(dirList.size()) + " apps to cloud");
+        mNotifyManager.notify(id, mBuilder.build());
+        intent.setAction("com.app.random.backApp.OnFinishUploadReceiver");
+        Intent sendUpdateList = new Intent("com.app.random.backApp.OnFinishUploadReceiver");
+        sendBroadcast(sendUpdateList);
     }
 
     private String createFileNameToUpload(AppDataItem item) {
