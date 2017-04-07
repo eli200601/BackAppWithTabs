@@ -79,7 +79,7 @@ public class DropboxUploadIntentService extends IntentService {
         mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mBuilder = new Builder(this);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                new Intent(this, MainActivity.class).putExtra("started_from","notification"), PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setAutoCancel(true);
 

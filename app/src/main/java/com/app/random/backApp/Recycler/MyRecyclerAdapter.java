@@ -1,5 +1,7 @@
 package com.app.random.backApp.Recycler;
 
+import android.animation.TypeEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.app.random.backApp.R;
@@ -118,7 +121,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
         holder.setItemClickListener(new ItemClickListener() {
             @Override
-            public void onDataItemClick(View view, int position) {
+            public void onDataItemClick(final View view, int position) {
                 //When clicking on the Data area
                 //ToDo
                 // custom dialog
@@ -134,7 +137,26 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 TextView packageName = (TextView) mView.findViewById(R.id.dialog_package);
                 TextView path = (TextView) mView.findViewById(R.id.dialog_path);
                 Button done = (Button) mView.findViewById(R.id.dialog_main_action);
-//                File apk = new File(appsListData.get(position).getSourceDir());
+
+//                *************************************************
+                final ProgressBar bar = (ProgressBar) mView.findViewById(R.id.progressBar);
+
+                ValueAnimator animator = new ValueAnimator();
+                animator.setObjectValues(0, 80);
+                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    public void onAnimationUpdate(ValueAnimator animation) {
+                        bar.setProgress((int) animation.getAnimatedValue());
+                    }
+                });
+                animator.setEvaluator(new TypeEvaluator<Integer>() {
+                    public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
+                        return Math.round(startValue + (endValue - startValue) * fraction);
+                    }
+                });
+                animator.setDuration(2000);
+                animator.start();
+//                *************************************************
+
 
                 try {
                     icon.setImageDrawable(packageManager.getApplicationIcon(appsListData.get(position).getPackageName()));
@@ -144,7 +166,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 }
                 title.setText(appsListData.get(position).getName());
                 version.setText("App Version: " + appsListData.get(position).getAppVersion());
-//                size.setText("APK Size: " + Formatter.formatShortFileSize(context, apk.length()));
+
                 size.setText("APK Size: " + appsListData.get(position).getApkSize());
                 packageName.setText("Package Name: " + appsListData.get(position).getPackageName());
                 path.setText("Path: " + appsListData.get(position).getSourceDir());

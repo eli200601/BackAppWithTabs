@@ -182,8 +182,11 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
 
 
             case R.id.action_delete: {
-                dropBoxManager.deleteFileListFromCloud(mAdapter.getSelectedAppsListCloud());
-                mAdapter.clearSelectedList();
+                if (mAdapter.getSelectedAppsListCloud().size() > 0) {
+                    dropBoxManager.deleteFileListFromCloud(mAdapter.getSelectedAppsListCloud());
+                    mAdapter.clearSelectedList();
+                }
+
                 //Continue here !!!!!!!!!!!!!!!!!!!!!!!!!!
             }
 

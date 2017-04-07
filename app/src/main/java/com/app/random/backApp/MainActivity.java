@@ -62,6 +62,10 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        String startedFrom = getIntent().getStringExtra("started_from");
+        if (startedFrom != null) {
+            mViewPager.setCurrentItem(1);
+        }
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
