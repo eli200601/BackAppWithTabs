@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -72,7 +73,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         PACKAGE_NAME = getActivity().getPackageName();
         sortType = SharedPrefsUtils.getIntegerPreference(getActivity().getApplicationContext(), Keys.SORT_TYPE, 0);
 
-        appsDataUtils = new AppsDataUtils(getActivity().getPackageManager(), PACKAGE_NAME, sortType);
+        appsDataUtils = new AppsDataUtils(getActivity().getApplicationContext(), getActivity().getPackageManager(), PACKAGE_NAME, sortType);
 
         //Bottom Bar init
         listAmountTextField = (TextView) view.findViewById(R.id.itemsInListValueText);
@@ -166,7 +167,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                 ArrayList<AppDataItem> itemsToUpload;
 
                 selectedPackageNameList = mAdapter.getSelectedPackageNamesList();
-
+                Snackbar.make(getView(), "Starting to upload " + selectedPackageNameList.size() + " applications...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
 
 
                 ArrayList<String> dirList = new ArrayList<>();

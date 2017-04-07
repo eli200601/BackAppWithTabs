@@ -3,17 +3,21 @@ package com.app.random.backApp.Recycler;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.app.random.backApp.R;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -118,30 +122,40 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 //When clicking on the Data area
                 //ToDo
                 // custom dialog
-                final Dialog dialog = new Dialog(view.getContext());
-                dialog.setContentView(R.layout.dialog_app_info);
+                Log.d(TAG, "position is: " + String.valueOf(position));
 
-                // Custom Android Alert Dialog Title
-                TextView package_name = (TextView) dialog.findViewById(R.id.package_name);
-                Button dialogButtonCancel = (Button) dialog.findViewById(R.id.customDialogCancel);
-                Button dialogButtonOk = (Button) dialog.findViewById(R.id.customDialogOk);
+                final AlertDialog.Builder mBuilder = new AlertDialog.Builder(view.getContext());
+                View mView = View.inflate(view.getContext(),R.layout.app_info_dialog, null);
 
-                dialog.setTitle(appsListData.get(holder.getAdapterPosition()).getName());
-                package_name.setText(appsListData.get(holder.getAdapterPosition()).getPackageName());
-                // Click cancel to dismiss android custom dialog box
-                dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
+                ImageView icon = (ImageView) mView.findViewById(R.id.dialog_app_icon);
+                TextView title = (TextView) mView.findViewById(R.id.dialog_title);
+                TextView version = (TextView) mView.findViewById(R.id.dialog_version);
+                TextView size = (TextView) mView.findViewById(R.id.dialog_file_size);
+                TextView packageName = (TextView) mView.findViewById(R.id.dialog_package);
+                TextView path = (TextView) mView.findViewById(R.id.dialog_path);
+                Button done = (Button) mView.findViewById(R.id.dialog_main_action);
+//                File apk = new File(appsListData.get(position).getSourceDir());
+
+                try {
+                    icon.setImageDrawable(packageManager.getApplicationIcon(appsListData.get(position).getPackageName()));
+                }
+                catch (PackageManager.NameNotFoundException error) {
+                    Log.e(TAG, error.getMessage());
+                }
+                title.setText(appsListData.get(position).getName());
+                version.setText("App Version: " + appsListData.get(position).getAppVersion());
+//                size.setText("APK Size: " + Formatter.formatShortFileSize(context, apk.length()));
+                size.setText("APK Size: " + appsListData.get(position).getApkSize());
+                packageName.setText("Package Name: " + appsListData.get(position).getPackageName());
+                path.setText("Path: " + appsListData.get(position).getSourceDir());
+
+                mBuilder.setView(mView);
+                final AlertDialog dialog = mBuilder.create();
+
+                done.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                // Your android custom dialog ok action
-                // Action for custom dialog ok button click
-                dialogButtonOk.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
+                    public void onClick(View view) {
+                        dialog.cancel();
                     }
                 });
                 dialog.show();

@@ -9,6 +9,7 @@ public class AppDataItem implements Serializable {
     private String packageName;
     private String sourceDir;
     private String appVersion;
+    private String apkSize;
     private boolean isCloudApp;
 
     public String getSourceDir() {
@@ -31,6 +32,15 @@ public class AppDataItem implements Serializable {
         this.sourceDir = sourceDir;
         this.appVersion = appVersion;
         this.isCloudApp = isCloudApp;
+
+    }
+
+    public String getApkSize() {
+        return apkSize;
+    }
+
+    public void setApkSize(String apkSize) {
+        this.apkSize = apkSize;
     }
 
     public String getAppVersion() {

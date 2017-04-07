@@ -1,12 +1,15 @@
 package com.app.random.backApp.Utils;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.text.format.Formatter;
 import android.util.Log;
 
 import com.app.random.backApp.Recycler.AppDataItem;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -24,6 +27,7 @@ public class AppsDataUtils {
     private int sortType = 0; // 1 = Dsc | 0 = Asc
     private int listSize;
     PackageManager packageManager;
+    private Context context;
 
     private static AppsDataUtils instance;
 
@@ -36,11 +40,11 @@ public class AppsDataUtils {
 
 
     //Constructor
-    public AppsDataUtils(PackageManager packageManager, String appPackageName, int sortType) {
+    public AppsDataUtils(Context context, PackageManager packageManager, String appPackageName, int sortType) {
         this.packageManager = packageManager;
         this.PACKAGE_NAME = appPackageName;
         this.sortType = sortType;
-
+        this.context = context;
     }
 
 
@@ -92,9 +96,9 @@ public class AppsDataUtils {
 
             Log.d(TAG, "*** adding application to list ***");
             Log.d(TAG, name + packageName + sourceDir + version + String.valueOf(isCloudApp));
-
+            File apk = new File(sourceDir);
             AppDataItem appsListItem = new AppDataItem(name,packageName,sourceDir, version, isCloudApp);
-
+            appsListItem.setApkSize(Formatter.formatShortFileSize(context, apk.length()));
             appsListData.add(appsListItem);
         }
 
@@ -138,25 +142,30 @@ public class AppsDataUtils {
         String packageName;
         String sourceDir;
         String version = null;
+        String apkSize;
         boolean isCloudApp = false;
 
-        appsListData.clear();
+        ArrayList<AppDataItem> newList = new ArrayList<>();
         //TOdo: need to change it to modify the current list source, from appListData
-        for (ApplicationInfo info : appsListInfo){
+        for (AppDataItem info : appsListData){
 
-            name = packageManager.getApplicationLabel(info).toString();
-            packageName = info.packageName;
-            sourceDir = info.sourceDir;
-//            version = info.
-
+            name = info.getName();
+            packageName = info.getPackageName();
+            sourceDir = info.getSourceDir();
+            apkSize = info.getApkSize();
+            version = info.getAppVersion();
 
             if(name.toLowerCase().contains(query.toLowerCase())) {
-                AppDataItem appsListItem = new AppDataItem(name, packageName, sourceDir , version, isCloudApp);
-                appsListData.add(appsListItem);
+                AppDataItem appsListItem = new AppDataItem(name, packageName, sourceDir , version, false);
+                appsListItem.setApkSize(apkSize);
+                newList.add(appsListItem);
             }
 
         }
-        return appsListData;
+
+//        appsListData.clear();
+//        appsListData = newList;
+        return newList;
     }
 
     public ArrayList<AppDataItem> getAppDataList() {

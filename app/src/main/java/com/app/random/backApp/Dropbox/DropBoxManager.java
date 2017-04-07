@@ -175,6 +175,7 @@ public class DropBoxManager {
                             Log.d(TAG, "path = " + entry.path);
 
                             AppDataItem appItem = new AppDataItem(appName, appPackageName, entry.path, appVersion, true);
+                            appItem.setApkSize(entry.size);
                             cloudAppsList.add(appItem);
                         }
                     }
