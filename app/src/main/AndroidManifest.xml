@@ -29,7 +29,15 @@
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="MainActivity" />
+                android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".Activitys.SplashScreenActivity"
+            android:label="Splash screen"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
         </activity>
         <activity
             android:name="com.dropbox.client2.android.AuthActivity"

@@ -8,6 +8,7 @@ public class Keys {
 
     /*  SharedPreferences Key's   */
     public static final String PREF_NAME = "Settings";
+    public static final String PREF_ACTIVATE = "Activate";
 
     /*  DropBox info   */
     public final static String DROPBOX_FILE_DIR = "/Apps/BackAppFolder/";

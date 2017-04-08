@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.app.random.backApp.Activitys.SplashScreenActivity;
 import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
 import com.app.random.backApp.Recycler.AppDataItem;
@@ -46,6 +47,13 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
         setContentView(R.layout.activity_main);
 
+        if (SharedPrefsUtils.getStringPreference(getApplicationContext(),Keys.PREF_ACTIVATE) == null) {
+            Intent myIntent = new Intent(getApplicationContext(), SplashScreenActivity.class);
+//            myIntent.putExtra("key", value); //Optional parameters
+            this.startActivity(myIntent);
+            this.finish();
+        }
+
         dropBoxManager = DropBoxManager.getInstance(getApplicationContext());
         dropBoxManager.loginDropbox();
 
@@ -64,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
         String startedFrom = getIntent().getStringExtra("started_from");
         if (startedFrom != null) {
-            mViewPager.setCurrentItem(1);
+            setTabPaging(1);
         }
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
