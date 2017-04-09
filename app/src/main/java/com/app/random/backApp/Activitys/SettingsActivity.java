@@ -1,4 +1,4 @@
-package com.app.random.backApp;
+package com.app.random.backApp.Activitys;
 
 
 import android.os.Bundle;
@@ -7,10 +7,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.app.random.backApp.Fragments.SettingsFragment;
+import com.app.random.backApp.R;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    Toolbar toolbar;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,7 +19,7 @@ public class SettingsActivity extends AppCompatActivity {
         setContentView(R.layout.toolbar);
         toolbar = (Toolbar) findViewById(R.id.toolbar_settings);
         toolbar.setTitle("Settings");
-
+//        toolbar.setNavigationIcon(R.mipmap.settings_back_pad);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

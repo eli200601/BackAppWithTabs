@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<set
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<set xmlns:android="http://schemas.android.com/apk/res/android">
 
     <translate
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:fromXDelta="0%"
-        android:toXDelta="0%"
-        android:fromYDelta="200%"
-        android:toYDelta="0%"
-        android:duration="20000"
+        android:duration="2000"
+        android:fromYDelta="60%p"
+        android:toYDelta="0"
         android:zAdjustment="top" />
 
+    <alpha
+        android:duration="2300"
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0" />
+
+    <!--android:fromXDelta="0%p"-->
+    <!--android:toXDelta="0%p"-->
 </set>

@@ -2,6 +2,7 @@ package com.app.random.backApp.Dropbox;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.format.Formatter;
 import android.util.Log;
 
 import com.app.random.backApp.Recycler.AppDataItem;
@@ -94,7 +95,7 @@ public class DropBoxManager {
     public void unlinkDropbox() {
         mDBApi.getSession().unlink();
         SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_ACCESS_TOKEN, null);
-        SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_USER_NAME, null);
+        SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_DISPLAY_NAME, null);
         accountInfoState = State.CREATED;
         isLogIn = false;
     }
@@ -189,7 +190,9 @@ public class DropBoxManager {
         }
 
         String listenTo = "CloudMainFragment";
-        dropboxCallBackListenerHashMap.get(listenTo).onFinishGeneratingCloudList(cloudAppsList);
+        if (dropboxCallBackListenerHashMap.get(listenTo) != null ) {
+            dropboxCallBackListenerHashMap.get(listenTo).onFinishGeneratingCloudList(cloudAppsList);
+        }
 
     }
 
@@ -263,34 +266,68 @@ public class DropBoxManager {
         }
     }
 
-    private class LoadDataDropbox extends AsyncTask<Void, Void, String> {
+    private class LoadDataDropbox extends AsyncTask<Void, Void, DropboxAPI.Account> {
 
         @Override
-        protected String doInBackground(Void... params) {
+        protected DropboxAPI.Account doInBackground(Void... params) {
             accountInfoState = State.IN_PROGRESS;
-            String name = null;
+
+            DropboxAPI.Account userAccount = null;
 
             try {
-
-                name = mDBApi.accountInfo().displayName;
-                Log.d(TAG, "Trying to fetch name = " + name);
-                Log.d(TAG, name);
+                userAccount = mDBApi.accountInfo();
             } catch (DropboxException e) {
                 e.printStackTrace();
             }
 
-            return name;
+
+            return userAccount;
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(DropboxAPI.Account result) {
             String mainActivityListener = "MainActivity";
             String cloudFragListener = "CloudMainFragment";
+
+
             if (result != null) {
-                String arr[] = result.split(" ", 2);
-                String username = "hi, " + arr[0];
-                Log.d(TAG, "Finished background, name is: " + username);
-                SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_USER_NAME, username);
+                String userName = null;
+                String displayName = null;
+                String lastName = null;
+                String userEmail = null;
+                String uid = null;
+                String referral = null;
+                long quota_long,quotaUsed_long;
+                String quota;
+                String quotaUsed;
+
+                String fullName[] = result.displayName.split(" ", 2);
+
+                userName = fullName[0];
+                lastName = fullName[1];
+                displayName = "hi, " + userName;
+                quota_long = result.quota;
+                quotaUsed_long = result.quotaNormal;
+                quota = Formatter.formatFileSize(context, quota_long);
+                quotaUsed = Formatter.formatFileSize(context, quotaUsed_long);
+                uid = String.valueOf(result.uid);
+                referral = result.referralLink;
+
+                SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_USER_NAME, userName);
+                SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_LAST_NAME, lastName);
+                SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_DISPLAY_NAME, displayName);
+
+                SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_TOTAL_SPACE, quota);
+                SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_USED_SPACE, quotaUsed);
+
+                SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_UID, uid);
+                SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_REFERRAL_URL, referral);
+
+                SharedPrefsUtils.setLongPreference(context, Keys.DROPBOX_USED_SPACE_LONG, quotaUsed_long);
+                SharedPrefsUtils.setLongPreference(context, Keys.DROPBOX_TOTAL_SPACE_LONG, quota_long);
+
+                Log.d(TAG, "Finished background, name is: " + userName);
+
                 accountInfoState = State.DONE;
 //                dropboxCallBackListener.get().onUserNameReceived();
                 if (dropboxCallBackListenerHashMap.containsKey(mainActivityListener)) {
@@ -299,7 +336,7 @@ public class DropBoxManager {
                 if (dropboxCallBackListenerHashMap.containsKey(cloudFragListener)) {
                     dropboxCallBackListenerHashMap.get(cloudFragListener).onUserNameReceived();
                 }
-//                dropboxCallBackListenerArrayList.get(0).onUserNameReceived();
+//
 
             }
             super.onPostExecute(result);

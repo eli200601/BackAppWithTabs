@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.app.random.backApp.Activitys.DBAccountInfoActivity;
+import com.app.random.backApp.Activitys.SettingsActivity;
 import com.app.random.backApp.Activitys.SplashScreenActivity;
 import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
@@ -52,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 //            myIntent.putExtra("key", value); //Optional parameters
             this.startActivity(myIntent);
             this.finish();
+            return;
         }
 
         dropBoxManager = DropBoxManager.getInstance(getApplicationContext());
@@ -117,14 +120,16 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
         MenuItem logoutButton = menu.findItem(R.id.action_logout);
         MenuItem loginButton = menu.findItem(R.id.action_login);
-        MenuItem user_name_text = menu.findItem((R.id.user_name_text));
+        MenuItem user_name_text = menu.findItem(R.id.user_name_text);
+        MenuItem accountInfo = menu.findItem(R.id.action_account_info);
 
         boolean isLogIn = dropBoxManager.isLoginToDropbox();
 
         logoutButton.setVisible(isLogIn);
         loginButton.setVisible(!isLogIn);
+        accountInfo.setVisible(isLogIn);
 
-        String user_name = SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.DROPBOX_USER_NAME);
+        String user_name = SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.DROPBOX_DISPLAY_NAME);
         if (user_name != null && isLogIn) {
             user_name_text.setVisible(true);
             user_name_text.setTitle(user_name);
@@ -158,6 +163,9 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
                 Log.d(TAG, "Login Clicked");
                 invalidateOptionsMenu();
                 break;
+            }
+            case R.id.action_account_info: {
+                startActivity(new Intent(this, DBAccountInfoActivity.class));
             }
         }
         return super.onOptionsItemSelected(item);

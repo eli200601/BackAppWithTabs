@@ -2,18 +2,84 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#242729"
-    android:layout_gravity="center"
+    android:background="#FFFFFF"
+
     android:id="@+id/lin_lay"
-    android:gravity="center"
+
     android:orientation="vertical" >
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/splash"
-        android:background="@mipmap/splash_img" />
+
+    <RelativeLayout
+        android:id="@+id/splash_title_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/splash"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="80dp"
+            android:background="@mipmap/ic_main" />
+
+        <TextView
+            android:id="@+id/splash_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Back-App application"
 
 
+            android:layout_below="@id/splash"
+            android:layout_centerHorizontal="true"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:textColor="@color/colorPrimary"/>
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/splash_main_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/splash_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:textSize="16dp"
+            android:text="Enjoy more space.\nApp backup and restore"
+            android:textColor="@color/cardview_dark_background"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/splash_policy_desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/button"
+            android:layout_marginBottom="20dp"
+            android:layout_centerHorizontal="true"
+            android:text="By continuing you are agreeing to the\nTerms of Service and Privacy Policy" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="50dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="GET STARTED"
+            android:textColor="@color/cardview_light_background"
+            android:background="@color/colorPrimary"
+            android:shadowColor="@color/cardview_dark_background"
+            android:onClick="getStartedClicked"/>
+
+    </RelativeLayout>
 
 </LinearLayout>

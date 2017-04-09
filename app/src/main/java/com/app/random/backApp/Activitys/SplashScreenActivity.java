@@ -4,14 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.Button;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.app.random.backApp.MainActivity;
 import com.app.random.backApp.R;
+import com.app.random.backApp.Utils.Keys;
+import com.app.random.backApp.Utils.SharedPrefsUtils;
 
 public class SplashScreenActivity extends Activity {
 
@@ -31,17 +35,36 @@ public class SplashScreenActivity extends Activity {
     }
 
     private void StartAnimations() {
-        Animation anim = AnimationUtils.loadAnimation(this, R.anim.alpha);
-        anim.reset();
-        LinearLayout l=(LinearLayout) findViewById(R.id.lin_lay);
-        l.clearAnimation();
-        l.startAnimation(anim);
+        RelativeLayout title_layout=(RelativeLayout) findViewById(R.id.splash_title_container);
+        final RelativeLayout bottom = (RelativeLayout) findViewById(R.id.splash_main_container);
+        TextView description = (TextView) findViewById(R.id.splash_desc);
+        TextView subtitle = (TextView) findViewById(R.id.splash_policy_desc);
+        Button getStarted = (Button) findViewById(R.id.button);
 
-        anim = AnimationUtils.loadAnimation(this, R.anim.translate);
-        anim.reset();
-        ImageView iv = (ImageView) findViewById(R.id.splash);
-        iv.clearAnimation();
-        iv.startAnimation(anim);
+        bottom.setVisibility(View.INVISIBLE);
+        final Animation container_fade = AnimationUtils.loadAnimation(this, R.anim.alpha);
+        container_fade.reset();
+
+        Animation anim_slide = AnimationUtils.loadAnimation(this, R.anim.translate);
+        anim_slide.reset();
+        anim_slide.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                bottom.startAnimation(container_fade);
+                bottom.setVisibility(View.VISIBLE);
+             }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        title_layout.startAnimation(anim_slide);
         
     }
 
@@ -53,5 +76,13 @@ public class SplashScreenActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
+    }
+
+    public void getStartedClicked(View view) {
+//        SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.PREF_ACTIVATE)
+        SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.PREF_ACTIVATE, Keys.PREF_ACTIVATE);
+        Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
+        this.startActivity(myIntent);
+        this.finish();
     }
 }
