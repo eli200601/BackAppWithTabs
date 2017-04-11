@@ -163,6 +163,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 }
                 catch (PackageManager.NameNotFoundException error) {
                     Log.e(TAG, error.getMessage());
+                    icon.setImageResource(R.mipmap.ic_launcher);
                 }
                 title.setText(appsListData.get(position).getName());
                 version.setText("App Version: " + appsListData.get(position).getAppVersion());

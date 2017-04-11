@@ -67,11 +67,13 @@ public class DropboxUploadIntentService extends IntentService {
         filesUtils = FilesUtils.getInstance(context);
         dropBoxManager = DropBoxManager.getInstance(context);
 
+
         int icon = R.mipmap.ic_main;
         // Getting from Bundle the app list to upload
         Bundle bundle = intent.getExtras();
         ArrayList<AppDataItem> dirList = (ArrayList<AppDataItem>) bundle.getSerializable(Keys.DIR_TO_UPLOAD_LIST);
         ArrayList<AppDataItem> doneList = dirList;
+        int listSize = dirList.size();
         //Saving the list in prefs to save state
         String jsonNotFinishList = filesUtils.getJSONStringFromArray(doneList);
         SharedPrefsUtils.setStringPreference(context,Keys.NOT_FINISH_UPLOAD_LIST,jsonNotFinishList);
@@ -170,9 +172,11 @@ public class DropboxUploadIntentService extends IntentService {
 
 
         }
+        SharedPrefsUtils.setStringPreference(context, Keys.NOT_FINISH_UPLOAD_LIST, null);
         mBuilder.setContentTitle("Upload completed!");
-        mBuilder.setContentText("successfully uploaded " + String.valueOf(dirList.size()) + " apps to cloud");
+        mBuilder.setContentText("successfully uploaded " + String.valueOf(listSize) + " apps to cloud");
         mNotifyManager.notify(id, mBuilder.build());
+        // Send broadcast action
         intent.setAction("com.app.random.backApp.OnFinishUploadReceiver");
         Intent sendUpdateList = new Intent("com.app.random.backApp.OnFinishUploadReceiver");
         sendBroadcast(sendUpdateList);
