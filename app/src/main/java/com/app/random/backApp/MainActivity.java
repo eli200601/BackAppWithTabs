@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -118,12 +119,20 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
             if (jsonNotFinishList != null) {
                 ArrayList<AppDataItem> appsList = filesUtils.getArrayFromJSONString(jsonNotFinishList);
                 if (appsList.size() > 0) {
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(Keys.DIR_TO_UPLOAD_LIST, appsList);
-                    Intent intent = new Intent(getApplicationContext(), DropboxUploadIntentService.class);
-                    intent.putExtras(bundle);
-                    Log.d(TAG, "Found that there is unfinished upload, starting again");
-                    startService(intent);
+                    long totalUploadSize = filesUtils.getFileSizeFromListArray(appsList);
+                    long cloudFreeSpace = SharedPrefsUtils.getLongPreference(getApplicationContext(), Keys.DROPBOX_FREE_SPACE_LONG, totalUploadSize);
+                    if (( cloudFreeSpace - totalUploadSize) < 0) {
+                        Log.e(TAG, "There is no free space on cloud...");
+                        Snackbar.make(getCurrentFocus(), "Upload failed. There is no free space on cloud...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    }
+                    else {
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(Keys.DIR_TO_UPLOAD_LIST, appsList);
+                        Intent intent = new Intent(getApplicationContext(), DropboxUploadIntentService.class);
+                        intent.putExtras(bundle);
+                        Log.d(TAG, "Found that there is unfinished upload, starting again");
+                        startService(intent);
+                    }
                 }
             }
         }

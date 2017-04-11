@@ -100,6 +100,10 @@ public class DropBoxManager {
         isLogIn = false;
     }
 
+    public void loadUserInfo() {
+        new LoadDataDropbox().execute();
+    }
+
     public void onResumeManager() {
 
         if (mDBApi.getSession().authenticationSuccessful()) {
@@ -110,7 +114,7 @@ public class DropBoxManager {
                 Log.d(TAG, "Access Token: " + accessToken);
 
                 SharedPrefsUtils.setStringPreference(context, Keys.DROPBOX_ACCESS_TOKEN, accessToken);
-                new LoadDataDropbox().execute();
+                loadUserInfo();
                 getDropBoxFileListMethod();
                 isLogIn = true;
 
@@ -325,6 +329,7 @@ public class DropBoxManager {
 
                 SharedPrefsUtils.setLongPreference(context, Keys.DROPBOX_USED_SPACE_LONG, quotaUsed_long);
                 SharedPrefsUtils.setLongPreference(context, Keys.DROPBOX_TOTAL_SPACE_LONG, quota_long);
+                SharedPrefsUtils.setLongPreference(context, Keys.DROPBOX_FREE_SPACE_LONG, quota_long-quotaUsed_long);
 
                 Log.d(TAG, "Finished background, name is: " + userName);
 

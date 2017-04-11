@@ -7,6 +7,7 @@ import com.app.random.backApp.Recycler.AppDataItem;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,5 +44,16 @@ public class FilesUtils {
         Type type = new TypeToken<List<AppDataItem>>(){}.getType();
         ArrayList<AppDataItem> appsList = gson.fromJson(stringJSON, type);
         return appsList;
+    }
+
+    public long getFileSizeFromListArray(ArrayList<AppDataItem> arrayList) {
+        long totalFilesSize = 0;
+
+        for (AppDataItem item : arrayList) {
+            File temp = new File(item.getSourceDir());
+            totalFilesSize = totalFilesSize + temp.length();
+        }
+
+        return totalFilesSize;
     }
 }

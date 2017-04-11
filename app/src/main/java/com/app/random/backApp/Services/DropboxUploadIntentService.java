@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -81,14 +82,7 @@ public class DropboxUploadIntentService extends IntentService {
         Log.d(TAG, "dirList size =  " + dirList.size());
         Log.d(TAG, "Starting to Upload....");
 
-        long totalUploadSize = 0;
-        int i=1;
-        // Getting the total upload size
-        for (AppDataItem item: dirList) {
-            File temp = new File(item.getSourceDir());
-            totalUploadSize = totalUploadSize + temp.length();
-        }
-        Log.d(TAG, "Total upload size = " + Formatter.formatShortFileSize(context, totalUploadSize));
+        int i=0;
         //Setting up the notification
         mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mBuilder = new Builder(this);
@@ -143,6 +137,7 @@ public class DropboxUploadIntentService extends IntentService {
             }
             catch (Exception e) {
                 Log.e(TAG, "Unable to upload, " + e.getMessage());
+                break;
             }
             finally {
                 if (inputStream != null) {
@@ -172,13 +167,24 @@ public class DropboxUploadIntentService extends IntentService {
 
 
         }
-        SharedPrefsUtils.setStringPreference(context, Keys.NOT_FINISH_UPLOAD_LIST, null);
-        mBuilder.setContentTitle("Upload completed!");
-        mBuilder.setContentText("successfully uploaded " + String.valueOf(listSize) + " apps to cloud");
-        mNotifyManager.notify(id, mBuilder.build());
-        // Send broadcast action
-        intent.setAction("com.app.random.backApp.OnFinishUploadReceiver");
         Intent sendUpdateList = new Intent("com.app.random.backApp.OnFinishUploadReceiver");
+
+        if (i != listSize) {
+            mBuilder.setContentTitle("Upload Failed!");
+            mBuilder.setContentText("Upload Failed! ");
+            mNotifyManager.notify(id, mBuilder.build());
+            sendUpdateList.putExtra(Keys.SERVICE_UPLOAD_STATUS, false);
+        }
+        else {
+            mBuilder.setContentTitle("Upload completed!");
+            mBuilder.setContentText("successfully uploaded " + String.valueOf(i) + " apps to cloud");
+            mNotifyManager.notify(id, mBuilder.build());
+            sendUpdateList.putExtra(Keys.SERVICE_UPLOAD_STATUS, true);
+        }
+        SharedPrefsUtils.setStringPreference(context, Keys.NOT_FINISH_UPLOAD_LIST, null);
+
+        // Send broadcast action
+//        intent.setAction("com.app.random.backApp.OnFinishUploadReceiver");
         sendBroadcast(sendUpdateList);
     }
 

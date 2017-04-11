@@ -258,7 +258,7 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
         mAdapter.notifyDataSetChanged();
         View view = getView();
         assert view != null;
-        Snackbar.make(view, "Uploaded successfully", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+
     }
 
 
@@ -269,7 +269,15 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "BroadcastReceiver finish upload");
-            updateUIList(intent);
+            if (intent.getBooleanExtra(Keys.SERVICE_UPLOAD_STATUS,false)) {
+                Snackbar.make(getView(), "Uploaded successfully", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                updateUIList(intent);
+                dropBoxManager.loadUserInfo();
+            }
+            else {
+                Snackbar.make(getView(), "Upload Failed", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            }
+
 
         }
     }

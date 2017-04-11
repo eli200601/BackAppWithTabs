@@ -29,6 +29,7 @@ import com.app.random.backApp.Recycler.MyRecyclerAdapter;
 import com.app.random.backApp.Recycler.UpdateBottomBar;
 import com.app.random.backApp.Services.DropboxUploadIntentService;
 import com.app.random.backApp.Utils.AppsDataUtils;
+import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 
@@ -42,7 +43,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
     private ArrayList<AppDataItem> appsListData = new ArrayList<>();
 
     private static final String TAG = "DeviceAppsFragment";
-
+    private FilesUtils filesUtils;
     private AppsDataUtils appsDataUtils;
     private String PACKAGE_NAME;
     public int sortType = 0; // 1 = Dsc | 0 = Asc
@@ -59,7 +60,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         dropBoxManager = DropBoxManager.getInstance(getActivity().getApplicationContext());
-
+        filesUtils = FilesUtils.getInstance(getActivity().getApplicationContext());
     }
 
 
@@ -167,33 +168,34 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                 ArrayList<AppDataItem> itemsToUpload;
 
                 selectedPackageNameList = mAdapter.getSelectedPackageNamesList();
-                Snackbar.make(getView(), "Starting to upload " + selectedPackageNameList.size() + " applications...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-
-
                 ArrayList<String> dirList = new ArrayList<>();
 
                 Log.d(TAG, "Path ArrayList:::::::::::::::::::");
                 Log.d(TAG, appsDataUtils.getAPKArrayListFromPackageNames(selectedPackageNameList).toString());
 
                 itemsToUpload = appsDataUtils.getAPKArrayListFromPackageNames(selectedPackageNameList);
+                long totalUploadSize = filesUtils.getFileSizeFromListArray(itemsToUpload);
+                long cloudFreeSpace = SharedPrefsUtils.getLongPreference(getActivity().getApplicationContext(), Keys.DROPBOX_FREE_SPACE_LONG, totalUploadSize);
+                if (( cloudFreeSpace - totalUploadSize) < 0) {
+                    Log.e(TAG, "There is no free space on cloud...");
+                    Snackbar.make(getView(), "Upload failed. There is no free space on cloud...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+                else {
+                    Snackbar.make(getView(), "Starting to upload " + selectedPackageNameList.size() + " applications...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Keys.DIR_TO_UPLOAD_LIST, itemsToUpload);
 
-//                for (AppDataItem appItem: itemsToUpload) {
-//                    dirList.add(appItem.getSourceDir());
-//                }
 
-                Bundle bundle = new Bundle();
-                bundle.putSerializable(Keys.DIR_TO_UPLOAD_LIST, itemsToUpload);
+                    Intent intent = new Intent(getActivity().getApplicationContext(), DropboxUploadIntentService.class);
+                    intent.putExtras(bundle);
 
+                    Log.d(TAG, "Starting the intent....");
 
-                Intent intent = new Intent(getActivity().getApplicationContext(), DropboxUploadIntentService.class);
-                intent.putExtras(bundle);
+                    getActivity().startService(intent);
 
-                Log.d(TAG, "Starting the intent....");
-
-                getActivity().startService(intent);
-
-                mAdapter.clearSelectedList();
-                mAdapter.notifyDataSetChanged();
+                    mAdapter.clearSelectedList();
+                    mAdapter.notifyDataSetChanged();
+                }
                 break;
             }
             default:
