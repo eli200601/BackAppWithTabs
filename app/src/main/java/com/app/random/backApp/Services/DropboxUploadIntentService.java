@@ -14,9 +14,12 @@ import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.MainActivity;
 import com.app.random.backApp.R;
 import com.app.random.backApp.Recycler.AppDataItem;
+import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
+import com.app.random.backApp.Utils.SharedPrefsUtils;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.ProgressListener;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,6 +42,7 @@ public class DropboxUploadIntentService extends IntentService {
     private NotificationManager mNotifyManager;
     private Builder mBuilder;
     int id = 1;
+    private FilesUtils filesUtils;
 
 
     public DropboxUploadIntentService() {
@@ -53,39 +57,45 @@ public class DropboxUploadIntentService extends IntentService {
 
     }
 
+
+
     @Override
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG,"onHandleIntent() started");
         Context context;
         context = getApplicationContext();
+        filesUtils = FilesUtils.getInstance(context);
         dropBoxManager = DropBoxManager.getInstance(context);
-        Bundle bundle = intent.getExtras();
-        int icon = R.mipmap.ic_launcher;
 
+        int icon = R.mipmap.ic_main;
+        // Getting from Bundle the app list to upload
+        Bundle bundle = intent.getExtras();
         ArrayList<AppDataItem> dirList = (ArrayList<AppDataItem>) bundle.getSerializable(Keys.DIR_TO_UPLOAD_LIST);
+        ArrayList<AppDataItem> doneList = dirList;
+        //Saving the list in prefs to save state
+        String jsonNotFinishList = filesUtils.getJSONStringFromArray(doneList);
+        SharedPrefsUtils.setStringPreference(context,Keys.NOT_FINISH_UPLOAD_LIST,jsonNotFinishList);
 
         Log.d(TAG, "dirList size =  " + dirList.size());
         Log.d(TAG, "Starting to Upload....");
 
         long totalUploadSize = 0;
         int i=1;
-
+        // Getting the total upload size
         for (AppDataItem item: dirList) {
             File temp = new File(item.getSourceDir());
             totalUploadSize = totalUploadSize + temp.length();
         }
         Log.d(TAG, "Total upload size = " + Formatter.formatShortFileSize(context, totalUploadSize));
-
+        //Setting up the notification
         mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mBuilder = new Builder(this);
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class).putExtra("started_from","notification"), PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setAutoCancel(true);
-
-
-        for (AppDataItem item: dirList) {
-
+        // Starting to upload each app in the list
+        for (AppDataItem item: new ArrayList<>(dirList)) {
             String fileName = createFileNameToUpload(item);
             Log.d(TAG, fileName);
 
@@ -136,11 +146,21 @@ public class DropboxUploadIntentService extends IntentService {
                 if (inputStream != null) {
                     try {
                         inputStream.close();
-                    } catch (IOException e) {}
+                    } catch (IOException e) { Log.e(TAG, "Unable to upload, " + e.getMessage()); }
                 }
             }
             mBuilder.setContentTitle("Upload completed");
             mBuilder.setContentText(item.getName() + " successfully uploaded.");
+            // Finished to upload app, removing the app from doneList list
+            assert doneList != null;
+            doneList.remove(item);
+            if (doneList.size() == 0) {
+                SharedPrefsUtils.setStringPreference(context, Keys.NOT_FINISH_UPLOAD_LIST, null);
+            }
+            else {
+                jsonNotFinishList = filesUtils.getJSONStringFromArray(doneList);
+                SharedPrefsUtils.setStringPreference(context, Keys.NOT_FINISH_UPLOAD_LIST, jsonNotFinishList);
+            }
 
             // Removes the progress bar
             mBuilder.setProgress(0, 0, false);

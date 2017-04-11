@@ -30,4 +30,6 @@ public class Keys {
 
     /* Service */
     public final static String DIR_TO_UPLOAD_LIST = "dir_to_upload_list";
+    public final static String NOT_FINISH_UPLOAD_LIST = "NotFinishUploadList";
+    /* Se*/
 }

@@ -34,5 +34,6 @@ dependencies {
     compile 'com.android.support:support-v4:25.1.0'
     compile 'com.dropbox.core:dropbox-core-sdk:2.1.1'
     compile 'com.cloudrail:cloudrail-si-android:2.16.2'
+    compile 'com.google.code.gson:gson:2.8.0'
     testCompile 'junit:junit:4.12'
 }

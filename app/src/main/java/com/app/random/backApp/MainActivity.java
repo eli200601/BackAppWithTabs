@@ -1,5 +1,8 @@
 package com.app.random.backApp;
 
+import android.app.ActivityManager;
+import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -17,10 +20,13 @@ import com.app.random.backApp.Activitys.SplashScreenActivity;
 import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
 import com.app.random.backApp.Recycler.AppDataItem;
+import com.app.random.backApp.Services.DropboxUploadIntentService;
+import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements DropboxCallBackListener {
 
@@ -36,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private DropBoxManager dropBoxManager = null;
-
+    private FilesUtils filesUtils;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -48,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 //        String origin = savedInstanceState.getString("origin");
 
         setContentView(R.layout.activity_main);
+
+        filesUtils = FilesUtils.getInstance(getApplicationContext());
 
         if (SharedPrefsUtils.getStringPreference(getApplicationContext(),Keys.PREF_ACTIVATE) == null) {
             Intent myIntent = new Intent(getApplicationContext(), SplashScreenActivity.class);
@@ -81,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        checkIfUploadDisrupted();
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -90,6 +99,34 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 //            }
 //        });
 
+    }
+
+    public boolean isServiceRunning(String serviceClassName){
+        final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        final List<ActivityManager.RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE);
+        for (ActivityManager.RunningServiceInfo runningServiceInfo : services) {
+            if (runningServiceInfo.service.getClassName().equals(serviceClassName)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void checkIfUploadDisrupted() {
+        String jsonNotFinishList = SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.NOT_FINISH_UPLOAD_LIST);
+        if (!isServiceRunning("DropboxUploadIntentService")) {
+            if (jsonNotFinishList != null) {
+                ArrayList<AppDataItem> appsList = filesUtils.getArrayFromJSONString(jsonNotFinishList);
+                if (appsList.size() > 0) {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Keys.DIR_TO_UPLOAD_LIST, appsList);
+                    Intent intent = new Intent(getApplicationContext(), DropboxUploadIntentService.class);
+                    intent.putExtras(bundle);
+                    Log.d(TAG, "Found that there is unfinished upload, starting again");
+                    startService(intent);
+                }
+            }
+        }
     }
 
     @Override
