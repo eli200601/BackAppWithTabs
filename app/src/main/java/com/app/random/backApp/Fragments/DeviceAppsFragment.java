@@ -119,11 +119,11 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         MenuItem uploadItem = menu.findItem(R.id.action_upload);
 
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-
+        
 
         searchView.setOnQueryTextListener(this);
 
-        if (mAdapter.getSelectedAppsListSize() > 0) {
+        if (mAdapter.getSelectedAppsListSize() > 0 && dropBoxManager.isLogIn) {
             uploadItem.setVisible(true);
         }
         else {
