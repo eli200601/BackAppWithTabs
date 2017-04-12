@@ -22,6 +22,7 @@ import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
 import com.app.random.backApp.Recycler.AppDataItem;
 import com.app.random.backApp.Services.DropboxUploadIntentService;
+import com.app.random.backApp.Utils.ConnectionDetector;
 import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         }
 
         dropBoxManager = DropBoxManager.getInstance(getApplicationContext());
-        dropBoxManager.loginDropbox();
+
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -90,7 +91,9 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        checkIfUploadDisrupted();
+
+
+
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -102,41 +105,9 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
     }
 
-    public boolean isServiceRunning(String serviceClassName){
-        final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        final List<ActivityManager.RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE);
-        for (ActivityManager.RunningServiceInfo runningServiceInfo : services) {
-            if (runningServiceInfo.service.getClassName().equals(serviceClassName)){
-                return true;
-            }
-        }
-        return false;
-    }
 
-    public void checkIfUploadDisrupted() {
-        String jsonNotFinishList = SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.NOT_FINISH_UPLOAD_LIST);
-        if (!isServiceRunning("DropboxUploadIntentService")) {
-            if (jsonNotFinishList != null) {
-                ArrayList<AppDataItem> appsList = filesUtils.getArrayFromJSONString(jsonNotFinishList);
-                if (appsList.size() > 0) {
-                    long totalUploadSize = filesUtils.getFileSizeFromListArray(appsList);
-                    long cloudFreeSpace = SharedPrefsUtils.getLongPreference(getApplicationContext(), Keys.DROPBOX_FREE_SPACE_LONG, totalUploadSize);
-                    if (( cloudFreeSpace - totalUploadSize) < 0) {
-                        Log.e(TAG, "There is no free space on cloud...");
-                        Snackbar.make(getCurrentFocus(), "Upload failed. There is no free space on cloud...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    }
-                    else {
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable(Keys.DIR_TO_UPLOAD_LIST, appsList);
-                        Intent intent = new Intent(getApplicationContext(), DropboxUploadIntentService.class);
-                        intent.putExtras(bundle);
-                        Log.d(TAG, "Found that there is unfinished upload, starting again");
-                        startService(intent);
-                    }
-                }
-            }
-        }
-    }
+
+
 
     @Override
     protected void onPause() {
@@ -199,15 +170,31 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
                 break;
             }
             case R.id.action_logout: {
-                Log.d(TAG, "Logout Clicked");
-                dropBoxManager.unlinkDropbox();
-                invalidateOptionsMenu();
+                if (new ConnectionDetector(getApplicationContext()).isConnectedToInternet()) {
+                    Log.d(TAG, "There is connection to internet");
+                    Log.d(TAG, "Logout Clicked");
+                    dropBoxManager.unlinkDropbox();
+                    invalidateOptionsMenu();
+                }
+                else {
+                    Log.d(TAG, "There is no connection to internet");
+                    Snackbar.make(getCurrentFocus(), "No connection to internet, Turn on your WiFi/3G", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+
                 break;
             }
             case R.id.action_login: {
-                dropBoxManager.loginDropbox();
-                Log.d(TAG, "Login Clicked");
-                invalidateOptionsMenu();
+                if (new ConnectionDetector(getApplicationContext()).isConnectedToInternet()) {
+                    Log.d(TAG, "There is connection to internet");
+                    dropBoxManager.loginDropbox();
+                    Log.d(TAG, "Login Clicked");
+                    invalidateOptionsMenu();
+                }
+                else {
+                    Log.d(TAG, "There is no connection to internet");
+                    Snackbar.make(getCurrentFocus(), "No connection to internet, Turn on your WiFi/3G", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+
                 break;
             }
             case R.id.action_account_info: {

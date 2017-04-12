@@ -6,6 +6,7 @@ import android.text.format.Formatter;
 import android.util.Log;
 
 import com.app.random.backApp.Recycler.AppDataItem;
+import com.app.random.backApp.Utils.ConnectionDetector;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 import com.dropbox.client2.DropboxAPI;
@@ -16,6 +17,8 @@ import com.dropbox.client2.session.AppKeyPair;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static android.R.attr.delay;
 
 public class DropBoxManager {
 
@@ -150,13 +153,17 @@ public class DropBoxManager {
         return result.toString();
     }
 
-    public void generateCloudAppsList(List<DropboxAPI.Entry> cloudFilesList) {
+    public void generateCloudAppsList(List<DropboxAPI.Entry> cloudFilesList) throws InterruptedException {
         // apk file contain appName_appPackageName_version.apk
         String separator = "_";
         cloudAppsList.clear();
+        String listenTo = "CloudMainFragment";
 
         if (cloudFilesList == null) {
-            // TODO: generate empty state list
+            // generate empty state list
+            AppDataItem appItem = new AppDataItem("There is no applications", "Please backup your apps", "/", "v1.0", true);
+            appItem.setApkSize("0.00b");
+            cloudAppsList.add(appItem);
         }
         else {
 
@@ -180,8 +187,8 @@ public class DropBoxManager {
                             Log.d(TAG, "path = " + entry.path);
 
                             AppDataItem appItem = new AppDataItem(appName, appPackageName, entry.path, appVersion, true);
-                            appItem.setApkSize(entry.size);
-                            cloudAppsList.add(appItem);
+
+                            cloudAppsList.add(appItem);appItem.setApkSize(entry.size);
                         }
                     }
                 }
@@ -189,11 +196,12 @@ public class DropBoxManager {
 
         }
         if (cloudAppsList.size() == 0) {
-            AppDataItem appItem = new AppDataItem("There is no applications", "Please backup your apps", "/");
+            AppDataItem appItem = new AppDataItem("There is no applications", "Please backup your apps", "/", "v1.0", true);
+            appItem.setApkSize("0.00b");
             cloudAppsList.add(appItem);
         }
 
-        String listenTo = "CloudMainFragment";
+
         if (dropboxCallBackListenerHashMap.get(listenTo) != null ) {
             dropboxCallBackListenerHashMap.get(listenTo).onFinishGeneratingCloudList(cloudAppsList);
         }
@@ -246,25 +254,36 @@ public class DropBoxManager {
 
 
     private class GetDropBoxFileList extends AsyncTask<Void, Void, List<DropboxAPI.Entry>> {
-
+        private String TAG = "GetDropBoxFileList";
         @Override
         protected List<DropboxAPI.Entry> doInBackground(Void... param) {
             DropboxAPI.Entry entries = null;
-            Log.i("CloudMainFragment", "New Tread started...");
-            try {
-                entries = mDBApi.metadata("/", 100, null, true, null);
-            } catch (DropboxException e) {
-                e.printStackTrace();
+            if (new ConnectionDetector(context).isConnectedToInternet()) {
+                Log.d(TAG, "There is connection...");
 
+                Log.i("CloudMainFragment", "New Tread started...");
+                try {
+                    entries = mDBApi.metadata("/", 100, null, true, null);
+                } catch (DropboxException e) {
+                    e.printStackTrace();
+                }
+                return entries.contents;
             }
+            else {
+                Log.d(TAG, "There is no connection...");
 
-            return entries.contents;
+                return null;
+            }
         }
 
         @Override
         protected void onPostExecute(List<DropboxAPI.Entry> cloudFilesList) {
 
-            generateCloudAppsList(cloudFilesList);
+            try {
+                generateCloudAppsList(cloudFilesList);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
             super.onPostExecute(cloudFilesList);
         }
@@ -275,16 +294,19 @@ public class DropBoxManager {
         @Override
         protected DropboxAPI.Account doInBackground(Void... params) {
             accountInfoState = State.IN_PROGRESS;
-
             DropboxAPI.Account userAccount = null;
 
-            try {
-                userAccount = mDBApi.accountInfo();
-            } catch (DropboxException e) {
-                e.printStackTrace();
+            if (new ConnectionDetector(context).isConnectedToInternet()) {
+                Log.d(TAG, "There is connection...");
+                try {
+                    userAccount = mDBApi.accountInfo();
+                } catch (DropboxException e) {
+                    e.printStackTrace();
+                }
             }
-
-
+            else {
+                Log.d(TAG, "There is connection...");
+            }
             return userAccount;
         }
 
@@ -334,7 +356,7 @@ public class DropBoxManager {
                 Log.d(TAG, "Finished background, name is: " + userName);
 
                 accountInfoState = State.DONE;
-//                dropboxCallBackListener.get().onUserNameReceived();
+//              Update the MainActivity Action bar with the user name
                 if (dropboxCallBackListenerHashMap.containsKey(mainActivityListener)) {
                     dropboxCallBackListenerHashMap.get(mainActivityListener).onUserNameReceived();
                 }
@@ -342,6 +364,10 @@ public class DropBoxManager {
                     dropboxCallBackListenerHashMap.get(cloudFragListener).onUserNameReceived();
                 }
 //
+
+            }
+            else {
+                Log.d(TAG, "No Connection, using last know information");
 
             }
             super.onPostExecute(result);

@@ -29,6 +29,7 @@ import com.app.random.backApp.Recycler.MyRecyclerAdapter;
 import com.app.random.backApp.Recycler.UpdateBottomBar;
 import com.app.random.backApp.Services.DropboxUploadIntentService;
 import com.app.random.backApp.Utils.AppsDataUtils;
+import com.app.random.backApp.Utils.ConnectionDetector;
 import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
@@ -164,37 +165,43 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                 break;
             }
             case R.id.action_upload: {
-                HashSet<String> selectedPackageNameList;
-                ArrayList<AppDataItem> itemsToUpload;
+                if (new ConnectionDetector(getActivity().getApplicationContext()).isConnectedToInternet()) {
+                    Log.d(TAG, "There is connection...");
+                    HashSet<String> selectedPackageNameList;
+                    ArrayList<AppDataItem> itemsToUpload;
 
-                selectedPackageNameList = mAdapter.getSelectedPackageNamesList();
-                ArrayList<String> dirList = new ArrayList<>();
+                    selectedPackageNameList = mAdapter.getSelectedPackageNamesList();
+                    ArrayList<String> dirList = new ArrayList<>();
 
-                Log.d(TAG, "Path ArrayList:::::::::::::::::::");
-                Log.d(TAG, appsDataUtils.getAPKArrayListFromPackageNames(selectedPackageNameList).toString());
+                    Log.d(TAG, "Path ArrayList:::::::::::::::::::");
+                    Log.d(TAG, appsDataUtils.getAPKArrayListFromPackageNames(selectedPackageNameList).toString());
 
-                itemsToUpload = appsDataUtils.getAPKArrayListFromPackageNames(selectedPackageNameList);
-                long totalUploadSize = filesUtils.getFileSizeFromListArray(itemsToUpload);
-                long cloudFreeSpace = SharedPrefsUtils.getLongPreference(getActivity().getApplicationContext(), Keys.DROPBOX_FREE_SPACE_LONG, totalUploadSize);
-                if (( cloudFreeSpace - totalUploadSize) < 0) {
-                    Log.e(TAG, "There is no free space on cloud...");
-                    Snackbar.make(getView(), "Upload failed. There is no free space on cloud...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    itemsToUpload = appsDataUtils.getAPKArrayListFromPackageNames(selectedPackageNameList);
+                    long totalUploadSize = filesUtils.getFileSizeFromListArray(itemsToUpload);
+                    long cloudFreeSpace = SharedPrefsUtils.getLongPreference(getActivity().getApplicationContext(), Keys.DROPBOX_FREE_SPACE_LONG, totalUploadSize);
+                    if ((cloudFreeSpace - totalUploadSize) < 0) {
+                        Log.e(TAG, "There is no free space on cloud...");
+                        Snackbar.make(getView(), "Upload failed. There is no free space on cloud...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    } else {
+                        Snackbar.make(getView(), "Starting to upload " + selectedPackageNameList.size() + " applications...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(Keys.DIR_TO_UPLOAD_LIST, itemsToUpload);
+
+
+                        Intent intent = new Intent(getActivity().getApplicationContext(), DropboxUploadIntentService.class);
+                        intent.putExtras(bundle);
+
+                        Log.d(TAG, "Starting the intent....");
+
+                        getActivity().startService(intent);
+
+                        mAdapter.clearSelectedList();
+                        mAdapter.notifyDataSetChanged();
+                    }
                 }
                 else {
-                    Snackbar.make(getView(), "Starting to upload " + selectedPackageNameList.size() + " applications...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(Keys.DIR_TO_UPLOAD_LIST, itemsToUpload);
-
-
-                    Intent intent = new Intent(getActivity().getApplicationContext(), DropboxUploadIntentService.class);
-                    intent.putExtras(bundle);
-
-                    Log.d(TAG, "Starting the intent....");
-
-                    getActivity().startService(intent);
-
-                    mAdapter.clearSelectedList();
-                    mAdapter.notifyDataSetChanged();
+                    Log.d(TAG, "There is no connection...");
+                    Snackbar.make(getView(), "No connection to internet, Turn on your WiFi/3G", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
                 break;
             }

@@ -1,6 +1,7 @@
 package com.app.random.backApp.Fragments;
 
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,11 +26,15 @@ import com.app.random.backApp.R;
 import com.app.random.backApp.Recycler.AppDataItem;
 import com.app.random.backApp.Recycler.MyRecyclerAdapter;
 import com.app.random.backApp.Recycler.UpdateBottomBar;
+import com.app.random.backApp.Services.DropboxUploadIntentService;
 import com.app.random.backApp.Utils.AppsDataUtils;
+import com.app.random.backApp.Utils.ConnectionDetector;
+import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -53,6 +58,8 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
     private MyRecyclerAdapter mAdapter;
     private RecyclerView mRecyclerView;
     private AppsDataUtils appsDataUtils;
+
+    private FilesUtils filesUtils;
 
     private ArrayList<AppDataItem> appsListData = new ArrayList<>();
 
@@ -88,8 +95,12 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
         setHasOptionsMenu(true);
 
         dropBoxManager = DropBoxManager.getInstance(getActivity().getApplicationContext());
+        filesUtils = FilesUtils.getInstance(getActivity().getApplicationContext());
+        dropBoxManager.loginDropbox();
 
         appsDataUtils = AppsDataUtils.getInstance();
+
+        checkIfUploadDisrupted();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -156,9 +167,17 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
 
         switch (id) {
             case R.id.action_refresh: {
-                dropBoxManager.getDropBoxFileListMethod();
-                mAdapter.clearSelectedList();
-                mAdapter.notifyDataSetChanged();
+                if (new ConnectionDetector(getActivity().getApplicationContext()).isConnectedToInternet()) {
+                    Log.d(TAG, "There is connection...");
+                    dropBoxManager.getDropBoxFileListMethod();
+                    mAdapter.clearSelectedList();
+                    mAdapter.notifyDataSetChanged();
+                }
+                else {
+                    Log.d(TAG, "There is NO connection!");
+                    Snackbar.make(getView(), "No connection to internet, Turn on your WiFi/3G", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+
                 break;
             }
 //            case R.id.action_sort_a_z_cloud: {
@@ -182,10 +201,17 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
 
 
             case R.id.action_delete: {
-                if (mAdapter.getSelectedAppsListCloud().size() > 0) {
-                    dropBoxManager.deleteFileListFromCloud(mAdapter.getSelectedAppsListCloud());
-                    mAdapter.clearSelectedList();
+                if (new ConnectionDetector(getActivity().getApplicationContext()).isConnectedToInternet()) {
+                    Log.d(TAG, "There is connection...");
+                    if (mAdapter.getSelectedAppsListCloud().size() > 0) {
+                        dropBoxManager.deleteFileListFromCloud(mAdapter.getSelectedAppsListCloud());
+                        mAdapter.clearSelectedList();
+                    }
+                }else {
+                    Log.d(TAG, "There is NO connection!");
+                    Snackbar.make(getView(), "No connection to internet, Turn on your WiFi/3G", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
+
 
                 //Continue here !!!!!!!!!!!!!!!!!!!!!!!!!!
             }
@@ -258,6 +284,50 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
         mAdapter.notifyDataSetChanged();
         View view = getView();
         assert view != null;
+
+    }
+
+    public boolean isServiceRunning(String serviceClassName){
+        final ActivityManager activityManager = (ActivityManager) getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        final List<ActivityManager.RunningServiceInfo> services = activityManager.getRunningServices(Integer.MAX_VALUE);
+        for (ActivityManager.RunningServiceInfo runningServiceInfo : services) {
+            if (runningServiceInfo.service.getClassName().equals(serviceClassName)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void checkIfUploadDisrupted() {
+        if (new ConnectionDetector(getActivity().getApplicationContext()).isConnectedToInternet()) {
+            Log.d(TAG, "There is connection to internet");
+            String jsonNotFinishList = SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.NOT_FINISH_UPLOAD_LIST);
+            if (!isServiceRunning("DropboxUploadIntentService")) {
+                if (jsonNotFinishList != null) {
+                    ArrayList<AppDataItem> appsList = filesUtils.getArrayFromJSONString(jsonNotFinishList);
+                    if (appsList.size() > 0) {
+                        long totalUploadSize = filesUtils.getFileSizeFromListArray(appsList);
+                        long cloudFreeSpace = SharedPrefsUtils.getLongPreference(getActivity().getApplicationContext(), Keys.DROPBOX_FREE_SPACE_LONG, totalUploadSize);
+                        if (( cloudFreeSpace - totalUploadSize) < 0) {
+                            Log.e(TAG, "There is no free space on cloud...");
+                            Snackbar.make(getView(), "Upload failed. There is no free space on cloud...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        }
+                        else {
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable(Keys.DIR_TO_UPLOAD_LIST, appsList);
+                            Intent intent = new Intent(getActivity().getApplicationContext(), DropboxUploadIntentService.class);
+                            intent.putExtras(bundle);
+                            Log.d(TAG, "Found that there is unfinished upload, starting again");
+                            getActivity().startService(intent);
+                        }
+                    }
+                }
+            }
+        }
+        else {
+            Log.d(TAG, "There is no connection to internet");
+//            Snackbar.make(this., "No connection to internet, Turn on your WiFi/3G", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+        }
 
     }
 

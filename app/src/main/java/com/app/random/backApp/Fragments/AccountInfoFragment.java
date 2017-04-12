@@ -54,8 +54,8 @@ public class AccountInfoFragment extends Fragment {
             targetProgress = 1;
         }
         else {
-            if (used< total) {
-                targetProgress = 99;
+            if (used > total) {
+                targetProgress = 100;
             }
         }
 
