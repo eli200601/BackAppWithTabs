@@ -110,7 +110,7 @@ public class DropboxUploadIntentService extends IntentService {
                 }
                 else {
                     mBuilder.setContentTitle("Uploading " + item.getName());
-                    mBuilder.setContentText("Uploading: " + String.valueOf(i) + "/" + String.valueOf(dirList.size()));
+                    mBuilder.setContentText("Uploading: " + String.valueOf(i+1) + "/" + String.valueOf(listSize));
                 }
 
                 mBuilder.setSmallIcon(icon);
