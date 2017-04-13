@@ -51,7 +51,7 @@ public class DownloadFolderFragment extends Fragment {
         context = getActivity().getApplicationContext();
         appsDataUtils = AppsDataUtils.getInstance(context);
         filesUtils = FilesUtils.getInstance(context);
-        mAdapter = new MyRecyclerAdapter(context,appsListData);
+        mAdapter = new MyRecyclerAdapter(context,appsListData, TAG);
         onFinishDownloadReceiver = new OnFinishDownloadReceiver();
     }
 
@@ -123,6 +123,7 @@ public class DownloadFolderFragment extends Fragment {
             case R.id.folder_action_refresh:{
                 appsListData = appsDataUtils.getFolderAppsList();
                 mAdapter.setItems(appsListData);
+                mAdapter.clearSelectedList();
                 mAdapter.notifyDataSetChanged();
                 break;
             }

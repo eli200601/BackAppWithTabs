@@ -81,7 +81,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         //RecyclerView - Apps list
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData);
+        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
         mRecyclerView.setAdapter(mAdapter);
 
         new LoadApplications().execute();

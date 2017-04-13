@@ -32,12 +32,14 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
     private HashSet<String> selectedAppsList = new HashSet<>();
 
     private PackageManager packageManager;
+    private String origin;
 
     private static String TAG = "MyRecyclerAdapter";
 
     UpdateBottomBar updateBottomBar;
 
-    public MyRecyclerAdapter(Context context, ArrayList<AppDataItem> appsListData) {
+    public MyRecyclerAdapter(Context context, ArrayList<AppDataItem> appsListData, String origin) {
+        this.origin = origin;
         this.context = context;
         this.appsListData = appsListData;
         this.packageManager = context.getPackageManager();
@@ -82,7 +84,12 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
         holder.packageName.setText((appsListData.get(holder.getAdapterPosition()).getPackageName()));
 //        viewHolder.iconView.setImageDrawable(data.loadIcon(packageManager));
         try {
-            holder.appIcon.setImageDrawable(packageManager.getApplicationIcon(appsListData.get(holder.getAdapterPosition()).getPackageName()));
+            if (origin.equals("DownloadFolderFragment")) {
+                holder.appIcon.setImageResource(R.mipmap.ic_folder_icon);
+            }
+            else {
+                holder.appIcon.setImageDrawable(packageManager.getApplicationIcon(appsListData.get(holder.getAdapterPosition()).getPackageName()));
+            }
         }
         catch (PackageManager.NameNotFoundException error) {
             Log.e(TAG, error.getMessage());

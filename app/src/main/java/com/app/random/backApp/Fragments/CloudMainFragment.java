@@ -119,7 +119,7 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         //RecyclerView - Apps list
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_cloud);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData);
+        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
         mRecyclerView.setAdapter(mAdapter);
 
         mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
