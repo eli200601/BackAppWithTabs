@@ -14,6 +14,12 @@
         android:title="@string/action_delete_marked"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_download"
+        android:orderInCategory="102"
+        android:title="@string/action_download_marked"
+        app:showAsAction="never" />
+
     <!--<item-->
         <!--android:id="@+id/action_sort_a_z_cloud"-->
         <!--android:orderInCategory="102"-->

@@ -118,10 +118,12 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         MenuItem searchItem = menu.findItem(R.id.action_search);
         MenuItem uploadItem = menu.findItem(R.id.action_upload);
 
+
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
 
         searchView.setOnQueryTextListener(this);
+
 
         if (mAdapter.getSelectedAppsListSize() > 0 && dropBoxManager.isLogIn) {
             uploadItem.setVisible(true);
@@ -185,7 +187,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                     } else {
                         Snackbar.make(getView(), "Starting to upload " + selectedPackageNameList.size() + " applications...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                         Bundle bundle = new Bundle();
-                        bundle.putSerializable(Keys.DIR_TO_UPLOAD_LIST, itemsToUpload);
+                        bundle.putSerializable(Keys.APPS_UPLOAD_ARRAYLIST, itemsToUpload);
 
 
                         Intent intent = new Intent(getActivity().getApplicationContext(), DropboxUploadIntentService.class);
@@ -205,6 +207,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                 }
                 break;
             }
+
             default:
                 result = super.onOptionsItemSelected(item);
                 break;

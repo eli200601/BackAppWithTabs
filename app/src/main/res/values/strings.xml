@@ -26,6 +26,7 @@
     <!-- Int: -->
     <string name="sortType_key">SortType</string>
     <string name="menu_action_logout">Logout</string>
+    <string name="action_download_marked">Download marked</string>
 
 
 </resources>

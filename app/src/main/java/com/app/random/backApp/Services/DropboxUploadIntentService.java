@@ -6,9 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat.Builder;
-import android.text.format.Formatter;
 import android.util.Log;
 
 import com.app.random.backApp.Dropbox.DropBoxManager;
@@ -20,7 +18,6 @@ import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 import com.dropbox.client2.DropboxAPI;
 import com.dropbox.client2.ProgressListener;
-import com.google.gson.Gson;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -72,8 +69,8 @@ public class DropboxUploadIntentService extends IntentService {
         int icon = R.mipmap.ic_main;
         // Getting from Bundle the app list to upload
         Bundle bundle = intent.getExtras();
-        ArrayList<AppDataItem> dirList = (ArrayList<AppDataItem>) bundle.getSerializable(Keys.DIR_TO_UPLOAD_LIST);
-        ArrayList<AppDataItem> doneList = dirList;
+        ArrayList<AppDataItem> dirList = (ArrayList<AppDataItem>) bundle.getSerializable(Keys.APPS_UPLOAD_ARRAYLIST);
+        ArrayList<AppDataItem> doneList = (ArrayList<AppDataItem>) dirList.clone();
         int listSize = dirList.size();
         //Saving the list in prefs to save state
         String jsonNotFinishList = filesUtils.getJSONStringFromArray(doneList);
@@ -86,8 +83,7 @@ public class DropboxUploadIntentService extends IntentService {
         //Setting up the notification
         mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mBuilder = new Builder(this);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class).putExtra("started_from","notification"), PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class).putExtra(Keys.STARTED_FROM,Keys.DROPBOX_UPLOAD_INTENT_SERVICE), PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setAutoCancel(true);
         // Starting to upload each app in the list

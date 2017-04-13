@@ -30,8 +30,12 @@ public class Keys {
     public final static String DROPBOX_FREE_SPACE_LONG = "Free_space_long";
 
     /* Service */
-    public final static String DIR_TO_UPLOAD_LIST = "dir_to_upload_list";
+    public final static String APPS_UPLOAD_ARRAYLIST = "Apps_to_upload_arrayList";
+    public final static String APPS_DOWNLOAD_ARRAYLIST = "Apps_to_download_arrayList";
     public final static String NOT_FINISH_UPLOAD_LIST = "NotFinishUploadList";
     public final static String SERVICE_UPLOAD_STATUS = "NotFinishUploadList";
+    public final static String STARTED_FROM = "Started_From";
+    public final static String DROPBOX_UPLOAD_INTENT_SERVICE = "DropboxUploadIntentService";
+    public final static String DROPBOX_DOWNLOAD_INTENT_SERVICE = "DropboxDownloadService";
     /* Se*/
 }

@@ -1,8 +1,5 @@
 package com.app.random.backApp;
 
-import android.app.ActivityManager;
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -21,14 +18,12 @@ import com.app.random.backApp.Activitys.SplashScreenActivity;
 import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
 import com.app.random.backApp.Recycler.AppDataItem;
-import com.app.random.backApp.Services.DropboxUploadIntentService;
 import com.app.random.backApp.Utils.ConnectionDetector;
 import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements DropboxCallBackListener {
 
@@ -83,13 +78,24 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         mViewPager.setOffscreenPageLimit(3);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        String startedFrom = getIntent().getStringExtra("started_from");
+        String startedFrom = getIntent().getStringExtra(Keys.STARTED_FROM);
         if (startedFrom != null) {
-            setTabPaging(1);
+            switch (startedFrom) {
+                case Keys.DROPBOX_UPLOAD_INTENT_SERVICE: {
+                    setTabPaging(1);
+                    break;
+                }
+                case Keys.DROPBOX_DOWNLOAD_INTENT_SERVICE: {
+                    setTabPaging(1);
+                    break;
+                }
+            }
+
         }
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
 
 
 

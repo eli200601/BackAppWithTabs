@@ -21,11 +21,11 @@ import android.view.ViewGroup;
 
 import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
-import com.app.random.backApp.MainActivity;
 import com.app.random.backApp.R;
 import com.app.random.backApp.Recycler.AppDataItem;
 import com.app.random.backApp.Recycler.MyRecyclerAdapter;
 import com.app.random.backApp.Recycler.UpdateBottomBar;
+import com.app.random.backApp.Services.DropboxDownloadService;
 import com.app.random.backApp.Services.DropboxUploadIntentService;
 import com.app.random.backApp.Utils.AppsDataUtils;
 import com.app.random.backApp.Utils.ConnectionDetector;
@@ -126,6 +126,7 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
             @Override
             public void onCheckBoxClick() {
                 // Do stuff when clicking on checkbox
+                getActivity().invalidateOptionsMenu();
             }
         });
 
@@ -147,12 +148,13 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
 //        MenuItem sort_z_aItem = menu.findItem(R.id.action_sort_z_a_cloud);
         MenuItem selectAllItem = menu.findItem(R.id.menuSelectAll_cloud);
         MenuItem unSelectAllItem = menu.findItem(R.id.menuUnSelectAll_cloud);
+        MenuItem downloadItem = menu.findItem(R.id.action_download);
 
 
         Log.d(TAG, "dropbox is login? " + String.valueOf(dropBoxManager.isLoginToDropbox()));
-
+        downloadItem.setVisible(dropBoxManager.isLoginToDropbox() && (mAdapter.getSelectedAppsListSize() > 0) );
         refreshItem.setVisible(dropBoxManager.isLoginToDropbox());
-        deleteItem.setVisible(dropBoxManager.isLoginToDropbox());
+        deleteItem.setVisible(dropBoxManager.isLoginToDropbox() && (mAdapter.getSelectedAppsListSize() > 0));
 //        sort_a_zItem.setVisible(dropBoxManager.isLoginToDropbox());
 //        sort_z_aItem.setVisible(dropBoxManager.isLoginToDropbox());
         selectAllItem.setVisible(dropBoxManager.isLoginToDropbox());
@@ -215,6 +217,26 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
 
                 //Continue here !!!!!!!!!!!!!!!!!!!!!!!!!!
             }
+            case R.id.action_download: {
+                if (new ConnectionDetector(getActivity().getApplicationContext()).isConnectedToInternet()) {
+                    Log.d(TAG, "There is connection...");
+                    ArrayList<AppDataItem> itemsToDownload;
+                    itemsToDownload = mAdapter.getSelectedAppsListCloud();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(Keys.APPS_DOWNLOAD_ARRAYLIST, itemsToDownload);
+                    Intent intent = new Intent(getActivity().getApplicationContext(), DropboxDownloadService.class);
+                    intent.putExtras(bundle);
+                    mAdapter.clearSelectedList();
+                    mAdapter.notifyDataSetChanged();
+                    Snackbar.make(getView(), "Starting to download the selected files", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Log.d(TAG, "Starting the intent....");
+                    getActivity().startService(intent);
+                }
+                else {
+                    Log.d(TAG, "There is NO connection!");
+                    Snackbar.make(getView(), "No connection to internet, Turn on your WiFi/3G", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            }
 
             default:
                 result = super.onOptionsItemSelected(item);
@@ -236,7 +258,7 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
         super.onResume();
         Log.d(TAG, "Adding " + TAG + " TO Listener List");
         dropBoxManager.addDropboxListener(this, TAG);
-        getActivity().registerReceiver(onFinishUploadReceiver,new IntentFilter("com.app.random.backApp.OnFinishUploadReceiver"));
+        getActivity().registerReceiver(onFinishUploadReceiver, new IntentFilter("com.app.random.backApp.OnFinishUploadReceiver"));
     }
 
     @Override
@@ -314,7 +336,7 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
                         }
                         else {
                             Bundle bundle = new Bundle();
-                            bundle.putSerializable(Keys.DIR_TO_UPLOAD_LIST, appsList);
+                            bundle.putSerializable(Keys.APPS_UPLOAD_ARRAYLIST, appsList);
                             Intent intent = new Intent(getActivity().getApplicationContext(), DropboxUploadIntentService.class);
                             intent.putExtras(bundle);
                             Log.d(TAG, "Found that there is unfinished upload, starting again");
@@ -333,8 +355,6 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
 
 
     public class OnFinishUploadReceiver extends BroadcastReceiver {
-
-//        public OnFinishUploadReceiver() { super();}
 
         @Override
         public void onReceive(Context context, Intent intent) {
