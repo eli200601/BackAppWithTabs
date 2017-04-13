@@ -171,24 +171,30 @@ public class DropBoxManager {
                 if (!entry.isDeleted) {
                     if (!entry.isDir) {
                         if (entry.fileName().contains(".apk")) {
-                            String appName;
-                            String appPackageName;
-                            String appVersion;
-                            String[] fileNameOutput;
+                            String appName = null;
+                            String appPackageName = null;
+                            String appVersion = null;
+                            String[] fileNameOutput = null;
 
                             fileNameOutput = entry.fileName().split(separator);
-                            appName = deCamelCasealize(fileNameOutput[0].trim());
-                            appPackageName = fileNameOutput[1].trim();
-                            appVersion = fileNameOutput[2].trim().replace(".apk", "");
+                            try {
+                                appName = deCamelCasealize(fileNameOutput[0].trim());
+                                appPackageName = fileNameOutput[1].trim();
+                                appVersion = fileNameOutput[2].trim().replace(".apk", "");
+                            }
+                            catch (IndexOutOfBoundsException e) {
+                                Log.e(TAG, "Cannot resolve file type");
+                            }
 
                             Log.d(TAG, "appName = " + appName);
                             Log.d(TAG, "appPackageName = " + appPackageName);
                             Log.d(TAG, "appVersion = " + appVersion);
                             Log.d(TAG, "path = " + entry.path);
-
-                            AppDataItem appItem = new AppDataItem(appName, appPackageName, entry.path, appVersion, true);
-
-                            cloudAppsList.add(appItem);appItem.setApkSize(entry.size);
+                            if (appName != null && appPackageName != null && entry.path != null && appVersion != null && entry.size != null) {
+                                AppDataItem appItem = new AppDataItem(appName, appPackageName, entry.path, appVersion, true);
+                                appItem.setApkSize(entry.size);
+                                cloudAppsList.add(appItem);
+                            }
                         }
                     }
                 }

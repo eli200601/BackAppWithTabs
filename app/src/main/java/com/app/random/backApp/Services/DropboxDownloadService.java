@@ -218,7 +218,14 @@ public class DropboxDownloadService extends Service {
                 }
                 Log.d(TAG, "File downloaded :)");
             }
-
+            Intent intent = new Intent(Keys.BC_ON_FINISH_DOWNLOAD);
+            if (finishDownloadItems.equals(listToDownloadSize)) {
+                intent.putExtra(Keys.SERVICE_DOWNLOAD_STATUS, true);
+            }
+            else {
+                intent.putExtra(Keys.SERVICE_DOWNLOAD_STATUS, false);
+            }
+            sendBroadcast(intent);
             //Finished the download flow hare
 
             return finishDownloadItems;

@@ -163,7 +163,7 @@ public class DropboxUploadIntentService extends IntentService {
 
 
         }
-        Intent sendUpdateList = new Intent("com.app.random.backApp.OnFinishUploadReceiver");
+        Intent sendUpdateList = new Intent(Keys.BC_ON_FINISH_UPLOAD);
 
         if (i != listSize) {
             mBuilder.setContentTitle("Upload Failed!");

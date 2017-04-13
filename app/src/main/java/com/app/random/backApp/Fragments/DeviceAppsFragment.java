@@ -46,7 +46,6 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
     private static final String TAG = "DeviceAppsFragment";
     private FilesUtils filesUtils;
     private AppsDataUtils appsDataUtils;
-    private String PACKAGE_NAME;
     public int sortType = 0; // 1 = Dsc | 0 = Asc
 
     private MyRecyclerAdapter mAdapter;
@@ -72,10 +71,8 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         setHasOptionsMenu(true);
 
-        PACKAGE_NAME = getActivity().getPackageName();
-        sortType = SharedPrefsUtils.getIntegerPreference(getActivity().getApplicationContext(), Keys.SORT_TYPE, 0);
-
-        appsDataUtils = new AppsDataUtils(getActivity().getApplicationContext(), getActivity().getPackageManager(), PACKAGE_NAME, sortType);
+        appsDataUtils = AppsDataUtils.getInstance(getActivity().getApplicationContext());
+//                getActivity().getApplicationContext(), getActivity().getPackageManager(), PACKAGE_NAME, sortType);
 
         //Bottom Bar init
         listAmountTextField = (TextView) view.findViewById(R.id.itemsInListValueText);
@@ -141,16 +138,16 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         switch (id) {
             case R.id.action_sort_a_z: {
-//              sortType = 0;
-                SharedPrefsUtils.setIntegerPreference(getActivity().getApplicationContext(), Keys.SORT_TYPE, 0);
+//               1 = Dsc | 0 = Asc
+                SharedPrefsUtils.setIntegerPreference(getActivity().getApplicationContext(), Keys.SORT_TYPE_INSTALLED_APPS, 0);
                 appsListData = appsDataUtils.updateSort(0);
                 mAdapter.setItems(appsListData);
                 mAdapter.notifyDataSetChanged();
                 break;
             }
             case R.id.action_sort_z_a: {
-//              sortType = 1;
-                SharedPrefsUtils.setIntegerPreference(getActivity().getApplicationContext(), Keys.SORT_TYPE, 1);
+//              1 = Dsc | 0 = Asc
+                SharedPrefsUtils.setIntegerPreference(getActivity().getApplicationContext(), Keys.SORT_TYPE_INSTALLED_APPS, 1);
                 appsListData = appsDataUtils.updateSort(1);
                 mAdapter.setItems(appsListData);
                 mAdapter.notifyDataSetChanged();

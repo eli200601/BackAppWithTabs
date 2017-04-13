@@ -42,7 +42,7 @@ import java.util.List;
  * Use the {@link CloudMainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CloudMainFragment extends Fragment implements View.OnClickListener, DropboxCallBackListener {
+public class CloudMainFragment extends Fragment implements DropboxCallBackListener {
 
     private OnFinishUploadReceiver onFinishUploadReceiver;
     // TODO: Rename parameter arguments, choose names that match
@@ -98,7 +98,7 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
         filesUtils = FilesUtils.getInstance(getActivity().getApplicationContext());
         dropBoxManager.loginDropbox();
 
-        appsDataUtils = AppsDataUtils.getInstance();
+        appsDataUtils = AppsDataUtils.getInstance(getActivity().getApplicationContext());
 
         checkIfUploadDisrupted();
         if (getArguments() != null) {
@@ -114,7 +114,7 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cloud_main, container, false);
 
-        sortType = SharedPrefsUtils.getIntegerPreference(getActivity().getApplicationContext(), Keys.SORT_TYPE, 0);
+        sortType = SharedPrefsUtils.getIntegerPreference(getActivity().getApplicationContext(), Keys.SORT_TYPE_INSTALLED_APPS, 0);
 
         //RecyclerView - Apps list
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_cloud);
@@ -258,21 +258,10 @@ public class CloudMainFragment extends Fragment implements View.OnClickListener,
         super.onResume();
         Log.d(TAG, "Adding " + TAG + " TO Listener List");
         dropBoxManager.addDropboxListener(this, TAG);
-        getActivity().registerReceiver(onFinishUploadReceiver, new IntentFilter("com.app.random.backApp.OnFinishUploadReceiver"));
+        getActivity().registerReceiver(onFinishUploadReceiver, new IntentFilter(Keys.BC_ON_FINISH_UPLOAD));
     }
 
-    @Override
-    public void onClick(View view) {
-        int id = view.getId();
-//        switch (id) {
-//            case R.id.button: {
-//
-//                dropBoxManager.getDropBoxFileListMethod();
-//
-//                break;
-//            }
-//        }
-    }
+
 
     @Override
     public void onUserNameReceived() {

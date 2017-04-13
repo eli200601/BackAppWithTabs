@@ -1,9 +1,12 @@
 package com.app.random.backApp.Utils;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
+import android.os.Environment;
 import android.text.format.Formatter;
 import android.util.Log;
 
@@ -15,12 +18,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 
+import static com.app.random.backApp.Dropbox.DropBoxManager.deCamelCasealize;
+
 
 public class AppsDataUtils {
 
     private static String TAG = "AppsDataUtils";
     private ArrayList<ApplicationInfo> appsListInfo = new ArrayList<>();
     private ArrayList<AppDataItem> appsListData = new ArrayList<>();
+    private ArrayList<AppDataItem> folderAppsList = new ArrayList<>();
+
 
 
     private String PACKAGE_NAME;
@@ -31,28 +38,27 @@ public class AppsDataUtils {
 
     private static AppsDataUtils instance;
 
-    public static AppsDataUtils getInstance() {
-//        if (instance == null) {
-//            instance = new AppsDataUtils(context);
-//        }
+    //Constructor
+    private AppsDataUtils(Context context) {
+        this.context = context;
+        //Refactor sortType name
+        this.sortType = SharedPrefsUtils.getIntegerPreference(context, Keys.SORT_TYPE_INSTALLED_APPS, 0);
+        this.packageManager = context.getPackageManager();
+        this.PACKAGE_NAME = context.getPackageName();
+
+    }
+
+    public static AppsDataUtils getInstance(Context context) {
+        if (instance == null) {
+            instance = new AppsDataUtils(context);
+        }
         return instance;
     }
-
-
-    //Constructor
-    public AppsDataUtils(Context context, PackageManager packageManager, String appPackageName, int sortType) {
-        this.packageManager = packageManager;
-        this.PACKAGE_NAME = appPackageName;
-        this.sortType = sortType;
-        this.context = context;
-    }
-
 
     public void startGettingInfo(){
 
         appsListInfo = new ArrayList<>(packageManager.getInstalledApplications(PackageManager.GET_META_DATA));
         Log.d(TAG, appsListInfo.toString());
-
         appsListInfo = filterApplicationList(appsListInfo);
         Log.d(TAG, appsListInfo.toString());
         appsListInfo = sortApplicationList(appsListInfo);
@@ -238,6 +244,103 @@ public class AppsDataUtils {
         }
     };
 
+    private Comparator<AppDataItem> nameDscComparatorAppDataItem = new Comparator<AppDataItem>() {
+        @Override
+        public int compare(AppDataItem app1, AppDataItem app2) {
+            return app1.getName().trim().compareToIgnoreCase(app2.getName().trim());
+        }
+    };
+    private Comparator<AppDataItem> nameAscComparatorAppDataItem = new Comparator<AppDataItem>() {
+        @Override
+        public int compare(AppDataItem app1, AppDataItem app2) {
+            return app2.getName().trim().compareToIgnoreCase(app1.getName().trim());
+        }
+    };
+
+    public ArrayList<AppDataItem> getFolderAppsList() {
+
+        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+        String separator = "_";
+
+        folderAppsList.clear();
+
+        Log.d("Files", "Path: " + path);
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        Log.d("Files", "Size: " + files.length);
+        for (File file : files) {
+            Log.d("Files", "FileName:" + file.getName());
+            Log.d("Files", "Path:" + file.getPath());
+            if (file.getName().contains(".apk")) {
+                String appName = null;
+                String appPackageName = null;
+                String appVersion = null;
+                String[] fileNameOutput = null;
+                String fileSize = null;
+                String filePath = null;
+
+                fileNameOutput = file.getName().split(separator);
+                try {
+                    appName = deCamelCasealize(fileNameOutput[0].trim());
+                    appPackageName = fileNameOutput[1].trim();
+                    appVersion = fileNameOutput[2].trim().replace(".apk", "");
+                    fileSize = Formatter.formatFileSize(context, file.length());
+                    filePath = file.getPath();
+                } catch (IndexOutOfBoundsException e) {
+                    Log.e(TAG, "Cannot resolve file type");
+                }
+                Log.d(TAG, "appName = " + appName);
+                Log.d(TAG, "appPackageName = " + appPackageName);
+                Log.d(TAG, "appVersion = " + appVersion);
+                Log.d(TAG, "path = " + path);
+                if (appName != null && appPackageName != null && filePath != null && appVersion != null && fileSize != null) {
+                    AppDataItem appItem = new AppDataItem(appName, appPackageName, filePath, appVersion, false);
+                    appItem.setApkSize(fileSize);
+                    folderAppsList.add(appItem);
+                }
+            }
+        }
+        if (folderAppsList != null) {
+            if (sortType == 0 ) {
+                Collections.sort(folderAppsList, nameDscComparatorAppDataItem);
+            } else if (sortType == 1) {
+                Collections.sort(folderAppsList, nameAscComparatorAppDataItem);
+            }
+        }
+        return folderAppsList;
+    }
+
+
+
+    private class GetFolderFileList extends AsyncTask<Void, Void, Void> {
+        private ProgressDialog progress = null;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+            Log.d("Files", "Path: " + path);
+            File directory = new File(path);
+            File[] files = directory.listFiles();
+            Log.d("Files", "Size: "+ files.length);
+            for (int i = 0; i < files.length; i++)
+            {
+                Log.d("Files", "FileName:" + files[i].getName());
+            }
+            for (File file: files) {
+                Log.d("Files", "FileName:" + file.getName());
+            }
+            return null;
+
+        }
+
+
+        @Override
+        protected void onPostExecute(Void result) {
+
+            super.onPostExecute(result);
+        }
+    }
 
 }
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/folder_action_install"
+        android:orderInCategory="100"
+        android:title="@string/action_install"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/folder_action_delete"
+        android:orderInCategory="101"
+        android:title="@string/action_delete"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/folder_action_refresh"
+        android:orderInCategory="101"
+        android:title="@string/action_refresh"
+        app:showAsAction="never" />
+
+
+</menu>

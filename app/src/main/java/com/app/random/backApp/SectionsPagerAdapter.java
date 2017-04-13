@@ -7,6 +7,7 @@ import android.util.SparseArray;
 
 import com.app.random.backApp.Fragments.CloudMainFragment;
 import com.app.random.backApp.Fragments.DeviceAppsFragment;
+import com.app.random.backApp.Fragments.DownloadFolderFragment;
 
 /**
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -20,7 +21,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         super(fm);
         fragmentsMap.put(0, new DeviceAppsFragment());
         fragmentsMap.put(1,CloudMainFragment.newInstance("1","2"));
-//        fragmentsMap.put(2, new DeviceAppsFragment());
+        fragmentsMap.put(2, new DownloadFolderFragment());
     }
 
     @Override
@@ -52,11 +53,11 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position) {
             case 0:
-                return "Device Apps";
+                return "Installed Apps";
             case 1:
                 return "Cloud";
-//            case 2:
-//                return "TBD";
+            case 2:
+                return "Downloads";
         }
         return null;
     }

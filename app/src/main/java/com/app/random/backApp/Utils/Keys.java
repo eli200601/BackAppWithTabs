@@ -3,12 +3,16 @@ package com.app.random.backApp.Utils;
 
 public class Keys {
 
-    public static final String SORT_TYPE = "sortType";
+    public static final String SORT_TYPE_INSTALLED_APPS = "sortType";
 
 
     /*  SharedPreferences Key's   */
     public static final String PREF_NAME = "Settings";
     public static final String PREF_ACTIVATE = "Activate";
+
+    /* Broadcast names */
+    public final static String BC_ON_FINISH_UPLOAD = "com.app.random.backApp.OnFinishUploadReceiver";
+    public final static String BC_ON_FINISH_DOWNLOAD = "com.app.random.backApp.OnFinishDownloadReceiver";
 
     /*  DropBox info   */
     public final static String DROPBOX_FILE_DIR = "/Apps/BackAppFolder/";
@@ -34,6 +38,7 @@ public class Keys {
     public final static String APPS_DOWNLOAD_ARRAYLIST = "Apps_to_download_arrayList";
     public final static String NOT_FINISH_UPLOAD_LIST = "NotFinishUploadList";
     public final static String SERVICE_UPLOAD_STATUS = "NotFinishUploadList";
+    public final static String SERVICE_DOWNLOAD_STATUS = "Download_finish";
     public final static String STARTED_FROM = "Started_From";
     public final static String DROPBOX_UPLOAD_INTENT_SERVICE = "DropboxUploadIntentService";
     public final static String DROPBOX_DOWNLOAD_INTENT_SERVICE = "DropboxDownloadService";
