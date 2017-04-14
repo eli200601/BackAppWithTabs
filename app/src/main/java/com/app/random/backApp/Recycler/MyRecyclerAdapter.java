@@ -60,23 +60,27 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         String viewTypePref = SharedPrefsUtils.getStringPreference(parent.getContext(), Keys.PREF_VIEWTYPE);
         View view = null;
-        switch (viewTypePref) {
-            case Keys.PREF_VIEWTYPE_LIST: {
-                Log.d(TAG, Keys.PREF_VIEWTYPE_LIST);
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_row, null);
-                break;
-            }
-            case Keys.PREF_VIEWTYPE_CARD:{
-                Log.d(TAG, Keys.PREF_VIEWTYPE_CARD);
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_card, null);
-                break;
-            }
-            case Keys.PREF_VIEWTYPE_GRID:{
-                Log.d(TAG, Keys.PREF_VIEWTYPE_GRID);
+        if (origin.equals(Keys.ORIGIN_DEVICEAPPSFRAGMENT)) {
+            switch (viewTypePref) {
+                case Keys.PREF_VIEWTYPE_LIST: {
+                    Log.d(TAG, Keys.PREF_VIEWTYPE_LIST);
+                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_row, null);
+                    break;
+                }
+                case Keys.PREF_VIEWTYPE_CARD:{
+                    Log.d(TAG, Keys.PREF_VIEWTYPE_CARD);
+                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_card, null);
+                    break;
+                }
+                case Keys.PREF_VIEWTYPE_GRID:{
+                    Log.d(TAG, Keys.PREF_VIEWTYPE_GRID);
 
+                }
             }
         }
-
+        else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_row, null);
+        }
         MyViewHolder holder = new MyViewHolder(view);
         return holder;
     }

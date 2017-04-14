@@ -4,7 +4,7 @@ package com.app.random.backApp.Utils;
 public class Keys {
 
     public static final String SORT_TYPE_INSTALLED_APPS = "sortType";
-
+    public static final String ORIGIN_DEVICEAPPSFRAGMENT = "DeviceAppsFragment";
 
     /*  SharedPreferences Key's   */
     public static final String PREF_NAME = "Settings";
