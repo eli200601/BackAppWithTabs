@@ -80,17 +80,6 @@ public class DownloadFolderFragment extends Fragment {
         return view;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        getActivity().registerReceiver(onFinishDownloadReceiver, new IntentFilter(Keys.BC_ON_FINISH_DOWNLOAD));
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        getActivity().unregisterReceiver(onFinishDownloadReceiver);
-    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -133,6 +122,18 @@ public class DownloadFolderFragment extends Fragment {
 
         }
         return result;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().registerReceiver(onFinishDownloadReceiver, new IntentFilter(Keys.BC_ON_FINISH_DOWNLOAD));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(onFinishDownloadReceiver);
     }
 
     public class OnFinishDownloadReceiver extends BroadcastReceiver {

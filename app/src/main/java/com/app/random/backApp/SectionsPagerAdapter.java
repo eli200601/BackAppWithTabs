@@ -20,7 +20,15 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public SectionsPagerAdapter(FragmentManager fm) {
         super(fm);
         fragmentsMap.put(0, new DeviceAppsFragment());
-        fragmentsMap.put(1,CloudMainFragment.newInstance("1","2"));
+        fragmentsMap.put(1, new CloudMainFragment());
+        fragmentsMap.put(2, new DownloadFolderFragment());
+    }
+
+    public void resetFragments() {
+        fragmentsMap = new SparseArray<>();
+        fragmentsMap.clear();
+        fragmentsMap.put(0, new DeviceAppsFragment());
+        fragmentsMap.put(1, new CloudMainFragment());
         fragmentsMap.put(2, new DownloadFolderFragment());
     }
 

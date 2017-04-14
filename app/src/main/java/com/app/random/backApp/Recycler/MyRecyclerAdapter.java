@@ -19,6 +19,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.app.random.backApp.R;
+import com.app.random.backApp.Utils.Keys;
+import com.app.random.backApp.Utils.SharedPrefsUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -56,7 +58,25 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 //    Initialize Holder
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_row, null);
+        String viewTypePref = SharedPrefsUtils.getStringPreference(parent.getContext(), Keys.PREF_VIEWTYPE);
+        View view = null;
+        switch (viewTypePref) {
+            case Keys.PREF_VIEWTYPE_LIST: {
+                Log.d(TAG, Keys.PREF_VIEWTYPE_LIST);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_row, null);
+                break;
+            }
+            case Keys.PREF_VIEWTYPE_CARD:{
+                Log.d(TAG, Keys.PREF_VIEWTYPE_CARD);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_card, null);
+                break;
+            }
+            case Keys.PREF_VIEWTYPE_GRID:{
+                Log.d(TAG, Keys.PREF_VIEWTYPE_GRID);
+
+            }
+        }
+
         MyViewHolder holder = new MyViewHolder(view);
         return holder;
     }
@@ -81,7 +101,8 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
     public void onBindViewHolder(final MyViewHolder holder, int position) {
 
         holder.appName.setText(appsListData.get(holder.getAdapterPosition()).getName());
-        holder.packageName.setText((appsListData.get(holder.getAdapterPosition()).getPackageName()));
+        holder.apkSize.setText("APK Size: " + (appsListData.get(holder.getAdapterPosition()).getApkSize()));
+        holder.version.setText("Version: " + (appsListData.get(holder.getAdapterPosition()).getAppVersion()));
 //        viewHolder.iconView.setImageDrawable(data.loadIcon(packageManager));
         try {
             if (origin.equals("DownloadFolderFragment")) {
@@ -166,7 +187,12 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
 
                 try {
-                    icon.setImageDrawable(packageManager.getApplicationIcon(appsListData.get(position).getPackageName()));
+                    if (origin.equals("DownloadFolderFragment")) {
+                        icon.setImageResource(R.mipmap.ic_folder_icon);
+                    }
+                    else {
+                        icon.setImageDrawable(packageManager.getApplicationIcon(appsListData.get(position).getPackageName()));
+                    }
                 }
                 catch (PackageManager.NameNotFoundException error) {
                     Log.e(TAG, error.getMessage());

@@ -9,7 +9,10 @@ public class Keys {
     /*  SharedPreferences Key's   */
     public static final String PREF_NAME = "Settings";
     public static final String PREF_ACTIVATE = "Activate";
-
+    public static final String PREF_VIEWTYPE = "view_preference";
+    public static final String PREF_VIEWTYPE_LIST = "List View";
+    public static final String PREF_VIEWTYPE_CARD = "Card View";
+    public static final String PREF_VIEWTYPE_GRID = "Grid View";
     /* Broadcast names */
     public final static String BC_ON_FINISH_UPLOAD = "com.app.random.backApp.OnFinishUploadReceiver";
     public final static String BC_ON_FINISH_DOWNLOAD = "com.app.random.backApp.OnFinishDownloadReceiver";

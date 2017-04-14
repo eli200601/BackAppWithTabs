@@ -5,15 +5,19 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.random.backApp.R;
+import com.app.random.backApp.Utils.SharedPrefsUtils;
 
 
 public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     TextView appName;
-    TextView packageName;
+    TextView apkSize;
+    TextView version;
+
     ImageView appIcon;
     CheckBox checkBox;
     LinearLayout dataView;
@@ -22,12 +26,13 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
 
     public MyViewHolder(View itemView) {
         super(itemView);
-
         appName = (TextView) itemView.findViewById(R.id.app_name);
-        packageName = (TextView) itemView.findViewById(R.id.app_paackage);
+        apkSize = (TextView) itemView.findViewById(R.id.item_size);
+        version = (TextView) itemView.findViewById(R.id.item_version);
         appIcon = (ImageView) itemView.findViewById(R.id.app_icon);
         checkBox = (CheckBox) itemView.findViewById(R.id.checkbox);
         dataView = (LinearLayout) itemView.findViewById(R.id.leftSide);
+
 
         dataView.setOnClickListener(this);
     }

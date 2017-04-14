@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="view_type">
+        <item>List View</item>
+        <item>Card View</item>
+        <item>Grid View</item>
+    </string-array>
+</resources>

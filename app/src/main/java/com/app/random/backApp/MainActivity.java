@@ -1,7 +1,9 @@
 package com.app.random.backApp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -52,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
         setContentView(R.layout.activity_main);
 
+
+
         filesUtils = FilesUtils.getInstance(getApplicationContext());
 
         if (SharedPrefsUtils.getStringPreference(getApplicationContext(),Keys.PREF_ACTIVATE) == null) {
@@ -64,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
         dropBoxManager = DropBoxManager.getInstance(getApplicationContext());
 
+        setSectionsPagerAdapter();
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -71,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -112,13 +117,16 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
     }
 
 
-
+    public void setSectionsPagerAdapter() {
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+    }
 
 
     @Override
     protected void onPause() {
         super.onPause();
         dropBoxManager.removeDropboxListener(TAG);
+
     }
 
     @Override
@@ -135,6 +143,8 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         mViewPager.setCurrentItem(2);
 
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

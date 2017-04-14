@@ -3,9 +3,11 @@ package com.app.random.backApp.Fragments;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -38,7 +40,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 
-public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryTextListener, DropboxCallBackListener{
+public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryTextListener, DropboxCallBackListener, SharedPreferences.OnSharedPreferenceChangeListener{
 
     private ArrayList<ApplicationInfo> appsListInfo =  new ArrayList<>();
     private ArrayList<AppDataItem> appsListData = new ArrayList<>();
@@ -61,6 +63,10 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         super.onCreate(savedInstanceState);
         dropBoxManager = DropBoxManager.getInstance(getActivity().getApplicationContext());
         filesUtils = FilesUtils.getInstance(getActivity().getApplicationContext());
+        Log.d(TAG, "Building this Fragment!!!!");
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
 
@@ -81,8 +87,11 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         //RecyclerView - Apps list
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+
+
         mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
         mRecyclerView.setAdapter(mAdapter);
+
 
         new LoadApplications().execute();
 
@@ -94,6 +103,41 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         });
 
         return view;
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        switch (key) {
+            case Keys.PREF_VIEWTYPE: {
+                // User change the view type need to update the UI
+                Log.d(TAG, "down User change to: " + SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE));
+//                mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+//                mAdapter = mRecyclerView.getAdapter();
+//                mRecyclerView.setAdapter(mAdapter);
+                String viewType = SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE);
+                switch (viewType) {
+                    case Keys.PREF_VIEWTYPE_LIST: {
+                        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+                        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
+                        mRecyclerView.setAdapter(mAdapter);
+                        break;
+                    }
+                    case Keys.PREF_VIEWTYPE_CARD: {
+                        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+                        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
+                        mRecyclerView.setAdapter(mAdapter);
+                        break;
+                    }
+                    case Keys.PREF_VIEWTYPE_GRID: {
+
+                        break;
+                    }
+
+                }
+
+                break;
+            }
+        }
     }
     
     public void updateBottomBar() {

@@ -8,7 +8,7 @@ import android.text.TextUtils;
 /**
  * A pack of helpful getter and setter methods for reading/writing to {@link SharedPreferences}.
  */
-final public class SharedPrefsUtils {
+final public class SharedPrefsUtils  {
     private SharedPrefsUtils() {}
 
     /**
