@@ -281,6 +281,7 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
     @Override
     public void onFinishUploadFiles() {
         updateBottomBar();
+        dropBoxManager.loadUserInfo();
     }
 
     @Override

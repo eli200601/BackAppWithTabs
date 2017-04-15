@@ -86,13 +86,19 @@ public class DropboxDownloadService extends Service {
     public void buildNotification() {
         mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(Keys.STARTED_FROM, Keys.DROPBOX_DOWNLOAD_INTENT_SERVICE);
         mBuilder = new Notification.Builder(this)
                 .setSmallIcon(R.mipmap.ic_main)
                 .setOngoing(true)
                 .setAutoCancel(true)
                 .setTicker("Starting to Download")
                 .setProgress(100, 0, false)
-                .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, intent.putExtra(Keys.STARTED_FROM, Keys.DROPBOX_DOWNLOAD_INTENT_SERVICE), PendingIntent.FLAG_UPDATE_CURRENT));
+
+                .setContentIntent(PendingIntent.getActivity(getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
     public void setNotificationText(String title, String content) {

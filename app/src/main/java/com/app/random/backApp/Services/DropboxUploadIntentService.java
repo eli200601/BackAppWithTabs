@@ -83,7 +83,13 @@ public class DropboxUploadIntentService extends IntentService {
         //Setting up the notification
         mNotifyManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         mBuilder = new Builder(this);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class).putExtra(Keys.STARTED_FROM,Keys.DROPBOX_UPLOAD_INTENT_SERVICE), PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intentA = new Intent(getApplicationContext(),MainActivity.class);
+        intentA.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intentA.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intentA.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        intentA.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intentA.putExtra(Keys.STARTED_FROM,Keys.DROPBOX_UPLOAD_INTENT_SERVICE);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intentA, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setAutoCancel(true);
         // Starting to upload each app in the list

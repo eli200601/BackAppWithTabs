@@ -44,7 +44,7 @@ import java.util.HashSet;
 public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryTextListener, DropboxCallBackListener, SharedPreferences.OnSharedPreferenceChangeListener{
 
     private ArrayList<ApplicationInfo> appsListInfo =  new ArrayList<>();
-    private ArrayList<AppDataItem> appsListData = new ArrayList<>();
+    private ArrayList<AppDataItem> appsListData;
 
     private static final String TAG = "DeviceAppsFragment";
     private FilesUtils filesUtils;
@@ -65,7 +65,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         dropBoxManager = DropBoxManager.getInstance(getActivity().getApplicationContext());
         filesUtils = FilesUtils.getInstance(getActivity().getApplicationContext());
         Log.d(TAG, "Building this Fragment!!!!");
-
+        appsListData = new ArrayList<>();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         prefs.registerOnSharedPreferenceChangeListener(this);
     }
@@ -122,6 +122,9 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                 updateBottomBar();
             }
         });
+        mAdapter.setItems(appsListData);
+        mAdapter.notifyDataSetChanged();
+//        updateBottomBar();
     }
 
 
@@ -136,7 +139,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
     }
 
     public void updateBottomBar() {
-
+        Log.d(TAG, "updateBottomBar called");
         String appsListSize = String.valueOf(appsDataUtils.getAppsListInfoListSize());
         String selectedAppsListSize = String.valueOf(mAdapter.getSelectedAppsListSize());
 
@@ -308,6 +311,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         protected Void doInBackground(Void... params) {
 
             appsDataUtils.startGettingInfo();
+            appsListData.clear();
             appsListInfo = appsDataUtils.getAppInfoList();
             appsListData = appsDataUtils.getAppDataList();
 
@@ -325,10 +329,10 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         protected void onPostExecute(Void result) {
 //            mRecyclerView.setAdapter(mAdapter);
             progress.dismiss();
-            updateBottomBar();
+
             mAdapter.setItems(appsListData);
             mAdapter.notifyDataSetChanged();
-
+            updateBottomBar();
             super.onPostExecute(result);
         }
 

@@ -139,7 +139,7 @@ public class DownloadFolderFragment extends Fragment {
                 else {
                     Snackbar.make(getView(), "An error occur", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
-                
+
 
                 break;
             }
