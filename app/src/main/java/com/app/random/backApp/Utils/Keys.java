@@ -5,6 +5,10 @@ public class Keys {
 
     public static final String SORT_TYPE_INSTALLED_APPS = "sortType";
     public static final String ORIGIN_DEVICEAPPSFRAGMENT = "DeviceAppsFragment";
+    public static final String ORIGIN_CLOUDMAINFRAGMENT = "CloudMainFragment";
+    public static final String ORIGIN_DOWNLOADFOLDERFRAGMENT = "DownloadFolderFragment";
+
+    public static final int NUMBER_OF_COLUMNS = 3;
 
     /*  SharedPreferences Key's   */
     public static final String PREF_NAME = "Settings";

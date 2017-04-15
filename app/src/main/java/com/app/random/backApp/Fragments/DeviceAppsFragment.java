@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -72,13 +73,11 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_apps_list, null);
 
         setHasOptionsMenu(true);
 
         appsDataUtils = AppsDataUtils.getInstance(getActivity().getApplicationContext());
-//                getActivity().getApplicationContext(), getActivity().getPackageManager(), PACKAGE_NAME, sortType);
 
         //Bottom Bar init
         listAmountTextField = (TextView) view.findViewById(R.id.itemsInListValueText);
@@ -86,62 +85,58 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         //RecyclerView - Apps list
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-
-
-        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
-        mRecyclerView.setAdapter(mAdapter);
-
+        setRecyclerLayoutType();
 
         new LoadApplications().execute();
 
+        return view;
+    }
+
+    public void setRecyclerLayoutType(){
+        String prefViewType = SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE);
+        Log.d(TAG, "setRecyclerLayoutType(): " + SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE));
+        switch (prefViewType) {
+            case Keys.PREF_VIEWTYPE_LIST: {
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+                mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
+                mRecyclerView.setAdapter(mAdapter);
+                break;
+            }
+            case Keys.PREF_VIEWTYPE_CARD: {
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+                mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
+                mRecyclerView.setAdapter(mAdapter);
+                break;
+            }
+            case Keys.PREF_VIEWTYPE_GRID: {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), Keys.NUMBER_OF_COLUMNS));
+                mRecyclerView.setHasFixedSize(true);
+                mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
+                mRecyclerView.setAdapter(mAdapter);
+                break;
+            }
+        }
         mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
             @Override
             public void onCheckBoxClick() {
                 updateBottomBar();
             }
         });
-
-        return view;
     }
+
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         switch (key) {
             case Keys.PREF_VIEWTYPE: {
-                // User change the view type need to update the UI
-                Log.d(TAG, "down User change to: " + SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE));
-//                mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-//                mAdapter = mRecyclerView.getAdapter();
-//                mRecyclerView.setAdapter(mAdapter);
-                String viewType = SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE);
-                switch (viewType) {
-                    case Keys.PREF_VIEWTYPE_LIST: {
-                        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-                        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
-                        mRecyclerView.setAdapter(mAdapter);
-                        break;
-                    }
-                    case Keys.PREF_VIEWTYPE_CARD: {
-                        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-                        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
-                        mRecyclerView.setAdapter(mAdapter);
-                        break;
-                    }
-                    case Keys.PREF_VIEWTYPE_GRID: {
-
-                        break;
-                    }
-
-                }
-
+                setRecyclerLayoutType();
                 break;
             }
         }
     }
-    
+
     public void updateBottomBar() {
-        
+
         String appsListSize = String.valueOf(appsDataUtils.getAppsListInfoListSize());
         String selectedAppsListSize = String.valueOf(mAdapter.getSelectedAppsListSize());
 
@@ -149,7 +144,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         selectedAmountTextField.setText(selectedAppsListSize + "/" + appsListSize);
 
         getActivity().invalidateOptionsMenu();
-        
+
     }
 
     @Override
@@ -315,7 +310,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
             appsDataUtils.startGettingInfo();
             appsListInfo = appsDataUtils.getAppInfoList();
             appsListData = appsDataUtils.getAppDataList();
-              
+
 //            updateBottomBar();
             return null;
 

@@ -259,13 +259,13 @@ public class AppsDataUtils {
 
     public ArrayList<AppDataItem> getFolderAppsList() {
 
-        String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
+        String pathLocal = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
         String separator = "_";
 
         folderAppsList.clear();
 
-        Log.d("Files", "Path: " + path);
-        File directory = new File(path);
+        Log.d("Files", "Path: " + pathLocal);
+        File directory = new File(pathLocal);
         File[] files = directory.listFiles();
         Log.d("Files", "Size: " + files.length);
         for (File file : files) {
@@ -292,7 +292,7 @@ public class AppsDataUtils {
                 Log.d(TAG, "appName = " + appName);
                 Log.d(TAG, "appPackageName = " + appPackageName);
                 Log.d(TAG, "appVersion = " + appVersion);
-                Log.d(TAG, "path = " + path);
+                Log.d(TAG, "path = " + pathLocal);
                 if (appName != null && appPackageName != null && filePath != null && appVersion != null && fileSize != null) {
                     AppDataItem appItem = new AppDataItem(appName, appPackageName, filePath, appVersion, false);
                     appItem.setApkSize(fileSize);

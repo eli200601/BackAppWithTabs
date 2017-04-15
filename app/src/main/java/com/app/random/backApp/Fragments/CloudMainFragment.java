@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -118,24 +119,21 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
 
         //RecyclerView - Apps list
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_cloud);
+        setRecyclerLayoutType();
+
+        return view;
+    }
+
+    public void setRecyclerLayoutType(){
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
         mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
         mRecyclerView.setAdapter(mAdapter);
-
         mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
             @Override
             public void onCheckBoxClick() {
-                // Do stuff when clicking on checkbox
                 getActivity().invalidateOptionsMenu();
             }
         });
-
-//        dropBoxManager.getDropBoxFileListMethod();
-//        Button button = (Button) view.findViewById(R.id.button);
-//
-//        button.setOnClickListener(this);
-
-        return view;
     }
 
     @Override

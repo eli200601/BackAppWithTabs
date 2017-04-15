@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -62,22 +63,27 @@ public class DownloadFolderFragment extends Fragment {
         setHasOptionsMenu(true);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_folder);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        mRecyclerView.setAdapter(mAdapter);
+        setRecyclerLayoutType();
 
         //Starting to load applications here
         appsListData = appsDataUtils.getFolderAppsList();
         mAdapter.setItems(appsListData);
         mAdapter.notifyDataSetChanged();
 
+        return view;
+    }
+
+    public void setRecyclerLayoutType(){
+        mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), Keys.NUMBER_OF_COLUMNS));
+        mRecyclerView.setHasFixedSize(true);
+        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
+        mRecyclerView.setAdapter(mAdapter);
         mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
             @Override
             public void onCheckBoxClick() {
-                //When checkbox is clicked
                 getActivity().invalidateOptionsMenu();
             }
         });
-        return view;
     }
 
 

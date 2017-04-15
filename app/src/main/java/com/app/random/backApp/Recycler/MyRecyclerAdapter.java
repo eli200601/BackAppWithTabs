@@ -74,12 +74,20 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 }
                 case Keys.PREF_VIEWTYPE_GRID:{
                     Log.d(TAG, Keys.PREF_VIEWTYPE_GRID);
-
+                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_grid, null);
+                    break;
                 }
             }
         }
         else {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_row, null);
+            if (origin.equals(Keys.ORIGIN_DOWNLOADFOLDERFRAGMENT)) {
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_grid, null);
+            }
+            else {
+                if (origin.equals(Keys.ORIGIN_CLOUDMAINFRAGMENT)) {
+                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_card, null);
+                }
+            }
         }
         MyViewHolder holder = new MyViewHolder(view);
         return holder;
@@ -103,11 +111,41 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 //    Bind data to view
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
+        String apkSizeInit = "APK Size: ";
+        String apkVersionInit = "Version: ";
+        String apkSize = appsListData.get(holder.getAdapterPosition()).getApkSize();
+        String version = appsListData.get(holder.getAdapterPosition()).getAppVersion();
+
+        if (!version.contains("v")) {
+            version = "v" + version;
+        }
 
         holder.appName.setText(appsListData.get(holder.getAdapterPosition()).getName());
-        holder.apkSize.setText("APK Size: " + (appsListData.get(holder.getAdapterPosition()).getApkSize()));
-        holder.version.setText("Version: " + (appsListData.get(holder.getAdapterPosition()).getAppVersion()));
-//        viewHolder.iconView.setImageDrawable(data.loadIcon(packageManager));
+
+        switch (origin) {
+            case Keys.ORIGIN_DEVICEAPPSFRAGMENT: {
+                if (SharedPrefsUtils.getStringPreference(context, Keys.PREF_VIEWTYPE).equals(Keys.PREF_VIEWTYPE_GRID)){
+                    holder.apkSize.setText(apkSize);
+                    holder.version.setText(version);
+                }
+                else {
+                    holder.apkSize.setText(apkSizeInit + apkSize);
+                    holder.version.setText(apkVersionInit + version);
+                }
+                break;
+            }
+            case Keys.ORIGIN_CLOUDMAINFRAGMENT: {
+                holder.apkSize.setText(apkSizeInit + apkSize);
+                holder.version.setText(apkVersionInit + version);
+                break;
+            }
+            case Keys.ORIGIN_DOWNLOADFOLDERFRAGMENT: {
+                holder.apkSize.setText(apkSize);
+                holder.version.setText(version);
+                break;
+            }
+        }
+
         try {
             if (origin.equals("DownloadFolderFragment")) {
                 holder.appIcon.setImageResource(R.mipmap.ic_folder_icon);
