@@ -21,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.app.random.backApp.R;
 import com.app.random.backApp.Recycler.AppDataItem;
@@ -47,7 +48,8 @@ public class DownloadFolderFragment extends Fragment {
     private Context context;
     private ArrayList<AppDataItem> appsListData = new ArrayList<>();
 
-
+    private TextView listAmountTextField;
+    private TextView selectedAmountTextField;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,8 +74,22 @@ public class DownloadFolderFragment extends Fragment {
         appsListData = appsDataUtils.getFolderAppsList();
         mAdapter.setItems(appsListData);
         mAdapter.notifyDataSetChanged();
-
+        listAmountTextField = (TextView) view.findViewById(R.id.itemsInListValueText_folder);
+        selectedAmountTextField = (TextView) view.findViewById(R.id.ItemsSelectedValueText_folder);
+        updateBottomBar();
         return view;
+    }
+
+    public void updateBottomBar() {
+
+        String appsListSize = String.valueOf(appsDataUtils.getAppsListFolderSize());
+        String selectedAppsListSize = String.valueOf(mAdapter.getSelectedAppsListSize());
+
+        listAmountTextField.setText(appsListSize);
+        selectedAmountTextField.setText(selectedAppsListSize + "/" + appsListSize);
+
+        getActivity().invalidateOptionsMenu();
+
     }
 
     public void setRecyclerLayoutType(){
@@ -84,7 +100,7 @@ public class DownloadFolderFragment extends Fragment {
         mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
             @Override
             public void onCheckBoxClick() {
-                getActivity().invalidateOptionsMenu();
+                updateBottomBar();
             }
         });
     }
@@ -123,7 +139,7 @@ public class DownloadFolderFragment extends Fragment {
                 else {
                     Snackbar.make(getView(), "An error occur", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
-
+                
 
                 break;
             }
@@ -173,6 +189,7 @@ public class DownloadFolderFragment extends Fragment {
                 appsListData = appsDataUtils.getFolderAppsList();
                 mAdapter.setItems(appsListData);
                 mAdapter.notifyDataSetChanged();
+                updateBottomBar();
             }
             else {
                 Snackbar.make(getView(), "Download Failed", Snackbar.LENGTH_LONG).setAction("Action", null).show();
@@ -208,6 +225,7 @@ public class DownloadFolderFragment extends Fragment {
             mAdapter.setItems(appsListData);
             mAdapter.clearSelectedList();
             mAdapter.notifyDataSetChanged();
+            updateBottomBar();
             super.onPostExecute(result);
         }
 

@@ -77,15 +77,12 @@ public class FilesUtils {
 
     public boolean installFilesFromArray(ArrayList<AppDataItem> list) {
         boolean result = true;
-        String start = "file://";
         for (AppDataItem item: list) {
             File toInstall = new File(item.getSourceDir());
-
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(toInstall), "application/vnd.android.package-archive");
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
-            
         }
         return result;
     }

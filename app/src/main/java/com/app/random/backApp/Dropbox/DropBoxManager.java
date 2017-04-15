@@ -38,7 +38,7 @@ public class DropBoxManager {
     public State accountInfoState;
 
     // Hold the cloud file list
-    ArrayList<AppDataItem> cloudAppsList;
+    public ArrayList<AppDataItem> cloudAppsList;
 
 
 

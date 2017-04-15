@@ -310,5 +310,11 @@ public class AppsDataUtils {
         return folderAppsList;
     }
 
+    public int getAppsListDataSize(){
+        return appsListData.size();
+    }
+    public int getAppsListFolderSize(){
+        return folderAppsList.size();
+    }
 }
 

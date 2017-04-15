@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
@@ -65,7 +65,8 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
     private ArrayList<AppDataItem> appsListData = new ArrayList<>();
 
     public int sortType = 0; // 1 = Dsc | 0 = Asc
-
+    private TextView listAmountTextField;
+    private TextView selectedAmountTextField;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -120,7 +121,8 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         //RecyclerView - Apps list
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_cloud);
         setRecyclerLayoutType();
-
+        listAmountTextField = (TextView) view.findViewById(R.id.itemsInListValueText_cloud);
+        selectedAmountTextField = (TextView) view.findViewById(R.id.ItemsSelectedValueText_cloud);
         return view;
     }
 
@@ -131,11 +133,21 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
             @Override
             public void onCheckBoxClick() {
-                getActivity().invalidateOptionsMenu();
+                updateBottomBar();
             }
         });
     }
+    public void updateBottomBar() {
 
+        String appsListSize = String.valueOf(dropBoxManager.cloudAppsList.size());
+        String selectedAppsListSize = String.valueOf(mAdapter.getSelectedAppsListSize());
+
+        listAmountTextField.setText(appsListSize);
+        selectedAmountTextField.setText(selectedAppsListSize + "/" + appsListSize);
+
+        getActivity().invalidateOptionsMenu();
+
+    }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.cloud_frag_menu, menu);
@@ -268,7 +280,7 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
 
     @Override
     public void onFinishUploadFiles() {
-
+        updateBottomBar();
     }
 
     @Override
@@ -276,6 +288,7 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         appsListData = cloudList;
         mAdapter.setItems(appsListData);
         mAdapter.notifyDataSetChanged();
+        updateBottomBar();
         getActivity().invalidateOptionsMenu();
     }
 
@@ -285,6 +298,7 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         assert view != null;
         Snackbar.make(view, "Files deleted...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
         dropBoxManager.getDropBoxFileListMethod();
+        updateBottomBar();
     }
 
     public void updateUIList(Intent intent) {

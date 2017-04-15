@@ -1,16 +1,91 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.app.random.backApp.Fragments.CloudMainFragment">
+    android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/recycler_view_folder"
         android:background="@color/colorGray">
+
     </android.support.v7.widget.RecyclerView>
 
+    <LinearLayout
+        android:id="@+id/bottom_bar_folder"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorGray"
+        android:addStatesFromChildren="true">
 
-</FrameLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:text="Items In List:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/itemsInListText_folder"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_weight="1"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:text="0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/itemsInListValueText_folder"
+                android:textSize="14sp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:textAlignment="viewStart"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:text="Items Selected:"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ItemsSelectedText_folder"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:paddingBottom="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_weight="1"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:text="0/0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ItemsSelectedValueText_folder"
+                android:textSize="14sp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="5dp"
+                android:layout_weight="1"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
