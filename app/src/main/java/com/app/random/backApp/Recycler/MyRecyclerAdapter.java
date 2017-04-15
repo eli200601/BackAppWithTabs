@@ -285,19 +285,20 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
         return appsListData.size();
     }
 
-    public HashSet<String> getSelectedPackageNamesList(){
-         return selectedAppsList;
+    public HashSet<String> getSelectedPackageNamesList() {
+        return selectedAppsList;
+    }
 
-
-
-//        ArrayList<String> apk_list = new ArrayList<>();
-//
-//        for (String app_name : selectedAppsList) {
-//
-//            appsListData.
-//        }
-//
-//        return selectedAppsList.contains()
+    public ArrayList<AppDataItem> getSelectedCustomArrayList(){
+        ArrayList<AppDataItem> appDataItems = new ArrayList<>();
+        for (String packageName: selectedAppsList) {
+            for (AppDataItem item: appsListData) {
+                if (item.getPackageName().equals(packageName)) {
+                    appDataItems.add(item);
+                }
+            }
+        }
+        return appDataItems;
     }
 
 }

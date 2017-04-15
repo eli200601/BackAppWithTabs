@@ -292,7 +292,7 @@ public class AppsDataUtils {
                 Log.d(TAG, "appName = " + appName);
                 Log.d(TAG, "appPackageName = " + appPackageName);
                 Log.d(TAG, "appVersion = " + appVersion);
-                Log.d(TAG, "path = " + pathLocal);
+                Log.d(TAG, "path = " + filePath);
                 if (appName != null && appPackageName != null && filePath != null && appVersion != null && fileSize != null) {
                     AppDataItem appItem = new AppDataItem(appName, appPackageName, filePath, appVersion, false);
                     appItem.setApkSize(fileSize);
@@ -308,38 +308,6 @@ public class AppsDataUtils {
             }
         }
         return folderAppsList;
-    }
-
-
-
-    private class GetFolderFileList extends AsyncTask<Void, Void, Void> {
-        private ProgressDialog progress = null;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath();
-            Log.d("Files", "Path: " + path);
-            File directory = new File(path);
-            File[] files = directory.listFiles();
-            Log.d("Files", "Size: "+ files.length);
-            for (int i = 0; i < files.length; i++)
-            {
-                Log.d("Files", "FileName:" + files[i].getName());
-            }
-            for (File file: files) {
-                Log.d("Files", "FileName:" + file.getName());
-            }
-            return null;
-
-        }
-
-
-        @Override
-        protected void onPostExecute(Void result) {
-
-            super.onPostExecute(result);
-        }
     }
 
 }

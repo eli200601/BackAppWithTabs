@@ -1,10 +1,12 @@
 package com.app.random.backApp.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -29,6 +31,7 @@ import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class DownloadFolderFragment extends Fragment {
 
@@ -110,9 +113,27 @@ public class DownloadFolderFragment extends Fragment {
         boolean result = false;
         switch (id) {
             case R.id.folder_action_delete:{
+                ArrayList<AppDataItem> listToDelete;
+                listToDelete = mAdapter.getSelectedCustomArrayList();
+                boolean flag = filesUtils.deleteFilesFromArray(listToDelete);
+                new PostDeleteRefresh().execute();
+                if (flag) {
+                    Snackbar.make(getView(), "Files deleted.", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+                else {
+                    Snackbar.make(getView(), "An error occur", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+
+
                 break;
             }
             case R.id.folder_action_install:{
+                ArrayList<AppDataItem> listToInstall;
+                listToInstall = mAdapter.getSelectedCustomArrayList();
+                filesUtils.installFilesFromArray(listToInstall);
+                mAdapter.clearSelectedList();
+                mAdapter.notifyDataSetChanged();
+
                 break;
             }
             case R.id.folder_action_refresh:{
@@ -163,5 +184,34 @@ public class DownloadFolderFragment extends Fragment {
 
         }
     }
+
+    private class PostDeleteRefresh extends AsyncTask<Void, Void, Void> {
+
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+
+        }
+
+
+        @Override
+        protected void onPostExecute(Void result) {
+            appsListData = appsDataUtils.getFolderAppsList();
+            mAdapter.setItems(appsListData);
+            mAdapter.clearSelectedList();
+            mAdapter.notifyDataSetChanged();
+            super.onPostExecute(result);
+        }
+
+    }
+
 
 }

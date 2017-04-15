@@ -29,6 +29,7 @@
     <string name="action_download_marked">Download marked</string>
     <string name="action_install">Install</string>
     <string name="action_delete">Delete</string>
+    <string name="action_delete_file">Delete file</string>
 
 
 </resources>

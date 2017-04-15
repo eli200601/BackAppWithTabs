@@ -15,9 +15,10 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/folder_action_refresh"
-        android:orderInCategory="101"
+        android:orderInCategory="102"
         android:title="@string/action_refresh"
         app:showAsAction="never" />
+
 
 
 </menu>

@@ -2,7 +2,12 @@ package com.app.random.backApp.Utils;
 
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.support.v4.content.FileProvider;
 
+import com.app.random.backApp.BuildConfig;
 import com.app.random.backApp.Recycler.AppDataItem;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -55,5 +60,33 @@ public class FilesUtils {
         }
 
         return totalFilesSize;
+    }
+
+    public boolean deleteFilesFromArray(ArrayList<AppDataItem> list) {
+        boolean result = true;
+        for (AppDataItem item: list) {
+            String path = item.getSourceDir();
+            File file = new File(path);
+            boolean deleted = file.delete();
+            if (deleted == false) {
+                result = false;
+            }
+        }
+        return result;
+    }
+
+    public boolean installFilesFromArray(ArrayList<AppDataItem> list) {
+        boolean result = true;
+        String start = "file://";
+        for (AppDataItem item: list) {
+            File toInstall = new File(item.getSourceDir());
+
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(toInstall), "application/vnd.android.package-archive");
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+            
+        }
+        return result;
     }
 }
