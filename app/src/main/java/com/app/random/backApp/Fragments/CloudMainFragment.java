@@ -6,9 +6,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -43,7 +45,7 @@ import java.util.List;
  * Use the {@link CloudMainFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CloudMainFragment extends Fragment implements DropboxCallBackListener {
+public class CloudMainFragment extends Fragment implements DropboxCallBackListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private OnFinishUploadReceiver onFinishUploadReceiver;
     // TODO: Rename parameter arguments, choose names that match
@@ -126,17 +128,50 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         return view;
     }
 
-    public void setRecyclerLayoutType(){
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
-        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
-        mRecyclerView.setAdapter(mAdapter);
+    public void setRecyclerLayoutType() {
+        String prefViewType = SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE_CLOUD);
+        Log.d(TAG, "setRecyclerLayoutType(): " + SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE_CLOUD));
+        switch (prefViewType) {
+            case Keys.PREF_VIEWTYPE_LIST: {
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+                mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(), appsListData, TAG);
+                mRecyclerView.setAdapter(mAdapter);
+                break;
+            }
+            case Keys.PREF_VIEWTYPE_CARD: {
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+                mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(), appsListData, TAG);
+                mRecyclerView.setAdapter(mAdapter);
+                break;
+            }
+            case Keys.PREF_VIEWTYPE_GRID: {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), Keys.NUMBER_OF_COLUMNS));
+                mRecyclerView.setHasFixedSize(true);
+                mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(), appsListData, TAG);
+                mRecyclerView.setAdapter(mAdapter);
+                break;
+            }
+        }
         mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
             @Override
             public void onCheckBoxClick() {
                 updateBottomBar();
             }
         });
+        mAdapter.setItems(appsListData);
+        mAdapter.notifyDataSetChanged();
+//        updateBottomBar();
     }
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+//        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
+//        mRecyclerView.setAdapter(mAdapter);
+//        mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
+//            @Override
+//            public void onCheckBoxClick() {
+//                updateBottomBar();
+//            }
+//        });
+//}
     public void updateBottomBar() {
 
         String appsListSize = String.valueOf(dropBoxManager.cloudAppsList.size());
@@ -147,6 +182,17 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
 
         getActivity().invalidateOptionsMenu();
 
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        Log.d(TAG, "Here i am now after change");
+        switch (key) {
+            case Keys.PREF_VIEWTYPE_CLOUD: {
+                setRecyclerLayoutType();
+                break;
+            }
+        }
     }
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -280,8 +326,14 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
 
     @Override
     public void onFinishUploadFiles() {
-        updateBottomBar();
-        dropBoxManager.loadUserInfo();
+        if (new ConnectionDetector(getActivity().getApplicationContext()).isConnectedToInternet()) {
+            Log.d(TAG, "There is connection...");
+            dropBoxManager.getDropBoxFileListMethod();
+            mAdapter.clearSelectedList();
+            mAdapter.notifyDataSetChanged();
+            updateBottomBar();
+            dropBoxManager.loadUserInfo();
+        }
     }
 
     @Override

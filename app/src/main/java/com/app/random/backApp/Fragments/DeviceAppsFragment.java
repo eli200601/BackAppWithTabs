@@ -93,8 +93,8 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
     }
 
     public void setRecyclerLayoutType(){
-        String prefViewType = SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE);
-        Log.d(TAG, "setRecyclerLayoutType(): " + SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE));
+        String prefViewType = SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE_DEVICE);
+        Log.d(TAG, "setRecyclerLayoutType(): " + SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE_DEVICE));
         switch (prefViewType) {
             case Keys.PREF_VIEWTYPE_LIST: {
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
@@ -131,7 +131,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         switch (key) {
-            case Keys.PREF_VIEWTYPE: {
+            case Keys.PREF_VIEWTYPE_DEVICE: {
                 setRecyclerLayoutType();
                 break;
             }
@@ -156,14 +156,20 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         MenuItem uploadItem = menu.findItem(R.id.action_upload);
-
+        MenuItem uninstallItem = menu.findItem(R.id.menuUninstallAPK);
 
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
 
 
         searchView.setOnQueryTextListener(this);
 
-
+        if (mAdapter.getSelectedAppsListSize() > 0) {
+            uninstallItem.setVisible(true);
+        }
+        else {
+            uninstallItem.setVisible(false);
+        }
+        
         if (mAdapter.getSelectedAppsListSize() > 0 && dropBoxManager.isLogIn) {
             uploadItem.setVisible(true);
         }
@@ -244,6 +250,13 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                     Log.d(TAG, "There is no connection...");
                     Snackbar.make(getView(), "No connection to internet, Turn on your WiFi/3G", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
+                break;
+            }
+            case R.id.menuUninstallAPK: {
+                ArrayList<AppDataItem> uninstallList = mAdapter.getSelectedCustomArrayList();
+                filesUtils.uninstallAppFromList(uninstallList);
+                mAdapter.clearSelectedList();
+                mAdapter.notifyDataSetChanged();
                 break;
             }
 

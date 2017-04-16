@@ -11,6 +11,21 @@
         android:defaultValue="@array/view_type"
         android:entries="@array/view_type"
         android:entryValues="@array/view_type"
-        android:key="view_preference"
-        android:title="View Options" />
+        android:key="view_preference_device"
+        android:title="Device Apps - View Options"
+        android:summary="Current view: %s"/>
+    <ListPreference
+        android:defaultValue="@array/view_type"
+        android:entries="@array/view_type"
+        android:entryValues="@array/view_type"
+        android:key="view_preference_cloud"
+        android:title="Cloud - View Options"
+        android:summary="Current view: %s"/>
+    <ListPreference
+        android:defaultValue="@array/view_type"
+        android:entries="@array/view_type"
+        android:entryValues="@array/view_type"
+        android:key="view_preference_folder"
+        android:title="Download Folder - View Options"
+        android:summary="Current view: %s"/>
 </PreferenceScreen>

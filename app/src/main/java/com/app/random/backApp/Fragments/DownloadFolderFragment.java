@@ -6,6 +6,7 @@ import android.content.Context;
 
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -30,11 +31,12 @@ import com.app.random.backApp.Recycler.UpdateBottomBar;
 import com.app.random.backApp.Utils.AppsDataUtils;
 import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
+import com.app.random.backApp.Utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public class DownloadFolderFragment extends Fragment {
+public class DownloadFolderFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     private static final String TAG = "DownloadFolderFragment";
     private AppsDataUtils appsDataUtils;
@@ -93,18 +95,59 @@ public class DownloadFolderFragment extends Fragment {
     }
 
     public void setRecyclerLayoutType(){
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), Keys.NUMBER_OF_COLUMNS));
-        mRecyclerView.setHasFixedSize(true);
-        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
-        mRecyclerView.setAdapter(mAdapter);
+        String prefViewType = SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE_FOLDER);
+        Log.d(TAG, "setRecyclerLayoutType(): " + SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE_FOLDER));
+        switch (prefViewType) {
+            case Keys.PREF_VIEWTYPE_LIST: {
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+                mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(), appsListData, TAG);
+                mRecyclerView.setAdapter(mAdapter);
+                break;
+            }
+            case Keys.PREF_VIEWTYPE_CARD: {
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
+                mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(), appsListData, TAG);
+                mRecyclerView.setAdapter(mAdapter);
+                break;
+            }
+            case Keys.PREF_VIEWTYPE_GRID: {
+                mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), Keys.NUMBER_OF_COLUMNS));
+                mRecyclerView.setHasFixedSize(true);
+                mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(), appsListData, TAG);
+                mRecyclerView.setAdapter(mAdapter);
+                break;
+            }
+        }
         mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
             @Override
             public void onCheckBoxClick() {
                 updateBottomBar();
             }
         });
+        mAdapter.setItems(appsListData);
+        mAdapter.notifyDataSetChanged();
+//        updateBottomBar();
     }
-
+//        mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), Keys.NUMBER_OF_COLUMNS));
+//        mRecyclerView.setHasFixedSize(true);
+//        mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
+//        mRecyclerView.setAdapter(mAdapter);
+//        mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
+//            @Override
+//            public void onCheckBoxClick() {
+//                updateBottomBar();
+//            }
+//        });
+//    }
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        switch (key) {
+            case Keys.PREF_VIEWTYPE_FOLDER: {
+                setRecyclerLayoutType();
+                break;
+            }
+        }
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

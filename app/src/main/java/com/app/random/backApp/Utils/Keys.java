@@ -14,6 +14,9 @@ public class Keys {
     public static final String PREF_NAME = "Settings";
     public static final String PREF_ACTIVATE = "Activate";
     public static final String PREF_VIEWTYPE = "view_preference";
+    public static final String PREF_VIEWTYPE_DEVICE = "view_preference_device";
+    public static final String PREF_VIEWTYPE_CLOUD = "view_preference_cloud";
+    public static final String PREF_VIEWTYPE_FOLDER = "view_preference_folder";
     public static final String PREF_VIEWTYPE_LIST = "List View";
     public static final String PREF_VIEWTYPE_CARD = "Card View";
     public static final String PREF_VIEWTYPE_GRID = "Grid View";

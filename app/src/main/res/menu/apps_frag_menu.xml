@@ -40,4 +40,10 @@
         android:id="@+id/menuUnSelectAll"
         app:showAsAction="never" />
 
+    <item
+        android:title="@string/uninstall_apk"
+        android:orderInCategory="104"
+        android:id="@+id/menuUninstallAPK"
+        app:showAsAction="never" />
+
 </menu>

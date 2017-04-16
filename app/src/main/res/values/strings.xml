@@ -30,6 +30,7 @@
     <string name="action_install">Install</string>
     <string name="action_delete">Delete</string>
     <string name="action_delete_file">Delete file</string>
+    <string name="uninstall_apk">Uninstall</string>
 
 
 </resources>

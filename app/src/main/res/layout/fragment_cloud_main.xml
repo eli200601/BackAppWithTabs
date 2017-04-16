@@ -1,91 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/recycler_view_cloud"
+        android:layout_weight="1"
         android:background="@color/colorGray">
-
     </android.support.v7.widget.RecyclerView>
 
-    <LinearLayout
-        android:id="@+id/bottom_bar_cloud"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/colorGray"
-        android:addStatesFromChildren="true">
+        android:layout_height="25dp"
+        android:id="@+id/bottom_bar_cloud"
+        android:background="@color/colorGray">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+        <TextView
+            android:text="Items In List:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/itemsInListText_cloud"
+            android:paddingTop="@dimen/bottom_bar_padding_top"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:textAllCaps="false"
+            android:textSize="14sp"
+            android:textColor="@color/colorWhite" />
 
-            <TextView
-                android:text="Items In List:"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/itemsInListText_cloud"
-                android:textAllCaps="false"
-                android:textSize="14sp"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:layout_weight="1"
-                android:textColor="@android:color/white" />
+        <TextView
+            android:text="0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/itemsInListValueText_cloud"
+            android:layout_toRightOf="@+id/itemsInListText_cloud"
+            android:textAlignment="viewStart"
+            android:paddingTop="@dimen/bottom_bar_padding_top"
+            android:paddingRight="50dp"
+            android:textSize="14sp"
+            android:textColor="@android:color/white" />
 
-            <TextView
-                android:text="0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/itemsInListValueText_cloud"
-                android:textSize="14sp"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:textAlignment="viewStart"
-                android:textColor="@android:color/white" />
-        </LinearLayout>
+        <TextView
+            android:text="Items Selected:"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ItemsSelectedText_cloud"
+            android:textAllCaps="false"
+            android:layout_toRightOf="@+id/itemsInListValueText_cloud"
+            android:layout_toLeftOf="@+id/ItemsSelectedValueText_cloud"
+            android:textAlignment="viewEnd"
+            android:textSize="14sp"
+            android:paddingTop="@dimen/bottom_bar_padding_top"
+            android:paddingRight="5dp"
+            android:textColor="@android:color/white" />
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+        <TextView
+            android:text="0/0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/ItemsSelectedValueText_cloud"
+            android:layout_alignParentRight="true"
+            android:textSize="14sp"
+            android:paddingTop="@dimen/bottom_bar_padding_top"
+            android:paddingRight="8dp"
+            android:textColor="@android:color/white" />
 
-            <TextView
-                android:text="Items Selected:"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/ItemsSelectedText_cloud"
-                android:textAllCaps="false"
-                android:textSize="14sp"
-                android:paddingBottom="5dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:layout_weight="1"
-                android:textColor="@android:color/white" />
-
-            <TextView
-                android:text="0/0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/ItemsSelectedValueText_cloud"
-                android:textSize="14sp"
-                android:paddingBottom="5dp"
-                android:paddingTop="5dp"
-                android:paddingStart="5dp"
-                android:paddingEnd="5dp"
-                android:layout_weight="1"
-                android:textColor="@android:color/white" />
-        </LinearLayout>
-    </LinearLayout>
-
-</RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

@@ -86,4 +86,14 @@ public class FilesUtils {
         }
         return result;
     }
+
+    public void uninstallAppFromList(ArrayList<AppDataItem> list) {
+        for (AppDataItem item: list) {
+            Intent intent = new Intent(Intent.ACTION_DELETE);
+            intent.setData(Uri.parse("package:" + item.getPackageName()));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+        }
+
+    }
 }

@@ -55,38 +55,49 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
         return selectedAppsList.size();
     }
 
+
+    public String getViewType() {
+        String viewType = null;
+        switch (origin) {
+            case Keys.ORIGIN_DEVICEAPPSFRAGMENT:{
+                viewType = SharedPrefsUtils.getStringPreference(context, Keys.PREF_VIEWTYPE_DEVICE);
+                break;
+            }
+            case Keys.ORIGIN_CLOUDMAINFRAGMENT: {
+                viewType = SharedPrefsUtils.getStringPreference(context, Keys.PREF_VIEWTYPE_CLOUD);
+                break;
+            }
+
+            case Keys.ORIGIN_DOWNLOADFOLDERFRAGMENT: {
+                viewType = SharedPrefsUtils.getStringPreference(context, Keys.PREF_VIEWTYPE_FOLDER);
+                break;
+            }
+
+        }
+        return viewType;
+
+    }
+
 //    Initialize Holder
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        String viewTypePref = SharedPrefsUtils.getStringPreference(parent.getContext(), Keys.PREF_VIEWTYPE);
+        String viewTypePref = getViewType();
         View view = null;
-        if (origin.equals(Keys.ORIGIN_DEVICEAPPSFRAGMENT)) {
-            switch (viewTypePref) {
-                case Keys.PREF_VIEWTYPE_LIST: {
-                    Log.d(TAG, Keys.PREF_VIEWTYPE_LIST);
-                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_row, null);
-                    break;
-                }
-                case Keys.PREF_VIEWTYPE_CARD:{
-                    Log.d(TAG, Keys.PREF_VIEWTYPE_CARD);
-                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_card, null);
-                    break;
-                }
-                case Keys.PREF_VIEWTYPE_GRID:{
-                    Log.d(TAG, Keys.PREF_VIEWTYPE_GRID);
-                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_grid, null);
-                    break;
-                }
+        switch (viewTypePref) {
+            case Keys.PREF_VIEWTYPE_LIST: {
+                Log.d(TAG, Keys.PREF_VIEWTYPE_LIST);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_row, null);
+                break;
             }
-        }
-        else {
-            if (origin.equals(Keys.ORIGIN_DOWNLOADFOLDERFRAGMENT)) {
+            case Keys.PREF_VIEWTYPE_CARD:{
+                Log.d(TAG, Keys.PREF_VIEWTYPE_CARD);
+                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_card, null);
+                break;
+            }
+            case Keys.PREF_VIEWTYPE_GRID:{
+                Log.d(TAG, Keys.PREF_VIEWTYPE_GRID);
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_grid, null);
-            }
-            else {
-                if (origin.equals(Keys.ORIGIN_CLOUDMAINFRAGMENT)) {
-                    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.apps_list_card, null);
-                }
+                break;
             }
         }
         MyViewHolder holder = new MyViewHolder(view);
@@ -115,6 +126,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
         String apkVersionInit = "Version: ";
         String apkSize = appsListData.get(holder.getAdapterPosition()).getApkSize();
         String version = appsListData.get(holder.getAdapterPosition()).getAppVersion();
+        String viewTypePref = getViewType();
 
         if (!version.contains("v")) {
             version = "v" + version;
@@ -122,32 +134,16 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
         holder.appName.setText(appsListData.get(holder.getAdapterPosition()).getName());
 
-        switch (origin) {
-            case Keys.ORIGIN_DEVICEAPPSFRAGMENT: {
-                if (SharedPrefsUtils.getStringPreference(context, Keys.PREF_VIEWTYPE).equals(Keys.PREF_VIEWTYPE_GRID)){
-                    holder.apkSize.setText(apkSize);
-                    holder.version.setText(version);
-                }
-                else {
-                    holder.apkSize.setText(apkSizeInit + apkSize);
-                    holder.version.setText(apkVersionInit + version);
-                }
-                break;
-            }
-            case Keys.ORIGIN_CLOUDMAINFRAGMENT: {
-                holder.apkSize.setText(apkSizeInit + apkSize);
-                holder.version.setText(apkVersionInit + version);
-                break;
-            }
-            case Keys.ORIGIN_DOWNLOADFOLDERFRAGMENT: {
-                holder.apkSize.setText(apkSize);
-                holder.version.setText(version);
-                break;
-            }
+        if (viewTypePref.equals(Keys.PREF_VIEWTYPE_GRID)){
+            holder.apkSize.setText(apkSize);
+            holder.version.setText(version);
         }
-
+        else {
+            holder.apkSize.setText(apkSizeInit + apkSize);
+            holder.version.setText(apkVersionInit + version);
+        }
         try {
-            if (origin.equals("DownloadFolderFragment")) {
+            if (origin.equals(Keys.ORIGIN_DOWNLOADFOLDERFRAGMENT)) {
                 holder.appIcon.setImageResource(R.mipmap.ic_folder_icon);
             }
             else {

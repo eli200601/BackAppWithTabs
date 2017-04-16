@@ -81,7 +81,9 @@ public class SplashScreenActivity extends Activity {
     public void getStartedClicked(View view) {
 //        SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.PREF_ACTIVATE)
         SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.PREF_ACTIVATE, Keys.PREF_ACTIVATE);
-        SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.PREF_VIEWTYPE, Keys.PREF_VIEWTYPE_LIST);
+        SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.PREF_VIEWTYPE_DEVICE, Keys.PREF_VIEWTYPE_LIST);
+        SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.PREF_VIEWTYPE_CLOUD, Keys.PREF_VIEWTYPE_CARD);
+        SharedPrefsUtils.setStringPreference(getApplicationContext(), Keys.PREF_VIEWTYPE_FOLDER, Keys.PREF_VIEWTYPE_GRID);
         Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
         this.startActivity(myIntent);
         this.finish();
