@@ -32,6 +32,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
     public ArrayList<AppDataItem> appsListData;
 
     private HashSet<String> selectedAppsList = new HashSet<>();
+    private HashSet<String> cloudSavedlist = new HashSet<>();
 
     private PackageManager packageManager;
     private String origin;
@@ -101,6 +102,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
             }
         }
         MyViewHolder holder = new MyViewHolder(view);
+        holder.successIcon.setVisibility(View.GONE);
         return holder;
     }
 
@@ -134,6 +136,8 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
         holder.appName.setText(appsListData.get(holder.getAdapterPosition()).getName());
 
+
+
         if (viewTypePref.equals(Keys.PREF_VIEWTYPE_GRID)){
             holder.apkSize.setText(apkSize);
             holder.version.setText(version);
@@ -154,7 +158,15 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
             Log.e(TAG, error.getMessage());
         }
 
-
+        if (origin.equals(Keys.ORIGIN_DEVICEAPPSFRAGMENT)) {
+            if (cloudSavedlist.contains(appsListData.get(holder.getAdapterPosition()).getPackageName())) {
+                holder.successIcon.setVisibility(View.VISIBLE);
+            }
+            else {
+                Log.d(TAG, "Not in list");
+                holder.successIcon.setVisibility(View.GONE);
+            }
+        }
         if (selectedAppsList.contains(appsListData.get(holder.getAdapterPosition()).getPackageName())){
             holder.checkBox.setChecked(true);
         }
@@ -295,6 +307,18 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
             }
         }
         return appDataItems;
+    }
+
+    public void setCloudSavedList(HashSet<String> list) {
+        this.cloudSavedlist = list;
+    }
+
+    public int getCloudSavedListSize() {
+        return cloudSavedlist.size();
+    }
+
+    public HashSet<String> getCloudSavedList() {
+        return cloudSavedlist;
     }
 
 }

@@ -18,6 +18,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
     TextView apkSize;
     TextView version;
 
+    ImageView successIcon;
     ImageView appIcon;
     CheckBox checkBox;
     LinearLayout dataView;
@@ -26,12 +27,15 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
 
     public MyViewHolder(View itemView) {
         super(itemView);
+        successIcon = (ImageView) itemView.findViewById(R.id.cloud_check_v);
         appName = (TextView) itemView.findViewById(R.id.app_name);
         apkSize = (TextView) itemView.findViewById(R.id.item_size);
         version = (TextView) itemView.findViewById(R.id.item_version);
         appIcon = (ImageView) itemView.findViewById(R.id.app_icon);
         checkBox = (CheckBox) itemView.findViewById(R.id.checkbox);
         dataView = (LinearLayout) itemView.findViewById(R.id.leftSide);
+
+
 
 
         dataView.setOnClickListener(this);

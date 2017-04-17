@@ -158,6 +158,7 @@ public class DropBoxManager {
         String separator = "_";
         cloudAppsList.clear();
         String listenTo = "CloudMainFragment";
+        String listenToo = "DeviceAppsFragment";
 
         if (cloudFilesList == null) {
             // generate empty state list
@@ -211,6 +212,9 @@ public class DropBoxManager {
         if (dropboxCallBackListenerHashMap.get(listenTo) != null ) {
             dropboxCallBackListenerHashMap.get(listenTo).onFinishGeneratingCloudList(cloudAppsList);
         }
+        if (dropboxCallBackListenerHashMap.get(listenToo) != null) {
+            dropboxCallBackListenerHashMap.get(listenToo).onFinishGeneratingCloudList(cloudAppsList);
+        }
 
     }
 
@@ -250,8 +254,10 @@ public class DropBoxManager {
         @Override
         protected void onPostExecute(Void result) {
             String cloudFragListener = "CloudMainFragment";
+            String deviceFragListener = Keys.ORIGIN_DEVICEAPPSFRAGMENT;
             if (dropboxCallBackListenerHashMap.containsKey(cloudFragListener)) {
                 dropboxCallBackListenerHashMap.get(cloudFragListener).onFinishDeletingFiles();
+
             }
             super.onPostExecute(result);
         }

@@ -46,6 +46,8 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
     private ArrayList<ApplicationInfo> appsListInfo =  new ArrayList<>();
     private ArrayList<AppDataItem> appsListData;
 
+    HashSet<String> cloudAppsList;
+
     private static final String TAG = "DeviceAppsFragment";
     private FilesUtils filesUtils;
     private AppsDataUtils appsDataUtils;
@@ -66,6 +68,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         filesUtils = FilesUtils.getInstance(getActivity().getApplicationContext());
         Log.d(TAG, "Building this Fragment!!!!");
         appsListData = new ArrayList<>();
+        cloudAppsList = new HashSet<>();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         prefs.registerOnSharedPreferenceChangeListener(this);
     }
@@ -93,29 +96,30 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
     }
 
     public void setRecyclerLayoutType(){
+//        mRecyclerView.setLayoutManager(null);
         String prefViewType = SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE_DEVICE);
         Log.d(TAG, "setRecyclerLayoutType(): " + SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE_DEVICE));
+
         switch (prefViewType) {
             case Keys.PREF_VIEWTYPE_LIST: {
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
                 mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
-                mRecyclerView.setAdapter(mAdapter);
                 break;
             }
             case Keys.PREF_VIEWTYPE_CARD: {
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
                 mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
-                mRecyclerView.setAdapter(mAdapter);
                 break;
             }
             case Keys.PREF_VIEWTYPE_GRID: {
                 mRecyclerView.setLayoutManager(new GridLayoutManager(this.getActivity(), Keys.NUMBER_OF_COLUMNS));
                 mRecyclerView.setHasFixedSize(true);
                 mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
-                mRecyclerView.setAdapter(mAdapter);
                 break;
             }
         }
+
+        mRecyclerView.setAdapter(mAdapter);
         mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
             @Override
             public void onCheckBoxClick() {
@@ -123,6 +127,9 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
             }
         });
         mAdapter.setItems(appsListData);
+
+        mAdapter.setCloudSavedList(cloudAppsList);
+        Log.d(TAG, "Setting up cloud list = " + String.valueOf(mAdapter.getSelectedAppsListSize()));
         mAdapter.notifyDataSetChanged();
 //        updateBottomBar();
     }
@@ -130,8 +137,12 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+        Log.d(TAG, "Getting nuts");
         switch (key) {
             case Keys.PREF_VIEWTYPE_DEVICE: {
+                if (mAdapter.getSelectedAppsListSize() > 0) {
+                    cloudAppsList = mAdapter.getCloudSavedList();
+                }
                 setRecyclerLayoutType();
                 break;
             }
@@ -169,7 +180,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         else {
             uninstallItem.setVisible(false);
         }
-        
+
         if (mAdapter.getSelectedAppsListSize() > 0 && dropBoxManager.isLogIn) {
             uploadItem.setVisible(true);
         }
@@ -307,9 +318,29 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
     }
 
+    public boolean isInstalled(String packageName) {
+        for (AppDataItem item: appsListData) {
+            if (packageName.equals(item.getPackageName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void onFinishGeneratingCloudList(ArrayList<AppDataItem> arrayList) {
+        cloudAppsList.clear();
+        Log.d(TAG, "onFinishGeneratingCloudList Started arrayList = " + String.valueOf(arrayList.size()));
+        Log.d(TAG, "onFinishGeneratingCloudList Started appsListData = " + String.valueOf(appsListData.size()));
+        for (AppDataItem cloudApp: arrayList) {
+            if (isInstalled(cloudApp.getPackageName()))
+                    cloudAppsList.add(cloudApp.getPackageName());
 
+        }
+        //??
+        Log.d(TAG, " Done loading list from cloud - List size is: " + String.valueOf(cloudAppsList.size()));
+        setRecyclerLayoutType();
+        updateBottomBar();
     }
 
     @Override
@@ -342,10 +373,13 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         protected void onPostExecute(Void result) {
 //            mRecyclerView.setAdapter(mAdapter);
             progress.dismiss();
-
+            Log.d(TAG, "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
             mAdapter.setItems(appsListData);
+            if (dropBoxManager.cloudAppsList.size() > 0) {
+                onFinishGeneratingCloudList(dropBoxManager.cloudAppsList);
+            }
             mAdapter.notifyDataSetChanged();
-            updateBottomBar();
+            Log.d(TAG, "LoadApplications Started appsListData = " + String.valueOf(appsListData.size()));
             super.onPostExecute(result);
         }
 
