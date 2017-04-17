@@ -99,7 +99,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 //        mRecyclerView.setLayoutManager(null);
         String prefViewType = SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE_DEVICE);
         Log.d(TAG, "setRecyclerLayoutType(): " + SharedPrefsUtils.getStringPreference(getActivity().getApplicationContext(), Keys.PREF_VIEWTYPE_DEVICE));
-
+        Log.d(TAG, "onFinishGeneratingCloudList Started appsListData = " + String.valueOf(appsListData.size()));
         switch (prefViewType) {
             case Keys.PREF_VIEWTYPE_LIST: {
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));

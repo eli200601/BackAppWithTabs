@@ -56,7 +56,7 @@ public class AppsDataUtils {
     }
 
     public void startGettingInfo(){
-
+        appsListInfo.clear();
         appsListInfo = new ArrayList<>(packageManager.getInstalledApplications(PackageManager.GET_META_DATA));
         Log.d(TAG, appsListInfo.toString());
         appsListInfo = filterApplicationList(appsListInfo);
@@ -86,7 +86,7 @@ public class AppsDataUtils {
         String version = null;
         boolean isCloudApp = false;
 
-
+        appsListData.clear();
         for (ApplicationInfo info : appsListInfo){
 
             name = packageManager.getApplicationLabel(info).toString();
