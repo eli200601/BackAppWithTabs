@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -102,7 +104,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
             }
         }
         MyViewHolder holder = new MyViewHolder(view);
-        holder.successIcon.setVisibility(View.GONE);
+        holder.successIcon.setVisibility(View.INVISIBLE);
         return holder;
     }
 
@@ -160,11 +162,14 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
         if (origin.equals(Keys.ORIGIN_DEVICEAPPSFRAGMENT)) {
             if (cloudSavedlist.contains(appsListData.get(holder.getAdapterPosition()).getPackageName())) {
+//                Animation container_fade = AnimationUtils.loadAnimation(context, R.anim.alpha);
+//                container_fade.reset();
+//                holder.successIcon.startAnimation(container_fade);
                 holder.successIcon.setVisibility(View.VISIBLE);
             }
             else {
                 Log.d(TAG, "Not in list");
-                holder.successIcon.setVisibility(View.GONE);
+                holder.successIcon.setVisibility(View.INVISIBLE);
             }
         }
         if (selectedAppsList.contains(appsListData.get(holder.getAdapterPosition()).getPackageName())){
