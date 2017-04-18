@@ -181,11 +181,8 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 holder.successIcon.setVisibility(View.INVISIBLE);
             }
         }
-        if (origin.equals(Keys.ORIGIN_CLOUDMAINFRAGMENT)) {
-            if (appsListData.get(holder.getAdapterPosition()).isCloudApp()) {
-                Log.d(TAG, "This is cloud app, setting up apk button");
-                holder.shareAPK.setVisibility(View.VISIBLE);
-                appsListData.get(holder.getAdapterPosition());
+        if (viewTypePref.equals(Keys.PREF_VIEWTYPE_CARD)) {
+            if (holder.shareAPK != null) {
                 holder.shareAPK.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -195,10 +192,19 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                     }
                 });
             }
+
+            if (origin.equals(Keys.ORIGIN_CLOUDMAINFRAGMENT)) {
+                if (appsListData.get(holder.getAdapterPosition()).isCloudApp()) {
+                    Log.d(TAG, "This is cloud app, setting up apk button");
+                    holder.shareAPK.setVisibility(View.VISIBLE);
+                    appsListData.get(holder.getAdapterPosition());
+                }
+            }
             else {
                 holder.shareAPK.setVisibility(View.GONE);
             }
         }
+
 
 
         if (selectedAppsList.contains(appsListData.get(holder.getAdapterPosition()).getPackageName())){
