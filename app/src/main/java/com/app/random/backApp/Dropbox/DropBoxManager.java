@@ -18,8 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static android.R.attr.delay;
-
 public class DropBoxManager {
 
     public enum State {
@@ -42,7 +40,7 @@ public class DropBoxManager {
 
 
 
-    public static DropBoxManager getInstance(Context context) {
+    public static synchronized DropBoxManager getInstance(Context context) {
         if (instance == null) {
             instance = new DropBoxManager(context);
         }

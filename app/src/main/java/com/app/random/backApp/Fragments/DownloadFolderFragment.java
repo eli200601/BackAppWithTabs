@@ -1,20 +1,19 @@
 package com.app.random.backApp.Fragments;
 
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,7 +33,6 @@ import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 public class DownloadFolderFragment extends Fragment implements SharedPreferences.OnSharedPreferenceChangeListener{
 
@@ -72,14 +70,62 @@ public class DownloadFolderFragment extends Fragment implements SharedPreference
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_folder);
         setRecyclerLayoutType();
 
-        //Starting to load applications here
         appsListData = appsDataUtils.getFolderAppsList();
         mAdapter.setItems(appsListData);
         mAdapter.notifyDataSetChanged();
+
+        //Starting to load applications here
+//        isStoragePermissionGranted();
+
+
         listAmountTextField = (TextView) view.findViewById(R.id.itemsInListValueText_folder);
         selectedAmountTextField = (TextView) view.findViewById(R.id.ItemsSelectedValueText_folder);
         updateBottomBar();
         return view;
+    }
+
+    public boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (getContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE ) == PackageManager.PERMISSION_GRANTED ) {
+                Log.v(TAG,"Permission is granted");
+                appsListData = appsDataUtils.getFolderAppsList();
+                mAdapter.setItems(appsListData);
+                mAdapter.notifyDataSetChanged();
+                return true;
+            } else {
+                Log.v(TAG,"Permission is revoked");
+                String[] permissions = new String[]{
+//                        android.Manifest.permission.INTERNET,
+//                        android.Manifest.permission.READ_PHONE_STATE,
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+                        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+//
+                };
+                requestPermissions(permissions, 1);
+//                && getContext().checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+//                requestPermissions(new String[]{ android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permission is granted");
+            appsListData = appsDataUtils.getFolderAppsList();
+            mAdapter.setItems(appsListData);
+            mAdapter.notifyDataSetChanged();
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.v(TAG,"onRequestPermissionsResult start grantResults.size = " + String.valueOf(grantResults.length));
+        if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.v(TAG,"Permission: "+permissions[0]+ " was " + grantResults[0]);
+            appsListData = appsDataUtils.getFolderAppsList();
+            mAdapter.setItems(appsListData);
+            mAdapter.notifyDataSetChanged();
+        }
     }
 
     public void updateBottomBar() {

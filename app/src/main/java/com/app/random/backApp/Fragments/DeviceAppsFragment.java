@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -90,10 +91,16 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         setRecyclerLayoutType();
 
+
         new LoadApplications().execute();
+
 
         return view;
     }
+
+
+
+
 
     public void setRecyclerLayoutType(){
 //        mRecyclerView.setLayoutManager(null);
@@ -276,6 +283,26 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                 break;
         }
         return result;
+    }
+
+    public void uninstallAppFromList(ArrayList<AppDataItem> list) {
+        for (AppDataItem item: list) {
+            Intent intent = new Intent(Intent.ACTION_DELETE);
+            intent.setData(Uri.parse("package:" + item.getPackageName()));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivityForResult(intent, 1);
+        }
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "Finish uninstall... onActivityResult start | resultCode = " + String.valueOf(resultCode));
+        if (requestCode == 1) {
+            new LoadApplications().execute();
+//            setRecyclerLayoutType();
+        }
     }
 
     @Override

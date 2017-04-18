@@ -1,11 +1,9 @@
 package com.app.random.backApp.Utils;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -265,6 +263,7 @@ public class AppsDataUtils {
         folderAppsList.clear();
 
         Log.d("Files", "Path: " + pathLocal);
+
         File directory = new File(pathLocal);
         File[] files = directory.listFiles();
         Log.d("Files", "Size: " + files.length);
@@ -299,6 +298,13 @@ public class AppsDataUtils {
                     folderAppsList.add(appItem);
                 }
             }
+        }
+        Log.d(TAG, "folderAppsList size is: " + String.valueOf(folderAppsList.size()));
+        if (folderAppsList.size() == 0) {
+            Log.d(TAG, "Create empty state");
+            AppDataItem appItem = new AppDataItem("There is no applications", "Please backup your apps", "/", "v1.0", true);
+            appItem.setApkSize("0.00b");
+            folderAppsList.add(appItem);
         }
         if (folderAppsList != null) {
             if (sortType == 0 ) {
