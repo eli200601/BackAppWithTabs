@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         setSupportActionBar(toolbar);
 
         filesUtils = FilesUtils.getInstance(getApplicationContext());
-
+        dropBoxManager = DropBoxManager.getInstance(getApplicationContext());
         if (SharedPrefsUtils.getStringPreference(getApplicationContext(),Keys.PREF_ACTIVATE) == null) {
             Intent myIntent = new Intent(getApplicationContext(), SplashScreenActivity.class);
 //            myIntent.putExtra("key", value); //Optional parameters
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
             isStoragePermissionGranted();
         }
 
-        dropBoxManager = DropBoxManager.getInstance(getApplicationContext());
+
 
 //        setSectionsPagerAdapter();
 
