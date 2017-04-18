@@ -168,7 +168,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
         catch (PackageManager.NameNotFoundException error) {
             Log.e(TAG, error.getMessage());
         }
-
+        // Display Success icon on item only on DeviceAppsFragment
         if (origin.equals(Keys.ORIGIN_DEVICEAPPSFRAGMENT)) {
             if (cloudSavedlist.contains(appsListData.get(holder.getAdapterPosition()).getPackageName())) {
 //                Animation container_fade = AnimationUtils.loadAnimation(context, R.anim.alpha);
@@ -181,6 +181,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 holder.successIcon.setVisibility(View.INVISIBLE);
             }
         }
+        //Display Share URL button on card
         if (viewTypePref.equals(Keys.PREF_VIEWTYPE_CARD)) {
             if (holder.shareAPK != null) {
                 holder.shareAPK.setOnClickListener(new View.OnClickListener() {
@@ -192,7 +193,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                     }
                 });
             }
-
             if (origin.equals(Keys.ORIGIN_CLOUDMAINFRAGMENT)) {
                 if (appsListData.get(holder.getAdapterPosition()).isCloudApp()) {
                     Log.d(TAG, "This is cloud app, setting up apk button");
@@ -204,6 +204,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 holder.shareAPK.setVisibility(View.GONE);
             }
         }
+
 
 
 

@@ -4,6 +4,8 @@ package com.app.random.backApp.Fragments;
 import android.app.ActivityManager;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -27,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
@@ -421,7 +424,7 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         }
 
     }
-    public void createShareAPKDialog(AppDataItem app, Date expires, String url) {
+    public void createShareAPKDialog(AppDataItem app, Date expires, final String url) {
         // custom dialog
 //        Log.d(TAG, "position is: " + String.valueOf(position));
 
@@ -449,6 +452,18 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
 
         mBuilder.setView(mView);
         final AlertDialog dialog = mBuilder.create();
+
+        // Dialog Listeners
+
+        dialog_copy_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(getContext().CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("url", url);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getContext(), "copied to clipboard", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         dialog_done_button.setOnClickListener(new View.OnClickListener() {
             @Override
