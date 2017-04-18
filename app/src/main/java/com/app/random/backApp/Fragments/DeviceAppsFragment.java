@@ -132,6 +132,11 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
             public void onCheckBoxClick() {
                 updateBottomBar();
             }
+
+            @Override
+            public void onShareAPKButtonClick(AppDataItem app) {
+
+            }
         });
         mAdapter.setItems(appsListData);
 

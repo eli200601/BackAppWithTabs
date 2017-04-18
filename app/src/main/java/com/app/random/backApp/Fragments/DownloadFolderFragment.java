@@ -169,6 +169,11 @@ public class DownloadFolderFragment extends Fragment implements SharedPreference
             public void onCheckBoxClick() {
                 updateBottomBar();
             }
+
+            @Override
+            public void onShareAPKButtonClick(AppDataItem app) {
+
+            }
         });
         mAdapter.setItems(appsListData);
         mAdapter.notifyDataSetChanged();

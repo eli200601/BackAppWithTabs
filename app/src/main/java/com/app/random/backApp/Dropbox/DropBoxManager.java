@@ -216,6 +216,16 @@ public class DropBoxManager {
 
     }
 
+    public DropboxAPI.DropboxLink shareAPKFromItem(AppDataItem app) {
+        DropboxAPI.DropboxLink app_shere = null;
+        try {
+            app_shere = mDBApi.share(app.getSourceDir());
+        } catch (DropboxException e) {
+            e.printStackTrace();
+        }
+        return app_shere;
+    }
+
 
 
     public void deleteFileListFromCloud(List<AppDataItem> appDataItems) {

@@ -2,17 +2,21 @@ package com.app.random.backApp.Fragments;
 
 
 import android.app.ActivityManager;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,6 +24,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.app.random.backApp.Dropbox.DropBoxManager;
@@ -35,8 +41,10 @@ import com.app.random.backApp.Utils.ConnectionDetector;
 import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
+import com.dropbox.client2.DropboxAPI;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -156,6 +164,13 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
             @Override
             public void onCheckBoxClick() {
                 updateBottomBar();
+            }
+
+            @Override
+            public void onShareAPKButtonClick(AppDataItem app) {
+                //Do Stuff hare
+                Log.d(TAG, "Here is onShareAPKButtonClick");
+                new GetShareAPKURL().execute(app);
             }
         });
         mAdapter.setItems(appsListData);
@@ -406,7 +421,81 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         }
 
     }
+    public void createShareAPKDialog(AppDataItem app, Date expires, String url) {
+        // custom dialog
+//        Log.d(TAG, "position is: " + String.valueOf(position));
 
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+        View mView = View.inflate(getContext(),R.layout.share_cloud_dialog, null);
+
+        TextView dialog_title = (TextView) mView.findViewById(R.id.title_share_dialog);
+        TextView dialog_app_name = (TextView) mView.findViewById(R.id.app_name_share_dialog);
+        TextView dialog_app_version = (TextView) mView.findViewById(R.id.app_version_share_dialog);
+        TextView dialog_app_size = (TextView) mView.findViewById(R.id.app_size_share_dialog);
+        EditText dialog_url_edit_text = (EditText)  mView.findViewById(R.id.share_url_edit_text_dialog);
+        TextView dialog_expiration = (TextView) mView.findViewById(R.id.link_expire_dialog);
+        Button dialog_copy_button = (Button) mView.findViewById(R.id.copy_to_clipboard_dialog);
+        Button dialog_share_button = (Button) mView.findViewById(R.id.share_url_button_dialog);
+        Button dialog_done_button = (Button) mView.findViewById(R.id.done_share_apk_dialog);
+
+        String dateString = "URL expire on: " + DateFormat.format("MM/dd/yyyy", new Date(expires.getTime())).toString();
+        Log.d(TAG, "Date Stirng = " + dateString);
+
+        dialog_app_name.setText(app.getName());
+        dialog_app_version.setText(app.getAppVersion());
+        dialog_app_size.setText(app.getApkSize());
+        dialog_url_edit_text.setText(url);
+        dialog_expiration.setText(dateString);
+
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+
+        dialog_done_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+        dialog.show();
+    }
+
+    private class GetShareAPKURL extends AsyncTask<AppDataItem, Void, DropboxAPI.DropboxLink> {
+        private ProgressDialog progress = null;
+        private AppDataItem appDataItem;
+
+        @Override
+        protected DropboxAPI.DropboxLink doInBackground(AppDataItem... params) {
+            Log.d(TAG,"GetShareAPKURL doInBackground");
+            DropboxAPI.DropboxLink app_share = null;
+            app_share = dropBoxManager.shareAPKFromItem(params[0]);
+            appDataItem = params[0];
+            return app_share;
+
+        }
+
+        @Override
+        protected void onPostExecute(DropboxAPI.DropboxLink result) {
+//            mRecyclerView.setAdapter(mAdapter);
+            progress.dismiss();
+            Log.d(TAG, "app_share is: " + String.valueOf(result == null));
+            if (result != null) {
+                createShareAPKDialog(appDataItem, result.expires, result.url);
+            }
+
+            super.onPostExecute(result);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progress = ProgressDialog.show(getContext(), "Generating", "Generating share url...");
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+        }
+    }
 
     public class OnFinishUploadReceiver extends BroadcastReceiver {
 

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/list_view_item_shape">
+
+
+    <TextView
+        android:id="@+id/title_share_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="5dp"
+        android:text="Share you APK"
+        android:textColor="@color/colorPrimary"
+        android:textSize="20dp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/app_name_share_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_below="@+id/title_share_dialog"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="20dp"
+        android:text="App name"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/app_version_share_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/app_name_share_dialog"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="5dp"
+        android:text="App version"
+
+        />
+    <TextView
+        android:id="@+id/app_size_share_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/app_version_share_dialog"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="5dp"
+        android:text="App size"
+        />
+
+    <EditText
+        android:id="@+id/share_url_edit_text_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/app_size_share_dialog"
+        android:paddingTop="20dp"
+        android:text="URL: Http://"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="16dp" />
+
+    <TextView
+        android:id="@+id/link_expire_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/share_url_edit_text_dialog"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="5dp"
+        android:text="expiration date"
+        />
+
+    <Button
+        android:id="@+id/copy_to_clipboard_dialog"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/link_expire_dialog"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:onClick="copyToClipboardClicked"
+        android:text="COPY TO CLIPBOARD" />
+
+    <Button
+        android:id="@+id/share_url_button_dialog"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/copy_to_clipboard_dialog"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:onClick="shareURLClicked"
+        android:text="Share URL" />
+
+    <Button
+        android:id="@+id/done_share_apk_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@+id/share_url_button_dialog"
+        android:text="Done"
+        android:textColor="@color/cardview_light_background"
+        android:background="@color/colorPrimary"
+        android:shadowColor="@color/cardview_dark_background"
+        android:onClick="doneShareClicked"
+
+
+        />
+
+    <!--<ProgressBar-->
+        <!--android:id="@+id/loading_share_apk_dialog"-->
+        <!--style="?android:attr/progressBarStyle"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_above="@+id/copy_to_clipboard_dialog"-->
+        <!--android:layout_alignStart="@+id/app_size_share_dialog" />-->
+
+</RelativeLayout>
