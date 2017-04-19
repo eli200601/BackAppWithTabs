@@ -104,10 +104,34 @@
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/app_icon"
+                android:layout_below="@+id/leftSide"
                 android:layout_toEndOf="@+id/app_icon"
                 android:text="@string/share_apk_card_action"
                 android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                android:textAlignment="textStart"/>
+
+            <Button
+                android:id="@+id/download_apk_card_action"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/share_apk_card_action"
+                android:layout_toEndOf="@+id/app_icon"
+                android:text="Download APK"
+                android:textColor="@color/colorAccent"
+                android:textStyle="bold"
+                android:textAlignment="textStart"/>
+
+            <Button
+                android:id="@+id/delete_apk_card_action"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/download_apk_card_action"
+                android:layout_toEndOf="@+id/app_icon"
+                android:text="@string/delete_apk_cad_action"
+                android:textColor="@color/colorRed"
                 android:textStyle="bold"
                 android:textAlignment="textStart"/>
         </RelativeLayout>

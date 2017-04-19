@@ -7,4 +7,5 @@
     <color name="colorGrayLighter">#ddd</color>
     <color name="colorGray">#aaa</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorRed">#CC0000</color>
 </resources>

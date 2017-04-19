@@ -177,7 +177,46 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
                 Log.d(TAG, "Here is onShareAPKButtonClick");
                 new GetShareAPKURL().execute(app);
             }
+
+            @Override
+            public void onDownloadAPKButtonClick(AppDataItem app) {
+                Log.d(TAG, "Here is onDownloadAPKButtonClick");
+                if (new ConnectionDetector(getActivity().getApplicationContext()).isConnectedToInternet()) {
+                    Log.d(TAG, "There is connection...");
+                    Bundle bundle = new Bundle();
+                    ArrayList<AppDataItem> list = new ArrayList<AppDataItem>();
+                    list.add(app);
+                    bundle.putSerializable(Keys.APPS_DOWNLOAD_ARRAYLIST, list);
+                    Intent intent = new Intent(getActivity().getApplicationContext(), DropboxDownloadService.class);
+                    intent.putExtras(bundle);
+                    mAdapter.clearSelectedList();
+                    mAdapter.notifyDataSetChanged();
+                    Snackbar.make(getView(), "Starting to download the selected files", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    Log.d(TAG, "Starting the intent....");
+                    getActivity().startService(intent);
+                }
+                else {
+                    Log.d(TAG, "There is NO connection!");
+                    Snackbar.make(getView(), "No connection to internet, Turn on your WiFi/3G", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            }
+
+            @Override
+            public void onDeleteAPKButtonClick(AppDataItem app) {
+                if (new ConnectionDetector(getActivity().getApplicationContext()).isConnectedToInternet()) {
+                    Log.d(TAG, "There is connection...");
+                    ArrayList<AppDataItem> list = new ArrayList<AppDataItem>();
+                    list.add(app);
+                    dropBoxManager.deleteFileListFromCloud(list);
+                    mAdapter.clearSelectedList();
+                }
+                else {
+                    Log.d(TAG, "There is NO connection!");
+                    Snackbar.make(getView(), "No connection to internet, Turn on your WiFi/3G", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            }
         });
+
         mAdapter.setItems(appsListData);
         mAdapter.notifyDataSetChanged();
 //        updateBottomBar();
@@ -285,7 +324,8 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
                         dropBoxManager.deleteFileListFromCloud(mAdapter.getSelectedAppsListCloud());
                         mAdapter.clearSelectedList();
                     }
-                }else {
+                }
+                else {
                     Log.d(TAG, "There is NO connection!");
                     Snackbar.make(getView(), "No connection to internet, Turn on your WiFi/3G", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }

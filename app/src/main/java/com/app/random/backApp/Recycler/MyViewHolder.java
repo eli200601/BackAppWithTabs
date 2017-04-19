@@ -6,11 +6,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.random.backApp.R;
-import com.app.random.backApp.Utils.SharedPrefsUtils;
 
 
 public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -25,6 +23,9 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
     LinearLayout dataView;
 
     Button shareAPK;
+    Button downloadAPK;
+    Button deleteAPK;
+
 
     ItemClickListener itemClickListener;
 
@@ -38,6 +39,8 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
         checkBox = (CheckBox) itemView.findViewById(R.id.checkbox);
         dataView = (LinearLayout) itemView.findViewById(R.id.leftSide);
         shareAPK = (Button) itemView.findViewById((R.id.share_apk_card_action));
+        downloadAPK = (Button) itemView.findViewById((R.id.download_apk_card_action));
+        deleteAPK = (Button) itemView.findViewById((R.id.delete_apk_card_action));
 
         dataView.setOnClickListener(this);
     }

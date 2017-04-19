@@ -137,6 +137,16 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
             public void onShareAPKButtonClick(AppDataItem app) {
 
             }
+
+            @Override
+            public void onDownloadAPKButtonClick(AppDataItem app) {
+
+            }
+
+            @Override
+            public void onDeleteAPKButtonClick(AppDataItem app) {
+
+            }
         });
         mAdapter.setItems(appsListData);
 

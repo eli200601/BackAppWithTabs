@@ -2,38 +2,25 @@ package com.app.random.backApp.Recycler;
 
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
-import android.text.format.Formatter;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.app.random.backApp.Dropbox.DropBoxManager;
-import com.app.random.backApp.MainActivity;
 import com.app.random.backApp.R;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
-import com.dropbox.client2.DropboxAPI;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 
 
@@ -181,15 +168,29 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 holder.successIcon.setVisibility(View.INVISIBLE);
             }
         }
-        //Display Share URL button on card
+        //Display Share URL, download and delete buttons on card
         if (viewTypePref.equals(Keys.PREF_VIEWTYPE_CARD)) {
             if (holder.shareAPK != null) {
                 holder.shareAPK.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         // go to Acync Task
-                        Log.d(TAG, "Clicked on Share button");
+                        Log.d(TAG, "Clicked on Share button on card");
                         updateBottomBar.onShareAPKButtonClick(appsListData.get(holder.getAdapterPosition()));
+                    }
+                });
+                holder.downloadAPK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(TAG, "Clicked on download button on card");
+                        updateBottomBar.onDownloadAPKButtonClick(appsListData.get(holder.getAdapterPosition()));
+                    }
+                });
+                holder.deleteAPK.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Log.d(TAG, "Clicked on delete button on card");
+                        updateBottomBar.onDeleteAPKButtonClick(appsListData.get(holder.getAdapterPosition()));
                     }
                 });
             }
@@ -197,11 +198,16 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 if (appsListData.get(holder.getAdapterPosition()).isCloudApp()) {
                     Log.d(TAG, "This is cloud app, setting up apk button");
                     holder.shareAPK.setVisibility(View.VISIBLE);
-                    appsListData.get(holder.getAdapterPosition());
+                    holder.downloadAPK.setVisibility(View.VISIBLE);
+                    holder.deleteAPK.setVisibility(View.VISIBLE);
+
                 }
             }
             else {
                 holder.shareAPK.setVisibility(View.GONE);
+                holder.downloadAPK.setVisibility(View.GONE);
+                holder.deleteAPK.setVisibility(View.GONE);
+
             }
         }
 
