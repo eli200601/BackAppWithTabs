@@ -192,10 +192,11 @@ public class DropboxUploadIntentService extends IntentService {
 
     private String createFileNameToUpload(AppDataItem item) {
         String name;
+//        String space = "_";
         String separator = "_";
         String ending = ".apk";
 
-        name = item.getName().replace(" ", "") + separator + item.getPackageName().trim() + separator +
+        name = item.getName() + separator + item.getPackageName().trim() + separator +
                 item.getAppVersion() + ending;
 
         return name;

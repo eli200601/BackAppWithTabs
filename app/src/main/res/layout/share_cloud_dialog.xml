@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,50 +16,71 @@
         android:paddingTop="5dp"
         android:text="Share your APK"
         android:textColor="@color/colorPrimary"
-        android:textSize="20dp"
+        android:textSize="22dp"
         android:textStyle="bold"/>
 
-    <TextView
-        android:id="@+id/app_name_share_dialog"
+    <RelativeLayout
+        android:id="@+id/share_container_dialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:layout_below="@+id/title_share_dialog"
         android:layout_centerHorizontal="true"
-        android:paddingTop="20dp"
-        android:text="App name"
-        android:textStyle="bold"
-        />
+        android:layout_marginTop="20dp"
+        android:layout_below="@+id/title_share_dialog">
 
-    <TextView
-        android:id="@+id/app_version_share_dialog"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/app_name_share_dialog"
-        android:layout_centerHorizontal="true"
-        android:paddingTop="5dp"
-        android:text="App version"
+        <ImageView
+            android:id="@+id/share_app_icon_apk_dialog"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            app:srcCompat="@mipmap/ic_launcher" />
 
-        />
-    <TextView
-        android:id="@+id/app_size_share_dialog"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/app_version_share_dialog"
-        android:layout_centerHorizontal="true"
-        android:paddingTop="5dp"
-        android:text="App size"
-        />
+        <TextView
+            android:id="@+id/app_name_share_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/share_app_icon_apk_dialog"
+            android:layout_marginStart="20dp"
+            android:text="App name"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/app_version_share_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:text="App version"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@+id/share_app_icon_apk_dialog"
+            android:layout_below="@+id/app_name_share_dialog"
+
+            />
+
+        <TextView
+            android:id="@+id/app_size_share_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_version_share_dialog"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@+id/share_app_icon_apk_dialog"
+            android:paddingTop="5dp"
+            android:text="App size"
+            />
+
+
+
+    </RelativeLayout>
+
 
     <EditText
         android:id="@+id/share_url_edit_text_dialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/share_container_dialog"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/app_size_share_dialog"
         android:paddingTop="20dp"
         android:text="URL: Http://"
         android:textColor="@color/colorPrimaryDark"
+        android:textColorLink="@color/colorBlack"
         android:textSize="16dp" />
 
     <TextView
@@ -68,6 +90,7 @@
         android:layout_below="@+id/share_url_edit_text_dialog"
         android:layout_centerHorizontal="true"
         android:paddingTop="5dp"
+        android:textSize="12dp"
         android:text="expiration date"
         />
 
@@ -100,7 +123,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="10dp"
         android:layout_below="@+id/share_url_button_dialog"
         android:text="Done"
         android:textColor="@color/cardview_light_background"
@@ -110,6 +133,8 @@
 
 
         />
+
+
 
     <!--<ProgressBar-->
         <!--android:id="@+id/loading_share_apk_dialog"-->

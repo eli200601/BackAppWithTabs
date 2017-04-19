@@ -139,6 +139,8 @@ public class DropBoxManager {
     }
 
     public static String deCamelCasealize(String camelCasedString) {
+        Log.d(TAG, "deCamelCasealize - name before = " + camelCasedString);
+        Log.d(TAG, "try = " + camelCasedString.replaceAll("(\\p{Ll})(\\p{Lu})","$1 $2"));
         if (camelCasedString == null || camelCasedString.isEmpty())
             return camelCasedString;
 
@@ -148,6 +150,8 @@ public class DropBoxManager {
             if (Character.isUpperCase(camelCasedString.charAt(i))) result.append(" ");
             result.append(camelCasedString.charAt(i));
         }
+        Log.d(TAG, "deCamelCasealize - name After = " + result.toString());
+
         return result.toString();
     }
 
@@ -177,9 +181,12 @@ public class DropBoxManager {
 
                             fileNameOutput = entry.fileName().split(separator);
                             try {
-                                appName = deCamelCasealize(fileNameOutput[0].trim());
+                                appName = fileNameOutput[0];
                                 appPackageName = fileNameOutput[1].trim();
                                 appVersion = fileNameOutput[2].trim().replace(".apk", "");
+                                if (!appVersion.contains("v")) {
+                                    appVersion = "v" + appVersion;
+                                }
                             }
                             catch (IndexOutOfBoundsException e) {
                                 Log.e(TAG, "Cannot resolve file type");

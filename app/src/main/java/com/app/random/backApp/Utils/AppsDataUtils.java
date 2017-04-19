@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 
-import static com.app.random.backApp.Dropbox.DropBoxManager.deCamelCasealize;
-
 
 public class AppsDataUtils {
 
@@ -280,7 +278,7 @@ public class AppsDataUtils {
 
                 fileNameOutput = file.getName().split(separator);
                 try {
-                    appName = deCamelCasealize(fileNameOutput[0].trim());
+                    appName = fileNameOutput[0];
                     appPackageName = fileNameOutput[1].trim();
                     appVersion = fileNameOutput[2].trim().replace(".apk", "");
                     fileSize = Formatter.formatFileSize(context, file.length());

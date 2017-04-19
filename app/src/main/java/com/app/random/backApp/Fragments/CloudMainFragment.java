@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -424,7 +426,7 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         }
 
     }
-    public void createShareAPKDialog(AppDataItem app, Date expires, final String url) {
+    public void createShareAPKDialog(final AppDataItem app, Date expires, final String url) {
         // custom dialog
 //        Log.d(TAG, "position is: " + String.valueOf(position));
 
@@ -432,6 +434,7 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         View mView = View.inflate(getContext(),R.layout.share_cloud_dialog, null);
 
         TextView dialog_title = (TextView) mView.findViewById(R.id.title_share_dialog);
+        ImageView dialog_app_icon = (ImageView) mView.findViewById(R.id.share_app_icon_apk_dialog);
         TextView dialog_app_name = (TextView) mView.findViewById(R.id.app_name_share_dialog);
         TextView dialog_app_version = (TextView) mView.findViewById(R.id.app_version_share_dialog);
         TextView dialog_app_size = (TextView) mView.findViewById(R.id.app_size_share_dialog);
@@ -441,8 +444,8 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         Button dialog_share_button = (Button) mView.findViewById(R.id.share_url_button_dialog);
         Button dialog_done_button = (Button) mView.findViewById(R.id.done_share_apk_dialog);
 
-        String dateString = "URL expire on: " + DateFormat.format("MM/dd/yyyy", new Date(expires.getTime())).toString();
-        Log.d(TAG, "Date Stirng = " + dateString);
+        String dateString = "URL expired on: " + DateFormat.format("MM/dd/yyyy", new Date(expires.getTime())).toString();
+        Log.d(TAG, "Date String = " + dateString);
 
         dialog_app_name.setText(app.getName());
         dialog_app_version.setText(app.getAppVersion());
@@ -453,12 +456,20 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         mBuilder.setView(mView);
         final AlertDialog dialog = mBuilder.create();
 
-        // Dialog Listeners
+        try {
+            dialog_app_icon.setImageDrawable(getActivity().getPackageManager().getApplicationIcon(app.getPackageName()));
+        }
+        catch (PackageManager.NameNotFoundException error) {
+            Log.e(TAG, error.getMessage());
+            dialog_app_icon.setImageResource(R.mipmap.ic_launcher);
+        }
 
+        // **************************Dialog Listeners **********************************
         dialog_copy_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Click on Copy to clipboard
+
                 ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(getContext().CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("url", url);
                 clipboard.setPrimaryClip(clip);
@@ -472,8 +483,9 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
                 //Click on Share url
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                String share = SharedPrefsUtils.getStringPreference(getContext(), Keys.DROPBOX_USER_NAME) + ", want's to share a file: " + url;
-                sendIntent.putExtra(Intent.EXTRA_TEXT, share);
+                String share = SharedPrefsUtils.getStringPreference(getContext(), Keys.DROPBOX_USER_NAME) + ", want's to share an apk file: " + url;
+                String text = "\nApp Name: " + app.getName() + " | Version: " + app.getAppVersion() + " | File size: " + app.getApkSize() + " |";
+                        sendIntent.putExtra(Intent.EXTRA_TEXT, share + text);
                 sendIntent.setType("text/plain");
                 startActivity(sendIntent);
             }
