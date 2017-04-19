@@ -458,10 +458,24 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         dialog_copy_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // Click on Copy to clipboard
                 ClipboardManager clipboard = (ClipboardManager)getActivity().getSystemService(getContext().CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("url", url);
                 clipboard.setPrimaryClip(clip);
                 Toast.makeText(getContext(), "copied to clipboard", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        dialog_share_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Click on Share url
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                String share = SharedPrefsUtils.getStringPreference(getContext(), Keys.DROPBOX_USER_NAME) + ", want's to share a file: " + url;
+                sendIntent.putExtra(Intent.EXTRA_TEXT, share);
+                sendIntent.setType("text/plain");
+                startActivity(sendIntent);
             }
         });
 
