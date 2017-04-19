@@ -7,6 +7,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_P" />
+
 
 
 
@@ -91,6 +95,9 @@
         <service android:enabled="true" android:name=".Services.DropboxDownloadService" />
 
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="9b1db7c71433d6e8faeaef73b88db01bd223bf13" />
     </application>
 
 </manifest>

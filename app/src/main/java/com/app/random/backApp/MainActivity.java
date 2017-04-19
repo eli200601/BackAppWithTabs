@@ -25,6 +25,7 @@ import com.app.random.backApp.Utils.ConnectionDetector;
 import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
 
@@ -290,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
     @Override
     public void onUserNameReceived() {
+        Crashlytics.setUserName(SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.DROPBOX_USER_NAME + " " + Keys.DROPBOX_LAST_NAME));
         invalidateOptionsMenu();
     }
 

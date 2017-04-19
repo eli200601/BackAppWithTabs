@@ -6,9 +6,11 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -20,6 +22,7 @@ import java.util.regex.Pattern;
 
 
 public class AccountInfoFragment extends Fragment {
+    final static String TAG = "AccountInfoFragment";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +38,7 @@ public class AccountInfoFragment extends Fragment {
         TextView referralText = (TextView) view.findViewById(R.id.info_referralURL);
         TextView totalSpaceText = (TextView) view.findViewById(R.id.info_total_space_text);
         TextView url = (TextView) view.findViewById(R.id.info_url_text);
+        Button btn = (Button) view.findViewById(R.id.force_crash_button);
 
         final TextView usedSpaceText = (TextView) view.findViewById(R.id.info_space_text);
 
@@ -68,6 +72,13 @@ public class AccountInfoFragment extends Fragment {
 
         totalSpaceText.setText("Total: " + sizeTotalText);
 
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "starting crashing");
+                throw new RuntimeException("This is a crash");
+            }
+        });
 
         final ValueAnimator animator = new ValueAnimator();
         animator.setObjectValues(0, targetProgress);
@@ -98,4 +109,6 @@ public class AccountInfoFragment extends Fragment {
     public void onPause() {
         super.onPause();
     }
+
+
 }

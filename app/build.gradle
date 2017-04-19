@@ -1,4 +1,19 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 
 android {
     compileSdkVersion 24
@@ -9,7 +24,7 @@ android {
         targetSdkVersion 24
 
         versionCode 1
-        versionName "1.0"
+        versionName "1.05"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -38,5 +53,8 @@ dependencies {
     compile 'com.cloudrail:cloudrail-si-android:2.16.2'
     compile 'com.google.code.gson:gson:2.8.0'
     testCompile 'junit:junit:4.12'
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
+        transitive = true;
+    }
 
 }
