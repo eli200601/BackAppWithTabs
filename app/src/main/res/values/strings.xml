@@ -31,8 +31,9 @@
     <string name="action_delete">Delete</string>
     <string name="action_delete_file">Delete file</string>
     <string name="uninstall_apk">Uninstall</string>
-    <string name="share_apk_card_action">Share APK</string>
-    <string name="delete_apk_cad_action">Delete APK</string>
+    <string name="share_apk_card_action">Share</string>
+    <string name="delete_apk_cad_action">Delete</string>
+    <string name="download_apk_card_action">Download</string>
 
 
 </resources>

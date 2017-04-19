@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat.Builder;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.app.random.backApp.Dropbox.DropBoxManager;
@@ -92,6 +93,7 @@ public class DropboxUploadIntentService extends IntentService {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intentA, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(contentIntent);
         mBuilder.setAutoCancel(true);
+        mBuilder.setColor(ContextCompat.getColor(context, R.color.colorPrimary));
         // Starting to upload each app in the list
         for (AppDataItem item: new ArrayList<>(dirList)) {
             String fileName = createFileNameToUpload(item);

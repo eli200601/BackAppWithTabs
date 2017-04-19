@@ -34,7 +34,7 @@
             <LinearLayout
                 android:id="@+id/leftSide"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="70dp"
                 android:layout_alignParentTop="true"
                 android:layout_toLeftOf="@+id/item_left_checkbox"
                 android:layout_toRightOf="@+id/app_icon"
@@ -43,35 +43,19 @@
 
                 <TextView
                     android:id="@+id/app_name"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:paddingTop="2dp"
-                    android:text="Example Header"
+                    android:paddingTop="15dp"
                     android:textAlignment="viewStart"
+
+                    android:text="Example Header"
+
+
                     android:textColor="@color/colorBlack"
-                    android:textSize="18dp"
+                    android:textSize="22dp"
                     android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/item_size"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/app_name"
-                    android:paddingLeft="5dp"
-                    android:paddingTop="0dp"
-                    android:text="APK Size: 12 MB"
-                    android:textSize="13dp" />
 
-                <TextView
-                    android:id="@+id/item_version"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/item_size"
-                    android:paddingLeft="5dp"
-                    android:paddingTop="2dp"
-                    android:text="Version: v1.6"
-                    android:textSize="13dp" />
 
             </LinearLayout>
 
@@ -99,41 +83,74 @@
 
             </LinearLayout>
 
-            <Button
-                android:id="@+id/share_apk_card_action"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/item_size"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/leftSide"
-                android:layout_toEndOf="@+id/app_icon"
-                android:text="@string/share_apk_card_action"
-                android:textColor="@color/colorPrimary"
-                android:textStyle="bold"
-                android:textAlignment="textStart"/>
+                android:paddingLeft="5dp"
+                android:paddingTop="0dp"
+                android:text="APK Size: 12 MB"
+                android:textSize="13dp" />
 
-            <Button
-                android:id="@+id/download_apk_card_action"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/item_version"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/share_apk_card_action"
-                android:layout_toEndOf="@+id/app_icon"
-                android:text="Download APK"
-                android:textColor="@color/colorAccent"
-                android:textStyle="bold"
-                android:textAlignment="textStart"/>
+                android:layout_below="@+id/item_size"
+                android:paddingLeft="5dp"
+                android:paddingTop="2dp"
+                android:text="Version: v1.6"
+                android:textSize="13dp" />
 
-            <Button
-                android:id="@+id/delete_apk_card_action"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/download_apk_card_action"
-                android:layout_toEndOf="@+id/app_icon"
-                android:text="@string/delete_apk_cad_action"
-                android:textColor="@color/colorRed"
-                android:textStyle="bold"
-                android:textAlignment="textStart"/>
+                android:layout_alignParentBottom="true"
+                android:paddingBottom="5dp">
+                <Button
+                    android:id="@+id/share_apk_card_action"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/download_apk_card_action"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_alignParentBottom="true"
+                    android:text="@string/share_apk_card_action"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    />
+
+                <Button
+                    android:id="@+id/download_apk_card_action"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:text="@string/download_apk_card_action"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/delete_apk_card_action"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_toRightOf="@+id/download_apk_card_action"
+                    android:text="@string/delete_apk_cad_action"
+                    android:textColor="@color/colorRed"
+                    android:textStyle="bold"
+                    />
+
+            </RelativeLayout>
+
         </RelativeLayout>
     </android.support.v7.widget.CardView>
 
