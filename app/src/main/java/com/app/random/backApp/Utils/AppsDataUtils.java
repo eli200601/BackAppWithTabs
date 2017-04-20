@@ -101,6 +101,7 @@ public class AppsDataUtils {
             File apk = new File(sourceDir);
             AppDataItem appsListItem = new AppDataItem(name,packageName,sourceDir, version, isCloudApp);
             appsListItem.setApkSize(Formatter.formatShortFileSize(context, apk.length()));
+            appsListItem.setProgress(100);
             appsListData.add(appsListItem);
         }
 
@@ -160,6 +161,7 @@ public class AppsDataUtils {
             if(name.toLowerCase().contains(query.toLowerCase())) {
                 AppDataItem appsListItem = new AppDataItem(name, packageName, sourceDir , version, false);
                 appsListItem.setApkSize(apkSize);
+                appsListItem.setProgress(100);
                 newList.add(appsListItem);
             }
 
@@ -293,6 +295,7 @@ public class AppsDataUtils {
                 if (appName != null && appPackageName != null && filePath != null && appVersion != null && fileSize != null) {
                     AppDataItem appItem = new AppDataItem(appName, appPackageName, filePath, appVersion, false);
                     appItem.setApkSize(fileSize);
+                    appItem.setProgress(100);
                     folderAppsList.add(appItem);
                 }
             }
@@ -302,6 +305,7 @@ public class AppsDataUtils {
             Log.d(TAG, "Create empty state");
             AppDataItem appItem = new AppDataItem("There is no applications", "Please backup your apps", "/", "v1.0", true);
             appItem.setApkSize("0.00b");
+            appItem.setProgress(100);
             folderAppsList.add(appItem);
         }
         if (folderAppsList != null) {

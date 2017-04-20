@@ -120,23 +120,26 @@ public class DropboxUploadIntentService extends IntentService {
                 mBuilder.setSmallIcon(icon);
                 mBuilder.setProgress(100, 0, false);
                 mNotifyManager.notify(id, mBuilder.build());
+                Log.d(TAG, "Creating Listener");
+                ProgressListener progressListener = new ProgressListener() {
+                    @Override
+                    public void onProgress(long bytes, long total) {
+                        Log.d(TAG, "Byte is: " + String.valueOf(bytes) + "Total is: " + String.valueOf(total));
 
-                DropboxAPI.Entry newEntry = dropBoxManager.mDBApi.putFileOverwrite("/" + fileName, inputStream,
-                        file.length(), new ProgressListener() {
-                            @Override
-                            public void onProgress(long bytes, long total) {
-                                Log.d(TAG, "Byte is: " + String.valueOf(bytes) + "Total is: " + String.valueOf(total));
+                        int percentage = (int) (bytes * 100.0 / total + 0.5);
 
-                                int percentage = (int) (bytes * 100.0 / total + 0.5);
+                        Log.d(TAG, "percentage is: " + String.valueOf(percentage));
 
-                                Log.d(TAG, "percentage is: " + String.valueOf(percentage));
+                        mBuilder.setProgress(100, percentage, false);
+                        mNotifyManager.notify(id, mBuilder.build());
 
-                                mBuilder.setProgress(100, percentage, false);
-                                mNotifyManager.notify(id, mBuilder.build());
+                        // Need to update
 
-                            }
-                        });
-
+                    }
+                };
+                Log.d(TAG, "Starting to upload...");
+                DropboxAPI.Entry newEntry = dropBoxManager.uploadSingleAPKToCloud(item,"/" + fileName, inputStream, file.length(), progressListener);
+//                DropboxAPI.Entry newEntry = dropBoxManager.mDBApi.putFileOverwrite("/" + fileName, inputStream, file.length(), progressListener);
                 Log.d(TAG, "New file is: " + newEntry.fileName() + " #### " + newEntry.path);
             }
             catch (Exception e) {

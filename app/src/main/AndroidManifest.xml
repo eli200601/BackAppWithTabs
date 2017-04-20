@@ -25,6 +25,7 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main_screen"
+            android:launchMode='singleTask'
             android:screenOrientation="portrait"
             android:grantUriPermissions="true"
             android:theme="@style/AppTheme">

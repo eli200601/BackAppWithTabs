@@ -11,6 +11,7 @@ public class AppDataItem implements Serializable {
     private String appVersion;
     private String apkSize;
     private boolean isCloudApp;
+    private int progress;
 
     public String getSourceDir() {
         return sourceDir;
@@ -33,6 +34,14 @@ public class AppDataItem implements Serializable {
         this.appVersion = appVersion;
         this.isCloudApp = isCloudApp;
 
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 
     public String getApkSize() {

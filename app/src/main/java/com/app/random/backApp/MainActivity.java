@@ -310,6 +310,11 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
     }
 
+    @Override
+    public void onFileUploadProgress(int percentage, long bytes, long total, AppDataItem app) {
+
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */

@@ -16,6 +16,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.SimpleItemAnimator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -111,6 +112,8 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
             case Keys.PREF_VIEWTYPE_LIST: {
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
                 mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
+                ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+
                 break;
             }
             case Keys.PREF_VIEWTYPE_CARD: {
@@ -387,6 +390,28 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
     @Override
     public void onFinishDeletingFiles() {
+
+    }
+
+    @Override
+    public void onFileUploadProgress(final int percentage, long bytes, long total, final AppDataItem app) {
+        Log.d(TAG, "Starting onFileUploadProgress");
+//        mAdapter.updateUploadProgress(percentage,bytes,total,app);
+        if (getActivity() != null) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Log.d(TAG,"Setting progress for item: " + String.valueOf(percentage));
+                    mAdapter.appsListData.get(mAdapter.getItemPosition(app)).setProgress(percentage);
+//                    mAdapter.notifyDataSetChanged();
+                    mAdapter.printINTOfList();
+                    mAdapter.notifyItemChanged(mAdapter.getItemPosition(app));
+//                    mAdapter.
+                }
+            });
+        }
+
+
 
     }
 

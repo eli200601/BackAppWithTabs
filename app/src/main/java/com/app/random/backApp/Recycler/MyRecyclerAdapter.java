@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -33,6 +35,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     private PackageManager packageManager;
     private String origin;
+    public MyViewHolder mHolder;
 
     private static String TAG = "MyRecyclerAdapter";
 
@@ -100,6 +103,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
         }
         MyViewHolder holder = new MyViewHolder(view);
         holder.successIcon.setVisibility(View.INVISIBLE);
+        holder.uploadProgress.setVisibility(View.GONE);
 
 
         return holder;
@@ -168,6 +172,26 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 holder.successIcon.setVisibility(View.INVISIBLE);
             }
         }
+        //Display Upload progress in DeviceAppsFragment
+        if (origin.equals(Keys.ORIGIN_DEVICEAPPSFRAGMENT)) {
+            if (appsListData.get(position).getProgress() < 100) {
+                if (holder.uploadProgress.getVisibility() == View.GONE ) {
+                    final Animation container_fade = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                    container_fade.reset();
+                    holder.uploadProgress.startAnimation(container_fade);
+                }
+                holder.uploadProgress.setVisibility(View.VISIBLE);
+                holder.uploadProgress.setProgress(appsListData.get(position).getProgress());
+            }
+            else {
+                holder.uploadProgress.setVisibility(View.GONE);
+            }
+        }
+        else {
+            holder.uploadProgress.setVisibility(View.GONE);
+        }
+
+
         //Display Share URL, download and delete buttons on card
         if (viewTypePref.equals(Keys.PREF_VIEWTYPE_CARD)) {
             if (holder.shareAPK != null) {
@@ -210,9 +234,6 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
             }
         }
-
-
-
 
         if (selectedAppsList.contains(appsListData.get(holder.getAdapterPosition()).getPackageName())){
             holder.checkBox.setChecked(true);
@@ -317,6 +338,39 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
         });
     }
 
+    public int getItemPosition(AppDataItem app) {
+        int x=0;
+
+        for (AppDataItem item: appsListData) {
+            if (item.getPackageName().equals(app.getPackageName())) {
+                Log.d(TAG, "position is = " + String.valueOf(x));
+                return x;
+            }
+            x++;
+        }
+        return appsListData.size() +1;
+    }
+
+//    public void updateUploadProgress(int percentage, long bytes, long total, AppDataItem app) {
+//        int position = getItemPosition(app);
+//        Log.d(TAG, "Starting updateUploadProgress #### position is: " + String.valueOf(position));
+//        if (!(position > appsListData.size())) {
+//            Log.d(TAG, "Setting progress");
+//
+//            appsListData.get(position).setProgress(percentage);
+//            Log.d(TAG, "finish setting progress, notifyDataSetChanged");
+////            notifyItemChanged(position);
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                    kiir.setText(ki_adat);
+//                }
+//                notifyDataSetChanged();
+//        }
+//
+//    }
+
     public void setAllListSelected(){
         HashSet<String> selectedList = new HashSet<>();
 
@@ -366,6 +420,12 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 
     public HashSet<String> getCloudSavedList() {
         return cloudSavedlist;
+    }
+
+    public void printINTOfList() {
+        for (AppDataItem item : appsListData) {
+            Log.d("ListEliran", "progress is: " + String.valueOf(item.getProgress()));
+        }
     }
 
 //    public void doneShareClicked() {

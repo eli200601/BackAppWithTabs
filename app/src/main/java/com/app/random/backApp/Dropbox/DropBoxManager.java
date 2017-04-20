@@ -10,10 +10,12 @@ import com.app.random.backApp.Utils.ConnectionDetector;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 import com.dropbox.client2.DropboxAPI;
+import com.dropbox.client2.ProgressListener;
 import com.dropbox.client2.android.AndroidAuthSession;
 import com.dropbox.client2.exception.DropboxException;
 import com.dropbox.client2.session.AppKeyPair;
 
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -166,6 +168,7 @@ public class DropBoxManager {
             // generate empty state list
             AppDataItem appItem = new AppDataItem("There is no applications", "Please backup your apps", "/", "v1.0", true);
             appItem.setApkSize("0.00b");
+            appItem.setProgress(100);
             cloudAppsList.add(appItem);
         }
         else {
@@ -199,6 +202,7 @@ public class DropBoxManager {
                             if (appName != null && appPackageName != null && entry.path != null && appVersion != null && entry.size != null) {
                                 AppDataItem appItem = new AppDataItem(appName, appPackageName, entry.path, appVersion, true);
                                 appItem.setApkSize(entry.size);
+                                appItem.setProgress(100);
                                 cloudAppsList.add(appItem);
                             }
                         }
@@ -210,6 +214,7 @@ public class DropBoxManager {
         if (cloudAppsList.size() == 0) {
             AppDataItem appItem = new AppDataItem("There is no applications", "Please backup your apps", "/", "v1.0", true);
             appItem.setApkSize("0.00b");
+            appItem.setProgress(100);
             cloudAppsList.add(appItem);
         }
 
@@ -246,6 +251,38 @@ public class DropBoxManager {
 
     }
 
+    public DropboxAPI.Entry uploadSingleAPKToCloud(final AppDataItem item, String path, FileInputStream inputStream, long length, final ProgressListener progressListener) {
+        final String listenTo = "DeviceAppsFragment";
+        DropboxAPI.Entry newEntry = null;
+        try {
+            Log.d(TAG, "Starting to upload");
+            newEntry = mDBApi.putFileOverwrite(path, inputStream, length, new ProgressListener() {
+                @Override
+                public void onProgress(long bytes, long total) {
+                    progressListener.onProgress(bytes, total);
+                    Log.d(TAG, "Byte is: " + String.valueOf(bytes) + "Total is: " + String.valueOf(total));
+                    int percentage = (int) (bytes * 100.0 / total + 0.5);
+                    if (dropboxCallBackListenerHashMap.get(listenTo) != null) {
+                        Log.d(TAG, "percentage = " + String.valueOf(percentage));
+                        dropboxCallBackListenerHashMap.get(listenTo).onFileUploadProgress(percentage, bytes, total, item);
+                    }
+                }
+            });
+        } catch (DropboxException e) {
+            e.printStackTrace();
+            Log.d(TAG, "Failed to upload = " + e.getMessage());
+        }
+        if (dropboxCallBackListenerHashMap.get(listenTo) != null) {
+            Log.d(TAG, "percentage = " + String.valueOf(100));
+            dropboxCallBackListenerHashMap.get(listenTo).onFileUploadProgress(100, 100, 100, item);
+        }
+        return newEntry;
+    }
+
+
+    // AsyncTasks **********************************************************************************
+
+    // DeleteFileFromCloud
     private class DeleteFileFromCloud extends AsyncTask<Void, Void, Void> {
 
         private ArrayList<String> dirList;
@@ -276,10 +313,10 @@ public class DropBoxManager {
             }
             super.onPostExecute(result);
         }
+    }// DeleteFileFromCloud
 
-    }
 
-
+    // GetDropBoxFileList
     private class GetDropBoxFileList extends AsyncTask<Void, Void, List<DropboxAPI.Entry>> {
         private String TAG = "GetDropBoxFileList";
         @Override
@@ -314,8 +351,9 @@ public class DropBoxManager {
 
             super.onPostExecute(cloudFilesList);
         }
-    }
+    } // GetDropBoxFileList
 
+    // LoadDataDropbox
     private class LoadDataDropbox extends AsyncTask<Void, Void, DropboxAPI.Account> {
 
         @Override
@@ -341,8 +379,6 @@ public class DropBoxManager {
         protected void onPostExecute(DropboxAPI.Account result) {
             String mainActivityListener = "MainActivity";
             String cloudFragListener = "CloudMainFragment";
-
-
             if (result != null) {
                 String userName = null;
                 String displayName = null;
@@ -390,8 +426,6 @@ public class DropBoxManager {
                 if (dropboxCallBackListenerHashMap.containsKey(cloudFragListener)) {
                     dropboxCallBackListenerHashMap.get(cloudFragListener).onUserNameReceived();
                 }
-//
-
             }
             else {
                 Log.d(TAG, "No Connection, using last know information");
@@ -399,7 +433,7 @@ public class DropBoxManager {
             }
             super.onPostExecute(result);
         }
-    }
+    }// LoadDataDropbox
 
 }
 

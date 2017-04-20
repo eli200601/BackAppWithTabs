@@ -414,6 +414,13 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         updateBottomBar();
     }
 
+    @Override
+    public void onFileUploadProgress(int percentage, long bytes, long total, AppDataItem app) {
+
+    }
+
+
+
     public void updateUIList(Intent intent) {
         dropBoxManager.getDropBoxFileListMethod();
         mAdapter.clearSelectedList();
@@ -525,7 +532,7 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
                 sendIntent.setAction(Intent.ACTION_SEND);
                 String share = SharedPrefsUtils.getStringPreference(getContext(), Keys.DROPBOX_USER_NAME) + ", want's to share an apk file: " + url;
                 String text = "\nApp Name: " + app.getName() + " | Version: " + app.getAppVersion() + " | File size: " + app.getApkSize() + " |";
-                        sendIntent.putExtra(Intent.EXTRA_TEXT, share + text);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, share + text);
                 sendIntent.setType("text/plain");
                 startActivity(sendIntent);
             }

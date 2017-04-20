@@ -11,5 +11,6 @@ public interface DropboxCallBackListener {
     void onFinishUploadFiles();
     void onFinishGeneratingCloudList(ArrayList<AppDataItem> arrayList);
     void onFinishDeletingFiles();
+    void onFileUploadProgress(int percentage, long bytes, long total, AppDataItem app);
 
 }

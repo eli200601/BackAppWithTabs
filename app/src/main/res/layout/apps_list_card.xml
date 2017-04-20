@@ -68,6 +68,18 @@
                 android:layout_alignParentEnd="true"
                 />
 
+            <ProgressBar
+                android:id="@+id/item_upload_progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:progressDrawable="@drawable/circular_progress_bar"
+                android:background="@drawable/circle_progress_shape"
+                android:layout_marginTop="3dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:max="100"
+                android:layout_toLeftOf="@+id/item_left_checkbox"/>
+
+
             <LinearLayout
                 android:id="@+id/item_left_checkbox"
                 android:layout_width="70dp"
