@@ -15,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -66,7 +67,7 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-
+//    private LocalBroadcastManager localBroadcastManager;
     private static final String TAG = "CloudMainFragment";
 
     private DropBoxManager dropBoxManager = null;
@@ -122,6 +123,7 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+//        localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
 
     }
 
@@ -366,6 +368,7 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         super.onPause();
         dropBoxManager.removeDropboxListener(TAG);
         getActivity().unregisterReceiver(onFinishUploadReceiver);
+//        localBroadcastManager.unregisterReceiver(onFinishUploadReceiver);
 
     }
 
@@ -374,7 +377,9 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         super.onResume();
         Log.d(TAG, "Adding " + TAG + " TO Listener List");
         dropBoxManager.addDropboxListener(this, TAG);
+//        localBroadcastManager.registerReceiver(onFinishUploadReceiver, new IntentFilter(Keys.BC_ON_FINISH_UPLOAD));
         getActivity().registerReceiver(onFinishUploadReceiver, new IntentFilter(Keys.BC_ON_FINISH_UPLOAD));
+
     }
 
 
@@ -502,7 +507,7 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
 
         mBuilder.setView(mView);
         final AlertDialog dialog = mBuilder.create();
-
+        dialog.getWindow().getAttributes().windowAnimations = R.style.PauseDialogAnimation;
         try {
             dialog_app_icon.setImageDrawable(getActivity().getPackageManager().getApplicationIcon(app.getPackageName()));
         }

@@ -1,9 +1,12 @@
 package com.app.random.backApp.Utils;
 
 
+import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 
 import com.app.random.backApp.Recycler.AppDataItem;
 import com.google.gson.Gson;
@@ -15,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FilesUtils {
-
+    private final String TAG = "FilesUtils";
     private static FilesUtils instance;
     private static Context context;
 
@@ -86,7 +89,7 @@ public class FilesUtils {
         return result;
     }
 
-    public void uninstallAppFromList(ArrayList<AppDataItem> list) {
+    public void uninstallAppFromList( ArrayList<AppDataItem> list) {
         for (AppDataItem item: list) {
             Intent intent = new Intent(Intent.ACTION_DELETE);
             intent.setData(Uri.parse("package:" + item.getPackageName()));

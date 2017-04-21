@@ -23,6 +23,7 @@ public class Keys {
     /* Broadcast names */
     public final static String BC_ON_FINISH_UPLOAD = "com.app.random.backApp.OnFinishUploadReceiver";
     public final static String BC_ON_FINISH_DOWNLOAD = "com.app.random.backApp.OnFinishDownloadReceiver";
+    public final static String BC_ON_FINISH_UNINSTALL = "android.intent.action.PACKAGE_REMOVED";
 
     /*  DropBox info   */
     public final static String DROPBOX_FILE_DIR = "/Apps/BackAppFolder/";

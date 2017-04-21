@@ -37,6 +37,8 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
     private String origin;
     public MyViewHolder mHolder;
 
+
+
     private static String TAG = "MyRecyclerAdapter";
 
     UpdateBottomBar updateBottomBar;
@@ -82,6 +84,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 //    Initialize Holder
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
         String viewTypePref = getViewType();
         View view = null;
         switch (viewTypePref) {
@@ -102,7 +105,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
             }
         }
         MyViewHolder holder = new MyViewHolder(view);
-        holder.successIcon.setVisibility(View.INVISIBLE);
+        holder.successIcon.setVisibility(View.GONE);
         holder.uploadProgress.setVisibility(View.GONE);
 
 
@@ -158,36 +161,47 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
         }
         catch (PackageManager.NameNotFoundException error) {
             Log.e(TAG, error.getMessage());
+            holder.appIcon.setImageResource(R.mipmap.ic_main);
         }
         // Display Success icon on item only on DeviceAppsFragment
         if (origin.equals(Keys.ORIGIN_DEVICEAPPSFRAGMENT)) {
             if (cloudSavedlist.contains(appsListData.get(holder.getAdapterPosition()).getPackageName())) {
-//                Animation container_fade = AnimationUtils.loadAnimation(context, R.anim.alpha);
-//                container_fade.reset();
-//                holder.successIcon.startAnimation(container_fade);
+                if (holder.successIcon.getVisibility() == View.GONE && !holder.sawAnimationSuccess) {
+                    final Animation container_fade = AnimationUtils.loadAnimation(context, R.anim.alpha);
+                    container_fade.reset();
+                    holder.successIcon.startAnimation(container_fade);
+
+                }
                 holder.successIcon.setVisibility(View.VISIBLE);
+                holder.sawAnimationSuccess = true;
             }
             else {
                 Log.d(TAG, "Not in list");
-                holder.successIcon.setVisibility(View.INVISIBLE);
+                holder.successIcon.setVisibility(View.GONE);
             }
         }
+
         //Display Upload progress in DeviceAppsFragment
         if (origin.equals(Keys.ORIGIN_DEVICEAPPSFRAGMENT)) {
             if (appsListData.get(position).getProgress() < 100) {
-                if (holder.uploadProgress.getVisibility() == View.GONE ) {
+                holder.successIcon.setVisibility(View.GONE);
+                if (holder.uploadProgress.getVisibility() == View.GONE && !holder.sawAnimationSuccess) {
                     final Animation container_fade = AnimationUtils.loadAnimation(context, R.anim.alpha);
                     container_fade.reset();
                     holder.uploadProgress.startAnimation(container_fade);
                 }
                 holder.uploadProgress.setVisibility(View.VISIBLE);
                 holder.uploadProgress.setProgress(appsListData.get(position).getProgress());
-            }
-            else {
+                holder.sawAnimationSuccess = true;
+            } else {
+                if (holder.uploadProgress.getVisibility() == View.VISIBLE && holder.sawAnimationSuccess) {
+                    final Animation container_fade = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+                    container_fade.reset();
+                    holder.uploadProgress.startAnimation(container_fade);
+                }
                 holder.uploadProgress.setVisibility(View.GONE);
             }
-        }
-        else {
+        } else {
             holder.uploadProgress.setVisibility(View.GONE);
         }
 
@@ -221,17 +235,30 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
             if (origin.equals(Keys.ORIGIN_CLOUDMAINFRAGMENT)) {
                 if (appsListData.get(holder.getAdapterPosition()).isCloudApp()) {
                     Log.d(TAG, "This is cloud app, setting up apk button");
+
+                    holder.shareAPK.setText(R.string.cloud_share_card_action);
+                    holder.downloadAPK.setText(R.string.cloud_download_card_action);
+                    holder.deleteAPK.setText(R.string.cloud_delete_card_action);
+
                     holder.shareAPK.setVisibility(View.VISIBLE);
                     holder.downloadAPK.setVisibility(View.VISIBLE);
                     holder.deleteAPK.setVisibility(View.VISIBLE);
 
                 }
-            }
-            else {
-                holder.shareAPK.setVisibility(View.GONE);
-                holder.downloadAPK.setVisibility(View.GONE);
-                holder.deleteAPK.setVisibility(View.GONE);
+            } else {
+                if (origin.equals(Keys.ORIGIN_DEVICEAPPSFRAGMENT)) {
+                    holder.shareAPK.setText(R.string.device_info_card_action);
+                    holder.downloadAPK.setText(R.string.device_upload_card_action);
+                    holder.deleteAPK.setText(R.string.device_uninstall_card_action);
 
+                    holder.shareAPK.setVisibility(View.VISIBLE);
+                    holder.downloadAPK.setVisibility(View.VISIBLE);
+                    holder.deleteAPK.setVisibility(View.VISIBLE);
+                } else {
+                    holder.shareAPK.setVisibility(View.GONE);
+                    holder.downloadAPK.setVisibility(View.GONE);
+                    holder.deleteAPK.setVisibility(View.GONE);
+                }
             }
         }
 
@@ -337,6 +364,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
             }
         });
     }
+
 
     public int getItemPosition(AppDataItem app) {
         int x=0;

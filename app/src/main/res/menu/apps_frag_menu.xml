@@ -45,5 +45,10 @@
         android:orderInCategory="104"
         android:id="@+id/menuUninstallAPK"
         app:showAsAction="never" />
+    <item
+        android:title="@string/refresh_device"
+        android:orderInCategory="105"
+        android:id="@+id/menuRefreshDevice"
+        app:showAsAction="never" />
 
 </menu>

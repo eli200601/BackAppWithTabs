@@ -1,5 +1,6 @@
 package com.app.random.backApp;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -14,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.app.random.backApp.Activitys.DBAccountInfoActivity;
 import com.app.random.backApp.Activitys.SettingsActivity;
@@ -299,6 +301,8 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
     public void onFinishUploadFiles() {
 
     }
+
+
 
     @Override
     public void onFinishGeneratingCloudList(ArrayList<AppDataItem> arrayList) {

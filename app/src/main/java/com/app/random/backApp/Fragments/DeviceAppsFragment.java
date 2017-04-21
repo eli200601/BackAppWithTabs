@@ -1,17 +1,27 @@
 package com.app.random.backApp.Fragments;
 
 
+import android.animation.TypeEvaluator;
+import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +34,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
@@ -39,12 +53,14 @@ import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 
 public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryTextListener, DropboxCallBackListener, SharedPreferences.OnSharedPreferenceChangeListener{
-
+//    private PackageChangeReceiver packageChangeReceiver;
+//    private LocalBroadcastManager localBroadcastManager;
     private ArrayList<ApplicationInfo> appsListInfo =  new ArrayList<>();
     private ArrayList<AppDataItem> appsListData;
 
@@ -73,6 +89,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         cloudAppsList = new HashSet<>();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         prefs.registerOnSharedPreferenceChangeListener(this);
+//        localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
     }
 
 
@@ -112,7 +129,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
             case Keys.PREF_VIEWTYPE_LIST: {
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
                 mAdapter = new MyRecyclerAdapter(this.getActivity().getApplicationContext(),appsListData, TAG);
-                ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
+
 
                 break;
             }
@@ -128,7 +145,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                 break;
             }
         }
-
+        ((SimpleItemAnimator) mRecyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.setUpdateBottomBar(new UpdateBottomBar() {
             @Override
@@ -138,17 +155,55 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
             @Override
             public void onShareAPKButtonClick(AppDataItem app) {
-
+                //Open Info Dialog
+                infoDialog(app);
             }
 
             @Override
             public void onDownloadAPKButtonClick(AppDataItem app) {
+                //Upload APK !!!
+                if (new ConnectionDetector(getActivity().getApplicationContext()).isConnectedToInternet()) {
+                    Log.d(TAG, "There is connection...");
 
+                    ArrayList<AppDataItem> itemsToUpload = new ArrayList<>();
+
+
+                    itemsToUpload.add(app);
+                    long totalUploadSize = filesUtils.getFileSizeFromListArray(itemsToUpload);
+                    long cloudFreeSpace = SharedPrefsUtils.getLongPreference(getActivity().getApplicationContext(), Keys.DROPBOX_FREE_SPACE_LONG, totalUploadSize);
+                    if ((cloudFreeSpace - totalUploadSize) < 0) {
+                        Log.e(TAG, "There is no free space on cloud...");
+                        Snackbar.make(getView(), "Upload failed. There is no free space on cloud...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    }
+                    else {
+                        Snackbar.make(getView(), "Starting to upload " + String.valueOf(itemsToUpload.size()) + " applications...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(Keys.APPS_UPLOAD_ARRAYLIST, itemsToUpload);
+
+                        Intent intent = new Intent(getActivity().getApplicationContext(), DropboxUploadIntentService.class);
+                        intent.putExtras(bundle);
+
+                        Log.d(TAG, "Starting the intent....");
+
+                        getActivity().startService(intent);
+
+//                        mAdapter.clearSelectedList();
+//                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+                else {
+                    Log.d(TAG, "There is no connection...");
+                    Snackbar.make(getView(), "No connection to internet, Turn on your WiFi/3G", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
             }
-
             @Override
             public void onDeleteAPKButtonClick(AppDataItem app) {
-
+                //Uninstall button in card
+                ArrayList<AppDataItem> uninstallList = new ArrayList<>();
+                uninstallList.add(app);
+                filesUtils.uninstallAppFromList(uninstallList);
+                mAdapter.clearSelectedList();
+                mAdapter.notifyDataSetChanged();
             }
         });
         mAdapter.setItems(appsListData);
@@ -201,9 +256,11 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         if (mAdapter.getSelectedAppsListSize() > 0) {
             uninstallItem.setVisible(true);
+
         }
         else {
             uninstallItem.setVisible(false);
+
         }
 
         if (mAdapter.getSelectedAppsListSize() > 0 && dropBoxManager.isLogIn) {
@@ -254,7 +311,6 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                     ArrayList<AppDataItem> itemsToUpload;
 
                     selectedPackageNameList = mAdapter.getSelectedPackageNamesList();
-                    ArrayList<String> dirList = new ArrayList<>();
 
                     Log.d(TAG, "Path ArrayList:::::::::::::::::::");
                     Log.d(TAG, appsDataUtils.getAPKArrayListFromPackageNames(selectedPackageNameList).toString());
@@ -265,7 +321,8 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                     if ((cloudFreeSpace - totalUploadSize) < 0) {
                         Log.e(TAG, "There is no free space on cloud...");
                         Snackbar.make(getView(), "Upload failed. There is no free space on cloud...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-                    } else {
+                    }
+                    else {
                         Snackbar.make(getView(), "Starting to upload " + selectedPackageNameList.size() + " applications...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                         Bundle bundle = new Bundle();
                         bundle.putSerializable(Keys.APPS_UPLOAD_ARRAYLIST, itemsToUpload);
@@ -295,6 +352,10 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                 mAdapter.notifyDataSetChanged();
                 break;
             }
+            case R.id.menuRefreshDevice: {
+                new LoadApplications().execute();
+                break;
+            }
 
             default:
                 result = super.onOptionsItemSelected(item);
@@ -303,25 +364,10 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         return result;
     }
 
-    public void uninstallAppFromList(ArrayList<AppDataItem> list) {
-        for (AppDataItem item: list) {
-            Intent intent = new Intent(Intent.ACTION_DELETE);
-            intent.setData(Uri.parse("package:" + item.getPackageName()));
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivityForResult(intent, 1);
-        }
 
-    }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d(TAG, "Finish uninstall... onActivityResult start | resultCode = " + String.valueOf(resultCode));
-        if (requestCode == 1) {
-            new LoadApplications().execute();
-//            setRecyclerLayoutType();
-        }
-    }
+
+
 
     @Override
     public boolean onQueryTextSubmit(String query) {
@@ -344,6 +390,13 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         super.onPause();
         dropBoxManager.removeDropboxListener(TAG);
 
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+//        localBroadcastManager.unregisterReceiver(packageChangeReceiver);
     }
 
     @Override
@@ -351,6 +404,8 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         super.onResume();
         Log.d(TAG, "Adding " + TAG + " TO Listener List");
         dropBoxManager.addDropboxListener(this, TAG);
+//        localBroadcastManager.registerReceiver(packageChangeReceiver, new IntentFilter(Keys.BC_ON_FINISH_UNINSTALL));
+
     }
 
     @Override
@@ -384,7 +439,8 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         }
         //??
         Log.d(TAG, " Done loading list from cloud - List size is: " + String.valueOf(cloudAppsList.size()));
-        setRecyclerLayoutType();
+//        setRecyclerLayoutType();
+        mAdapter.notifyDataSetChanged();
         updateBottomBar();
     }
 
@@ -404,7 +460,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
                     Log.d(TAG,"Setting progress for item: " + String.valueOf(percentage));
                     mAdapter.appsListData.get(mAdapter.getItemPosition(app)).setProgress(percentage);
 //                    mAdapter.notifyDataSetChanged();
-                    mAdapter.printINTOfList();
+//                    mAdapter.printINTOfList();
                     mAdapter.notifyItemChanged(mAdapter.getItemPosition(app));
 //                    mAdapter.
                 }
@@ -422,9 +478,10 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         protected Void doInBackground(Void... params) {
 
             appsDataUtils.startGettingInfo();
-            appsListData.clear();
+            appsListData = new ArrayList<>();
             appsListInfo = appsDataUtils.getAppInfoList();
             appsListData = appsDataUtils.getAppDataList();
+            Log.d(TAG,"appsListData = " + String.valueOf(appsListData.size()) + "appsListInfo = " + String.valueOf(appsListInfo.size()));
 
 //            updateBottomBar();
             return null;
@@ -463,4 +520,81 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
             super.onProgressUpdate(values);
         }
     }
+
+    public void infoDialog(AppDataItem app){
+        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+        View mView = View.inflate(getContext(),R.layout.app_info_dialog, null);
+
+        ImageView icon = (ImageView) mView.findViewById(R.id.dialog_app_icon);
+        TextView title = (TextView) mView.findViewById(R.id.dialog_title);
+        TextView version = (TextView) mView.findViewById(R.id.dialog_version);
+        TextView size = (TextView) mView.findViewById(R.id.dialog_file_size);
+        TextView packageName = (TextView) mView.findViewById(R.id.dialog_package);
+        TextView path = (TextView) mView.findViewById(R.id.dialog_path);
+        Button done = (Button) mView.findViewById(R.id.dialog_main_action);
+
+//                *************************************************
+        final ProgressBar bar = (ProgressBar) mView.findViewById(R.id.progressBar);
+
+        ValueAnimator animator = new ValueAnimator();
+        animator.setObjectValues(0, 80);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                bar.setProgress((int) animation.getAnimatedValue());
+            }
+        });
+        animator.setEvaluator(new TypeEvaluator<Integer>() {
+            public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
+                return Math.round(startValue + (endValue - startValue) * fraction);
+            }
+        });
+        animator.setDuration(2000);
+        animator.start();
+//                *************************************************
+
+
+        try {
+            icon.setImageDrawable(getActivity().getApplicationContext().getPackageManager().getApplicationIcon(app.getPackageName()));
+
+        }
+        catch (PackageManager.NameNotFoundException error) {
+            Log.e(TAG, error.getMessage());
+            icon.setImageResource(R.mipmap.ic_launcher);
+        }
+        title.setText(app.getName());
+        version.setText("App Version: " + app.getAppVersion());
+
+        size.setText("APK Size: " + app.getApkSize());
+        packageName.setText("Package Name: " + app.getPackageName());
+        path.setText("Path: " + app.getSourceDir());
+
+        mBuilder.setView(mView);
+        final AlertDialog dialog = mBuilder.create();
+        //set animation to dialog
+        dialog.getWindow().getAttributes().windowAnimations = R.style.PauseDialogAnimation;
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.cancel();
+            }
+        });
+        dialog.show();
+
+    }
+
+//    public class PackageChangeReceiver extends BroadcastReceiver {
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            Log.d(TAG, "BroadcastReceiver - PackageChangeReceiver");
+//            if (intent.getAction().equals("android.intent.action.PACKAGE_REMOVED")) {
+//                String packageName = intent.getDataString();
+//                Log.d(TAG, "uninstall:" + packageName + "package name of the program");
+//                Toast.makeText(context.getApplicationContext(), "Removed!", Toast.LENGTH_LONG).show();
+//            }
+//            new LoadApplications().execute();
+//        }
+//
+//    }
+
 }
