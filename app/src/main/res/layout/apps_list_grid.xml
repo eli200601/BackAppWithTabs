@@ -43,18 +43,31 @@
                     android:layout_gravity="end"
                     app:srcCompat="@mipmap/ic_cloud_check_v" />
 
-                <ProgressBar
-                    android:id="@+id/item_upload_progressBar"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:progressDrawable="@drawable/circular_progress_bar"
-                    android:background="@drawable/circle_progress_shape"
-                    android:layout_marginTop="3dp"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:max="100"
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:layout_alignParentTop="true"/>
+                    android:layout_marginTop="3dp">
 
+                    <ProgressBar
+                        android:id="@+id/item_upload_progressBar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:progressDrawable="@drawable/circular_progress_bar"
+                        android:background="@drawable/circle_progress_shape"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:max="100"
+                        />
+                    <ImageView
+                        android:id="@+id/cancel_progress_button"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        app:srcCompat="@mipmap/ic_cancel_progress_icon"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        />
+
+                </RelativeLayout>
 
             </FrameLayout>
 

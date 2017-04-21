@@ -31,6 +31,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
     boolean sawAnimationPregress;
 
     ProgressBar uploadProgress;
+    ImageView cancelProgress;
 
     ItemClickListener itemClickListener;
 
@@ -47,6 +48,7 @@ public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClic
         downloadAPK = (Button) itemView.findViewById((R.id.download_apk_card_action));
         deleteAPK = (Button) itemView.findViewById((R.id.delete_apk_card_action));
         uploadProgress = (ProgressBar) itemView.findViewById(R.id.item_upload_progressBar);
+        cancelProgress = (ImageView) itemView.findViewById(R.id.cancel_progress_button);
 
         dataView.setOnClickListener(this);
         sawAnimationSuccess = false;

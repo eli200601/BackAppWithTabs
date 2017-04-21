@@ -3,6 +3,7 @@ package com.app.random.backApp.Recycler;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.app.random.backApp.R;
+import com.app.random.backApp.Services.DropboxUploadIntentService;
+import com.app.random.backApp.Services.IntentManager;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 
@@ -107,6 +110,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
         MyViewHolder holder = new MyViewHolder(view);
         holder.successIcon.setVisibility(View.GONE);
         holder.uploadProgress.setVisibility(View.GONE);
+        holder.cancelProgress.setVisibility(View.GONE);
 
 
         return holder;
@@ -186,10 +190,21 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
             if (appsListData.get(position).getProgress() < 100) {
                 holder.successIcon.setVisibility(View.GONE);
                 if (holder.uploadProgress.getVisibility() == View.GONE && !holder.sawAnimationSuccess) {
+                    //First time the animation started
                     final Animation container_fade = AnimationUtils.loadAnimation(context, R.anim.alpha);
                     container_fade.reset();
                     holder.uploadProgress.startAnimation(container_fade);
+                    holder.cancelProgress.startAnimation(container_fade);
+                    holder.cancelProgress.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Log.d(TAG, "Trying to stop the service...");
+                            IntentManager.getInstance(context).stopUploadIntent();
+//                            context.stopService(new Intent(context.getApplicationContext(), DropboxUploadIntentService.class));
+                        }
+                    });
                 }
+                holder.cancelProgress.setVisibility(View.VISIBLE);
                 holder.uploadProgress.setVisibility(View.VISIBLE);
                 holder.uploadProgress.setProgress(appsListData.get(position).getProgress());
                 holder.sawAnimationSuccess = true;
@@ -198,11 +213,14 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                     final Animation container_fade = AnimationUtils.loadAnimation(context, R.anim.fade_out);
                     container_fade.reset();
                     holder.uploadProgress.startAnimation(container_fade);
+                    holder.cancelProgress.startAnimation(container_fade);
                 }
                 holder.uploadProgress.setVisibility(View.GONE);
+                holder.cancelProgress.setVisibility(View.GONE);
             }
         } else {
             holder.uploadProgress.setVisibility(View.GONE);
+            holder.cancelProgress.setVisibility(View.GONE);
         }
 
 
@@ -312,22 +330,22 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
                 Button done = (Button) mView.findViewById(R.id.dialog_main_action);
 
 //                *************************************************
-                final ProgressBar bar = (ProgressBar) mView.findViewById(R.id.progressBar);
-
-                ValueAnimator animator = new ValueAnimator();
-                animator.setObjectValues(0, 80);
-                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        bar.setProgress((int) animation.getAnimatedValue());
-                    }
-                });
-                animator.setEvaluator(new TypeEvaluator<Integer>() {
-                    public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
-                        return Math.round(startValue + (endValue - startValue) * fraction);
-                    }
-                });
-                animator.setDuration(2000);
-                animator.start();
+//                final ProgressBar bar = (ProgressBar) mView.findViewById(R.id.progressBar);
+//
+//                ValueAnimator animator = new ValueAnimator();
+//                animator.setObjectValues(0, 80);
+//                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//                    public void onAnimationUpdate(ValueAnimator animation) {
+//                        bar.setProgress((int) animation.getAnimatedValue());
+//                    }
+//                });
+//                animator.setEvaluator(new TypeEvaluator<Integer>() {
+//                    public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
+//                        return Math.round(startValue + (endValue - startValue) * fraction);
+//                    }
+//                });
+//                animator.setDuration(2000);
+//                animator.start();
 //                *************************************************
 
 
@@ -420,6 +438,11 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
     @Override
     public int getItemCount() {
         return appsListData.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
     }
 
     public HashSet<String> getSelectedPackageNamesList() {

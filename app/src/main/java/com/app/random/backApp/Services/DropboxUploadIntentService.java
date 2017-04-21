@@ -208,5 +208,9 @@ public class DropboxUploadIntentService extends IntentService {
     }
 
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, " onDestroy called :)");
+    }
 }

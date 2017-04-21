@@ -82,7 +82,7 @@ public class AppsDataUtils {
         String version = null;
         boolean isCloudApp = false;
 
-        appsListData.clear();
+        appsListData = new ArrayList<>();
         for (ApplicationInfo info : appsListInfo){
 
             name = packageManager.getApplicationLabel(info).toString();

@@ -4,8 +4,8 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/list_view_item_shape">
-
+    >
+    <!--android:background="@drawable/list_view_item_shape"-->
 
     <ImageView
         android:id="@+id/dialog_app_icon"
@@ -81,11 +81,11 @@
         android:layout_marginTop="20dp"
         android:text="Done" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/dialog_main_action" />
+    <!--<ProgressBar-->
+        <!--android:id="@+id/progressBar"-->
+        <!--style="@android:style/Widget.Material.Light.ProgressBar.Horizontal"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@+id/dialog_main_action" />-->
 
 </RelativeLayout>
