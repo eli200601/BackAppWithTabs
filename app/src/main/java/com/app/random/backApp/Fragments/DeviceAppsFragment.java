@@ -4,6 +4,7 @@ package com.app.random.backApp.Fragments;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -89,6 +91,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         dropBoxManager = DropBoxManager.getInstance(getActivity().getApplicationContext());
         filesUtils = FilesUtils.getInstance(getActivity().getApplicationContext());
         Log.d(TAG, "Building this Fragment!!!!");
@@ -529,15 +532,76 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         }
     }
 
-    public void infoDialog(AppDataItem app){
+    public void infoDialog(AppDataItem app) {
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("AppInfo", app);
+
         int[] originalPos = new int[2];
+        int[] originalIconPos = new int[2];
         // Getting the item x,y
         View view_item = mRecyclerView.getLayoutManager().findViewByPosition(mAdapter.getItemPosition(app));
+//        view_item.setVisibility(View.GONE);
+
+        boolean found = false;
+        View app_icon = null;
+        ArrayList<View> allViewsWithinMyTopView = getAllChildren(view_item);
+        for (View child : allViewsWithinMyTopView) {
+            if (child instanceof ImageView) {
+                ImageView childImageView = (ImageView) child;
+
+                if (childImageView.getId() == R.id.app_icon) {
+                    found = true;
+                    app_icon = childImageView;
+                    break;
+                }
+            }
+        }
+        if (!found) {
+            Log.d(TAG, "icon not found within TopView");
+        } else {
+            Log.d(TAG, "app_icon View found!!!");
+        }
+        app_icon.getLocationInWindow(originalIconPos);
+        Log.d(TAG, "Icon X=" + String.valueOf(originalIconPos[0]) + " Y= " + String.valueOf(originalIconPos[1]));
+
         view_item.getLocationInWindow(originalPos);
+
         Intent dialogActivity = new Intent(getContext(), AppInfoDialogActivity.class);
-        dialogActivity.putExtra("x", originalPos[0]); //Optional parameters
-        dialogActivity.putExtra("y", originalPos[1]); //Optional parameters
-        this.startActivity(dialogActivity);
+
+        dialogActivity.putExtra("x", originalIconPos[0]); //Optional parameters
+        dialogActivity.putExtra("y", originalIconPos[1]); //Optional parameters
+        dialogActivity.putExtra("bundleAppInfo", bundle);
+
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), app_icon, "AppIcon");
+
+        this.startActivity(dialogActivity, options.toBundle());
+
+    }
+
+    private ArrayList<View> getAllChildren(View v) {
+
+        if (!(v instanceof ViewGroup)) {
+            ArrayList<View> viewArrayList = new ArrayList<View>();
+            viewArrayList.add(v);
+            return viewArrayList;
+        }
+
+        ArrayList<View> result = new ArrayList<View>();
+
+        ViewGroup vg = (ViewGroup) v;
+        for (int i = 0; i < vg.getChildCount(); i++) {
+
+            View child = vg.getChildAt(i);
+
+            ArrayList<View> viewArrayList = new ArrayList<View>();
+            viewArrayList.add(v);
+            viewArrayList.addAll(getAllChildren(child));
+
+            result.addAll(viewArrayList);
+        }
+        return result;
+    }
+
 
 
 
@@ -645,7 +709,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 //        });
 //        dialog.show();
 
-    }
+//    }
 
 //    public class PackageChangeReceiver extends BroadcastReceiver {
 //

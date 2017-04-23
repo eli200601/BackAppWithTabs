@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.TextView;
 
 import com.app.random.backApp.Activitys.DBAccountInfoActivity;
@@ -55,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        requestWindowFeature( Window.FEATURE_ACTIVITY_TRANSITIONS );
         super.onCreate(savedInstanceState);
 //        String origin = savedInstanceState.getString("origin");
 

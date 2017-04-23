@@ -20,7 +20,7 @@ android {
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "com.app.random.backapp"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 24
 
         versionCode 1

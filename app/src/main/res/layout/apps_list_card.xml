@@ -49,7 +49,7 @@
                     android:textAlignment="viewStart"
 
                     android:text="Example Header"
-
+                    android:transitionName="AppIcon"
 
                     android:textColor="@color/colorBlack"
                     android:textSize="22dp"

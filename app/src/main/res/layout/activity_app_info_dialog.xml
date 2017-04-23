@@ -15,9 +15,10 @@
         android:background="@color/colorWhite">
 
         <ImageView
-            android:id="@+id/app_icon_activity_dialog"
+            android:id="@+id/app_icon"
             android:layout_width="70dp"
             android:layout_height="70dp"
+            android:transitionName="AppIcon"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="15dp"
@@ -27,13 +28,5 @@
 
     </RelativeLayout>
 
-    <!--<ImageView-->
-        <!--android:id="@+id/app_icon_activity_dialog_moving"-->
-        <!--android:layout_width="70dp"-->
-        <!--android:layout_height="70dp"-->
-        <!--app:srcCompat="@mipmap/ic_main"-->
-        <!--android:layout_alignTop="@+id/dialog_container"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:layout_marginTop="15dp" />-->
 
 </RelativeLayout>
