@@ -8,4 +8,5 @@
     <color name="colorGray">#aaa</color>
     <color name="colorBlack">#000000</color>
     <color name="colorRed">#CC0000</color>
+    <color name="backgroundOverlayColor">#33BBFFFF</color>
 </resources>

@@ -45,6 +45,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.random.backApp.Activitys.AppInfoDialogActivity;
 import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
 import com.app.random.backApp.R;
@@ -533,113 +534,116 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         // Getting the item x,y
         View view_item = mRecyclerView.getLayoutManager().findViewByPosition(mAdapter.getItemPosition(app));
         view_item.getLocationInWindow(originalPos);
+        Intent dialogActivity = new Intent(getContext(), AppInfoDialogActivity.class);
+        dialogActivity.putExtra("x", originalPos[0]); //Optional parameters
+        dialogActivity.putExtra("y", originalPos[1]); //Optional parameters
+        this.startActivity(dialogActivity);
 
 
 
-
-        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
-        View mView = View.inflate(getContext(),R.layout.app_info_dialog, null);
-
-        ImageView icon = (ImageView) mView.findViewById(R.id.dialog_app_icon);
-        TextView title = (TextView) mView.findViewById(R.id.dialog_title);
-        TextView version = (TextView) mView.findViewById(R.id.dialog_version);
-        TextView size = (TextView) mView.findViewById(R.id.dialog_file_size);
-        TextView packageName = (TextView) mView.findViewById(R.id.dialog_package);
-        TextView path = (TextView) mView.findViewById(R.id.dialog_path);
-        Button done = (Button) mView.findViewById(R.id.dialog_main_action);
-
-
-
-        try {
-            icon.setImageDrawable(getActivity().getApplicationContext().getPackageManager().getApplicationIcon(app.getPackageName()));
-
-        }
-        catch (PackageManager.NameNotFoundException error) {
-            Log.e(TAG, error.getMessage());
-            icon.setImageResource(R.mipmap.ic_launcher);
-        }
-
-        //                *************************************************
-//        icon.setVisibility(View.GONE);
-        title.setVisibility(View.GONE);
-        version.setVisibility(View.GONE);
-        size.setVisibility(View.GONE);
-        packageName.setVisibility(View.GONE);
-        path.setVisibility(View.GONE);
-        done.setVisibility(View.GONE);
-
-//        Animation anim_fade= AnimationUtils.loadAnimation(getContext(), R.anim.translate);
-//        anim_fade.reset();
-//        AnimationSet replaceAnimation = new AnimationSet(false);
-//        // animations should be applied on the finish line
-//        replaceAnimation.setFillAfter(true);
+//        final AlertDialog.Builder mBuilder = new AlertDialog.Builder(getContext());
+//        View mView = View.inflate(getContext(),R.layout.app_info_dialog, null);
 //
-//        // create scale animation
-//        ScaleAnimation scale = new ScaleAnimation(1.0f, originalPos[0], 1.0f, originalPos[1]);
-//        scale.setDuration(1000);
+//        ImageView icon = (ImageView) mView.findViewById(R.id.dialog_app_icon);
+//        TextView title = (TextView) mView.findViewById(R.id.dialog_title);
+//        TextView version = (TextView) mView.findViewById(R.id.dialog_version);
+//        TextView size = (TextView) mView.findViewById(R.id.dialog_file_size);
+//        TextView packageName = (TextView) mView.findViewById(R.id.dialog_package);
+//        TextView path = (TextView) mView.findViewById(R.id.dialog_path);
+//        Button done = (Button) mView.findViewById(R.id.dialog_main_action);
 //
-        int[] targetPos = new int[2];
-        icon.getLocationInWindow(targetPos);
 //
-//        // create translation animation
-//        TranslateAnimation trans = new TranslateAnimation(0, 0,
-//                TranslateAnimation.ABSOLUTE, targetPos[0], 0, 0,
-//                TranslateAnimation.ABSOLUTE, targetPos[1]);
-//        trans.setDuration(1000);
 //
-//        // add new animations to the set
-//        replaceAnimation.addAnimation(scale);
-//        replaceAnimation.addAnimation(trans);
+//        try {
+//            icon.setImageDrawable(getActivity().getApplicationContext().getPackageManager().getApplicationIcon(app.getPackageName()));
 //
-//        // start our animation
-//        icon.startAnimation(replaceAnimation);
-        icon.animate().scaleX(originalPos[0])
-                .scaleY(originalPos[1])
-                .x(targetPos[0])
-                .y(targetPos[1])
-                .setDuration(4000)
-                .start();
-        icon.setVisibility(View.VISIBLE);
-
-//********************** Intro animation ************************************************
-//        final ProgressBar bar = (ProgressBar) mView.findViewById(R.id.progressBar);
+//        }
+//        catch (PackageManager.NameNotFoundException error) {
+//            Log.e(TAG, error.getMessage());
+//            icon.setImageResource(R.mipmap.ic_launcher);
+//        }
 //
-//        ValueAnimator animator = new ValueAnimator();
-//        animator.setObjectValues(0, 80);
-//        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            public void onAnimationUpdate(ValueAnimator animation) {
-//                bar.setProgress((int) animation.getAnimatedValue());
+//        //                *************************************************
+////        icon.setVisibility(View.GONE);
+//        title.setVisibility(View.GONE);
+//        version.setVisibility(View.GONE);
+//        size.setVisibility(View.GONE);
+//        packageName.setVisibility(View.GONE);
+//        path.setVisibility(View.GONE);
+//        done.setVisibility(View.GONE);
+//
+////        Animation anim_fade= AnimationUtils.loadAnimation(getContext(), R.anim.translate);
+////        anim_fade.reset();
+////        AnimationSet replaceAnimation = new AnimationSet(false);
+////        // animations should be applied on the finish line
+////        replaceAnimation.setFillAfter(true);
+////
+////        // create scale animation
+////        ScaleAnimation scale = new ScaleAnimation(1.0f, originalPos[0], 1.0f, originalPos[1]);
+////        scale.setDuration(1000);
+////
+//        int[] targetPos = new int[2];
+//        icon.getLocationInWindow(targetPos);
+////
+////        // create translation animation
+////        TranslateAnimation trans = new TranslateAnimation(0, 0,
+////                TranslateAnimation.ABSOLUTE, targetPos[0], 0, 0,
+////                TranslateAnimation.ABSOLUTE, targetPos[1]);
+////        trans.setDuration(1000);
+////
+////        // add new animations to the set
+////        replaceAnimation.addAnimation(scale);
+////        replaceAnimation.addAnimation(trans);
+////
+////        // start our animation
+////        icon.startAnimation(replaceAnimation);
+//        icon.animate().scaleX(originalPos[0])
+//                .scaleY(originalPos[1])
+//                .x(targetPos[0])
+//                .y(targetPos[1])
+//                .setDuration(4000)
+//                .start();
+//        icon.setVisibility(View.VISIBLE);
+//
+////********************** Intro animation ************************************************
+////        final ProgressBar bar = (ProgressBar) mView.findViewById(R.id.progressBar);
+////
+////        ValueAnimator animator = new ValueAnimator();
+////        animator.setObjectValues(0, 80);
+////        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+////            public void onAnimationUpdate(ValueAnimator animation) {
+////                bar.setProgress((int) animation.getAnimatedValue());
+////            }
+////        });
+////        animator.setEvaluator(new TypeEvaluator<Integer>() {
+////            public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
+////                return Math.round(startValue + (endValue - startValue) * fraction);
+////            }
+////        });
+////        animator.setDuration(2000);
+////        animator.start();
+////                *************************************************
+//
+//
+//
+//        title.setText(app.getName());
+//        version.setText("App Version: " + app.getAppVersion());
+//
+//        size.setText("APK Size: " + app.getApkSize());
+//        packageName.setText("Package Name: " + app.getPackageName());
+//        path.setText("Path: " + app.getSourceDir());
+//
+//        mBuilder.setView(mView);
+//        final AlertDialog dialog = mBuilder.create();
+//        //set animation to dialog
+////        dialog.getWindow().getAttributes().windowAnimations = R.style.PauseDialogAnimation;
+//        done.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                dialog.cancel();
 //            }
 //        });
-//        animator.setEvaluator(new TypeEvaluator<Integer>() {
-//            public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
-//                return Math.round(startValue + (endValue - startValue) * fraction);
-//            }
-//        });
-//        animator.setDuration(2000);
-//        animator.start();
-//                *************************************************
-
-
-
-        title.setText(app.getName());
-        version.setText("App Version: " + app.getAppVersion());
-
-        size.setText("APK Size: " + app.getApkSize());
-        packageName.setText("Package Name: " + app.getPackageName());
-        path.setText("Path: " + app.getSourceDir());
-
-        mBuilder.setView(mView);
-        final AlertDialog dialog = mBuilder.create();
-        //set animation to dialog
-//        dialog.getWindow().getAttributes().windowAnimations = R.style.PauseDialogAnimation;
-        done.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.cancel();
-            }
-        });
-        dialog.show();
+//        dialog.show();
 
     }
 
