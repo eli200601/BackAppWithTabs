@@ -1,13 +1,18 @@
 package com.app.random.backApp.Activitys;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.PathMeasure;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -43,12 +48,13 @@ public class AppInfoDialogActivity extends Activity {
         Intent intent = getIntent();
         int startX = intent.getIntExtra("x", 0);
         int startY = intent.getIntExtra("y", 0);
+        int[] i = {startX,startY};
         Log.d(TAG, " StartX = " + String.valueOf(startX) + " startY = " + String.valueOf(startY));
 
         RelativeLayout screenOverlay = (RelativeLayout) findViewById(R.id.layout_screen);
         RelativeLayout dialog = (RelativeLayout) findViewById(R.id.dialog_container);
 
-        ImageView appIcon = (ImageView) findViewById(R.id.app_icon_activity_dialog);
+        final ImageView appIcon = (ImageView) findViewById(R.id.app_icon_activity_dialog);
 //        ImageView moving_appIcon = (ImageView) findViewById(R.id.app_icon_activity_dialog_moving);
         appIcon.setImageResource(R.mipmap.ic_main);
         screenOverlay.setVisibility(View.INVISIBLE);
@@ -81,21 +87,49 @@ public class AppInfoDialogActivity extends Activity {
             Animation anim_fade = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.dialog_fade_in);
             anim_fade.reset();
 
-            screenOverlay.setAnimation(anim_fade);
+//            screenOverlay.setAnimation(anim_fade);
             dialog.setAnimation(anim_fade);
 
-            Animation lTraslateAnimation = new TranlateAnimation()0 , 0, 0, 500);
-            lTraslateAnimation.setDuration(2000);
-            lTraslateAnimation.setFillAfter(true);
-            lTraslateAnimation.setRepeatCount(-1);
-            lTraslateAnimation.setRepeatMode(Animation.REVERSE);
-            imgView .startAnimation(lTraslateAnimation);
-//            appIcon.animate().scaleX(startX)
-//                    .scaleY(startY)
-//                    .x(x)
-//                    .y(y)
-//                    .setDuration(4000)
-//                    .start();
+//            final PathMeasure pm;
+//            final float point[] = {Float.valueOf(startX), 0f};
+//
+//            ValueAnimator.AnimatorUpdateListener listener = new ValueAnimator.AnimatorUpdateListener(){
+//                        @Override
+//                        public void onAnimationUpdate (ValueAnimator animation) {
+//                            float val = animation.getAnimatedFraction();
+//                            pm.getPosTan(pm.getLength() * val, point, null);
+//                            appIcon.setTranslationX(point[0]);
+//                            appIcon.setTranslationY(point[1]);
+//                        }
+//                    };
+//
+//// and then to animate
+//            pm = new PathMeasure(path, false);
+//            ValueAnimator a = ValueAnimator.ofFloat(0.0f 1.0f);
+//            a.setDuration(/* your duration */);
+//            a.setInterpolator(/* your interpolator */);
+//            a.addUpdateListener(listener);
+//            a.start();
+//            RelativeLayout relativeLayout = new RelativeLayout(this);
+//// ImageView
+//            ImageView imageView = new ImageView(this);
+//
+//// Setting layout params to our RelativeLayout
+//            RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(70, 70);
+//
+//// Setting position of our ImageView
+//            layoutParams.leftMargin = startX;
+//            layoutParams.topMargin = startY;
+//
+//// Finally Adding the imageView to RelativeLayout and its position
+//            relativeLayout.addView(appIcon, layoutParams);
+
+            appIcon.animate()
+                    .translationX(x)
+                    .translationY(y)
+                    .setInterpolator(new LinearInterpolator())
+                    .setDuration(4000)
+                    .start();
 
         }
         screenOverlay.setVisibility(View.VISIBLE);
