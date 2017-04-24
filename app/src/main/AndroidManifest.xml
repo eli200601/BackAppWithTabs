@@ -57,7 +57,7 @@
             android:label="App Info Dialog"
             android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme.Translucent">
+            android:theme="@style/AppTheme.Base">
             <!--android:theme="@android:style/Theme.Translucent"-->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

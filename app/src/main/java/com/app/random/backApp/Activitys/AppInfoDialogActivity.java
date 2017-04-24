@@ -1,30 +1,19 @@
 package com.app.random.backApp.Activitys;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.PathMeasure;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.transition.Explode;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-
 
 import com.app.random.backApp.R;
 import com.app.random.backApp.Recycler.AppDataItem;
 
 
-public class AppInfoDialogActivity extends Activity {
+public class AppInfoDialogActivity extends AppCompatActivity {
 
     static final String TAG = "AppInfoDialogActiviTAG";
 
@@ -34,8 +23,16 @@ public class AppInfoDialogActivity extends Activity {
         requestWindowFeature( Window.FEATURE_ACTIVITY_TRANSITIONS );
 //        getWindow().setEnterTransition(new Explode());
 //        getWindow().setExitTransition(new Explode());
+//        supportPostponeEnterTransition();
         super.onCreate(savedInstanceState);
+//        Fade fade = new Fade();
+//        fade.setDuration(5000);
+////        ChangeBounds changeBounds = new ChangeBounds();
+////        changeBounds.setDuration(5000);
+//        getWindow().setEnterTransition(fade);
+
         setContentView(R.layout.activity_app_info_dialog);
+
 
         int x,y;
         Intent intent = getIntent();

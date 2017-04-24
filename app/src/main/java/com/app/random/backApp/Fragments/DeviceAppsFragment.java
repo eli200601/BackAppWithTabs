@@ -1,29 +1,18 @@
 package com.app.random.backApp.Fragments;
 
 
-import android.animation.TypeEvaluator;
-import android.animation.ValueAnimator;
-import android.app.Activity;
-import android.app.ActivityOptions;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.net.Uri;
+import android.graphics.Rect;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,16 +25,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
-import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.app.random.backApp.Activitys.AppInfoDialogActivity;
 import com.app.random.backApp.Dropbox.DropBoxManager;
@@ -62,7 +43,6 @@ import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -561,6 +541,15 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         } else {
             Log.d(TAG, "app_icon View found!!!");
         }
+        //Checking if the icon is fully appear on screen
+        Rect rect = new Rect();
+        if(app_icon.getGlobalVisibleRect(rect) && app_icon.getHeight() == rect.height() && app_icon.getWidth() == rect.width() ) {
+            Log.d(TAG, "Icon is fully visible on screen :)");
+        } else {
+            Log.d(TAG, "Icon is not fully visible on screen :)");
+            mRecyclerView.smoothScrollToPosition(mAdapter.getItemPosition(app));
+        }
+
         app_icon.getLocationInWindow(originalIconPos);
         Log.d(TAG, "Icon X=" + String.valueOf(originalIconPos[0]) + " Y= " + String.valueOf(originalIconPos[1]));
 
@@ -571,6 +560,8 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         dialogActivity.putExtra("x", originalIconPos[0]); //Optional parameters
         dialogActivity.putExtra("y", originalIconPos[1]); //Optional parameters
         dialogActivity.putExtra("bundleAppInfo", bundle);
+
+
 
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), app_icon, "AppIcon");
 
