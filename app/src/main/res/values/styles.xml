@@ -10,8 +10,8 @@
         <item name="windowNoTitle">true</item>
 
         <item name="android:windowContentTransitions">true</item>
-        <!--<item name="android:windowSharedElementEnterTransition">@transition/change_image_transform</item>-->
-        <!--<item name="android:windowSharedElementExitTransition">@transition/change_image_transform</item>-->
+        <item name="android:windowSharedElementEnterTransition">@transition/change_image_transform</item>
+        <item name="android:windowSharedElementExitTransition">@transition/change_image_transform</item>
 
     </style>
 
@@ -75,14 +75,14 @@
 
         <item name="android:windowContentTransitions">true</item>
 
-        <!--<item name="android:windowEnterTransition">@transition/transition_main_activity</item>-->
-        <!--<item name="android:windowExitTransition">@transition/transition_main_activity</item>-->
+        <item name="android:windowEnterTransition">@transition/fade_element</item>
+        <item name="android:windowExitTransition">@transition/fade_element</item>
 
         <!--<item name="android:windowEnterTransition">@android:anim/slide_in_left</item>-->
         <!--<item name="android:windowExitTransition">@android:anim/slide_out_right</item>-->
 
-        <!--<item name="android:windowSharedElementEnterTransition">@transition/fade_element</item>-->
-        <!--<item name="android:windowSharedElementExitTransition">@transition/change_image_transform</item>-->
+        <item name="android:windowSharedElementEnterTransition">@transition/change_image_transform</item>
+        <item name="android:windowSharedElementExitTransition">@transition/change_image_transform</item>
     </style>
 
 

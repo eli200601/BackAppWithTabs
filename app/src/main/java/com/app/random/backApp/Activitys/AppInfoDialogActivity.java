@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Explode;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.util.Log;
@@ -34,17 +35,7 @@ public class AppInfoDialogActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature( Window.FEATURE_ACTIVITY_TRANSITIONS );
-
-        Transition mFadeTransition = TransitionInflater.from(this).inflateTransition(R.transition.fade_element);
-        getWindow().setEnterTransition(mFadeTransition);
-        getWindow().setExitTransition(mFadeTransition);
-//        supportPostponeEnterTransition();
         super.onCreate(savedInstanceState);
-//        Fade fade = new Fade();
-//        fade.setDuration(5000);
-////        ChangeBounds changeBounds = new ChangeBounds();
-////        changeBounds.setDuration(5000);
-//        getWindow().setEnterTransition(fade);
 
         setContentView(R.layout.activity_app_info_dialog);
         filesUtils = FilesUtils.getInstance(getApplicationContext());

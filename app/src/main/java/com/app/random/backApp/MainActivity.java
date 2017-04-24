@@ -58,11 +58,11 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature( Window.FEATURE_ACTIVITY_TRANSITIONS );
+//        requestWindowFeature( Window.FEATURE_ACTIVITY_TRANSITIONS );
         super.onCreate(savedInstanceState);
 //        String origin = savedInstanceState.getString("origin");
-        TransitionInflater inflater = TransitionInflater.from(this);
-        Transition transition = inflater.inflateTransition(R.transition.transition_main_activity);
+//        TransitionInflater inflater = TransitionInflater.from(this);
+//        Transition transition = inflater.inflateTransition(R.transition.transition_main_activity);
 //        getWindow().setExitTransition(transition);
 //        getWindow().setEnterTransition(transition);
 //        getWindow().setSharedElementEnterTransition(enterTransition());
