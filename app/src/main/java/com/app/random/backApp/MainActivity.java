@@ -1,6 +1,5 @@
 package com.app.random.backApp;
 
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -12,11 +11,14 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.ChangeBounds;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
-import android.widget.TextView;
+import android.view.animation.DecelerateInterpolator;
 
 import com.app.random.backApp.Activitys.DBAccountInfoActivity;
 import com.app.random.backApp.Activitys.SettingsActivity;
@@ -59,6 +61,13 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         requestWindowFeature( Window.FEATURE_ACTIVITY_TRANSITIONS );
         super.onCreate(savedInstanceState);
 //        String origin = savedInstanceState.getString("origin");
+        TransitionInflater inflater = TransitionInflater.from(this);
+        Transition transition = inflater.inflateTransition(R.transition.transition_main_activity);
+//        getWindow().setExitTransition(transition);
+//        getWindow().setEnterTransition(transition);
+//        getWindow().setSharedElementEnterTransition(enterTransition());
+//        getWindow().setSharedElementReturnTransition(returnTransition());
+
 
         setContentView(R.layout.activity_main);
 
@@ -119,6 +128,21 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 //            }
 //        });
 
+    }
+
+    private Transition enterTransition() {
+        ChangeBounds bounds = new ChangeBounds();
+        bounds.setDuration(10000);
+
+        return bounds;
+    }
+
+    private Transition returnTransition() {
+        ChangeBounds bounds = new ChangeBounds();
+        bounds.setInterpolator(new DecelerateInterpolator());
+        bounds.setDuration(10000);
+
+        return bounds;
     }
 
     public void setViewPager(){

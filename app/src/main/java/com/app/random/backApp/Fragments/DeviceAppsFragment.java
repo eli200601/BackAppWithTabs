@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +26,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -67,6 +69,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
     private TextView selectedAmountTextField;
 
     private DropBoxManager dropBoxManager = null;
+    private ViewTreeObserver.OnGlobalLayoutListener listener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -518,21 +521,48 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         int[] originalPos = new int[2];
         int[] originalIconPos = new int[2];
+
+        ImageView childImageView;
+        TextView childTextView;
+
+        View app_icon = null;
+        View app_name = null;
+        View app_size = null;
+        View app_version = null;
+
         // Getting the item x,y
         View view_item = mRecyclerView.getLayoutManager().findViewByPosition(mAdapter.getItemPosition(app));
 //        view_item.setVisibility(View.GONE);
 
         boolean found = false;
-        View app_icon = null;
+
         ArrayList<View> allViewsWithinMyTopView = getAllChildren(view_item);
         for (View child : allViewsWithinMyTopView) {
             if (child instanceof ImageView) {
-                ImageView childImageView = (ImageView) child;
+                childImageView = (ImageView) child;
 
                 if (childImageView.getId() == R.id.app_icon) {
                     found = true;
                     app_icon = childImageView;
-                    break;
+//                    break;
+                }
+            }
+            if (child instanceof TextView) {
+                childTextView = (TextView) child;
+                switch (childTextView.getId()){
+                    case R.id.app_name: {
+                        app_name = childTextView;
+//                        break;
+                    }
+                    case R.id.item_size: {
+                        app_size = childTextView;
+//                        break;
+                    }
+                    case R.id.item_version: {
+                        app_version = childTextView;
+//                        break;
+                    }
+
                 }
             }
         }
@@ -545,27 +575,63 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         Rect rect = new Rect();
         if(app_icon.getGlobalVisibleRect(rect) && app_icon.getHeight() == rect.height() && app_icon.getWidth() == rect.width() ) {
             Log.d(TAG, "Icon is fully visible on screen :)");
+
+            app_icon.getLocationInWindow(originalIconPos);
+            Log.d(TAG, "Icon X=" + String.valueOf(originalIconPos[0]) + " Y= " + String.valueOf(originalIconPos[1]));
+
+            view_item.getLocationInWindow(originalPos);
+
+            Intent dialogActivity = new Intent(getContext(), AppInfoDialogActivity.class);
+
+            dialogActivity.putExtra("x", originalIconPos[0]); //Optional parameters
+            dialogActivity.putExtra("y", originalIconPos[1]); //Optional parameters
+            dialogActivity.putExtra("bundleAppInfo", bundle);
+            Pair<View, String> iconPair = Pair.create(app_icon, "AppIcon");
+            Pair<View, String> namePair = Pair.create(app_name, "AppName");
+            Pair<View, String> sizePair = Pair.create(app_size, "AppSize");
+            Pair<View, String> versionPair = Pair.create(app_version, "AppVersion");
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), iconPair, namePair, sizePair, versionPair);
+//            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), app_icon, "AppIcon");
+
+            this.startActivity(dialogActivity, options.toBundle());
+
         } else {
-            Log.d(TAG, "Icon is not fully visible on screen :)");
-            mRecyclerView.smoothScrollToPosition(mAdapter.getItemPosition(app));
+            Log.d(TAG, "Icon is NOT fully visible on screen :(");
+            final int[] point = originalIconPos;
+            final int x = originalIconPos[0];
+            final int y = originalIconPos[1];
+            final View new_app_icon = app_icon;
+            final Bundle newBundle = bundle;
+            
+            listener = new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+
+                    new_app_icon.getLocationInWindow(point);
+                    Log.d(TAG, "Icon X=" + String.valueOf(x) + " Y= " + String.valueOf(y));
+
+//                    view_item.getLocationInWindow(point);
+
+                    Intent dialogActivity = new Intent(getContext(), AppInfoDialogActivity.class);
+
+                    dialogActivity.putExtra("x", x); //Optional parameters
+                    dialogActivity.putExtra("y", y); //Optional parameters
+                    dialogActivity.putExtra("bundleAppInfo", newBundle);
+
+
+                    ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), new_app_icon, "AppIcon");
+
+                    startActivity(dialogActivity, options.toBundle());
+                    mRecyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(listener);
+                }
+            };
+
+
+            mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(listener);
+            mRecyclerView.scrollToPosition(mAdapter.getItemPosition(app));
+
         }
 
-        app_icon.getLocationInWindow(originalIconPos);
-        Log.d(TAG, "Icon X=" + String.valueOf(originalIconPos[0]) + " Y= " + String.valueOf(originalIconPos[1]));
-
-        view_item.getLocationInWindow(originalPos);
-
-        Intent dialogActivity = new Intent(getContext(), AppInfoDialogActivity.class);
-
-        dialogActivity.putExtra("x", originalIconPos[0]); //Optional parameters
-        dialogActivity.putExtra("y", originalIconPos[1]); //Optional parameters
-        dialogActivity.putExtra("bundleAppInfo", bundle);
-
-
-
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), app_icon, "AppIcon");
-
-        this.startActivity(dialogActivity, options.toBundle());
 
     }
 

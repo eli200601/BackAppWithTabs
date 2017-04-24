@@ -23,6 +23,7 @@
 
             <ImageView
                 android:id="@+id/app_icon"
+                android:transitionName="AppName"
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:layout_alignParentLeft="true"
@@ -43,13 +44,14 @@
 
                 <TextView
                     android:id="@+id/app_name"
+                    android:transitionName="AppName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="15dp"
                     android:textAlignment="viewStart"
 
                     android:text="Example Header"
-                    android:transitionName="AppIcon"
+
 
                     android:textColor="@color/colorBlack"
                     android:textSize="22dp"
@@ -91,6 +93,7 @@
 
             <TextView
                 android:id="@+id/item_size"
+                android:transitionName="AppSize"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/leftSide"
@@ -101,6 +104,7 @@
 
             <TextView
                 android:id="@+id/item_version"
+                android:transitionName="AppVersion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/item_size"

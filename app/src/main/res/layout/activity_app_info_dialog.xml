@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/layout_screen">
+    android:id="@+id/layout_screen"
+    android:background="#C0000000">
 
 
     <RelativeLayout
         android:id="@+id/dialog_container"
-        android:layout_width="250dp"
+        android:layout_width="270dp"
         android:layout_height="350dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
@@ -17,6 +18,7 @@
 
         <ImageView
             android:id="@+id/app_icon"
+            android:transitionName="AppIcon"
             android:layout_width="70dp"
             android:layout_height="70dp"
             android:layout_alignParentTop="true"
@@ -24,8 +26,58 @@
             android:layout_marginTop="15dp"
             android:adjustViewBounds="true"
             android:scaleType="fitXY"
-            android:transitionName="AppIcon"
             app:srcCompat="@mipmap/ic_main" />
+
+        <TextView
+            android:id="@+id/app_name"
+            android:transitionName="AppName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_icon"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:text="Title"
+            android:textColor="@android:color/background_dark"
+            android:textSize="22dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/item_size"
+            android:transitionName="AppSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/app_name"
+            android:paddingLeft="10dp"
+            android:paddingTop="15dp"
+            android:text="APK Size: 12 MB"
+            android:textSize="13dp" />
+
+        <TextView
+            android:id="@+id/item_version"
+            android:transitionName="AppVersion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/item_size"
+            android:paddingLeft="10dp"
+            android:paddingTop="5dp"
+            android:text="Version: v1.6"
+            android:textSize="13dp" />
+
+        <!--<Button-->
+            <!--android:id="@+id/done_share_apk_dialog"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginRight="10dp"-->
+            <!--android:layout_marginLeft="10dp"-->
+            <!--android:layout_marginTop="5dp"-->
+            <!--android:layout_marginBottom="10dp"-->
+            <!--android:layout_below="@+id/share_url_button_dialog"-->
+            <!--android:text="Done"-->
+            <!--android:textColor="@color/cardview_light_background"-->
+            <!--android:background="@color/colorPrimary"-->
+            <!--android:shadowColor="@color/cardview_dark_background"-->
+            <!--android:onClick="doneShareClicked" />-->
 
     </RelativeLayout>
 

@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.app.random.backApp.R;
 import com.app.random.backApp.Recycler.AppDataItem;
@@ -21,7 +24,9 @@ public class AppInfoDialogActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature( Window.FEATURE_ACTIVITY_TRANSITIONS );
-//        getWindow().setEnterTransition(new Explode());
+
+        Transition mFadeTransition = TransitionInflater.from(this).inflateTransition(R.transition.fade_element);
+        getWindow().setEnterTransition(mFadeTransition);
 //        getWindow().setExitTransition(new Explode());
 //        supportPostponeEnterTransition();
         super.onCreate(savedInstanceState);
@@ -51,6 +56,13 @@ public class AppInfoDialogActivity extends AppCompatActivity {
         RelativeLayout dialog = (RelativeLayout) findViewById(R.id.dialog_container);
 
         ImageView appIcon = (ImageView) findViewById(R.id.app_icon);
+        TextView appTitle = (TextView) findViewById(R.id.app_name);
+        TextView appVersion = (TextView) findViewById(R.id.item_size);
+        TextView appSize = (TextView) findViewById(R.id.item_version);
+
+        appTitle.setText(app.getName());
+        appVersion.setText(app.getAppVersion());
+        appSize.setText(app.getApkSize());
 
         try {
             appIcon.setImageDrawable(getApplicationContext().getPackageManager().getApplicationIcon(app.getPackageName()));
