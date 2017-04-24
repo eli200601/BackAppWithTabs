@@ -24,7 +24,7 @@ android {
         targetSdkVersion 24
 
         versionCode 1
-        versionName "1.05"
+        versionName "1.30"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }

@@ -13,6 +13,8 @@
         <item name="android:windowSharedElementEnterTransition">@transition/change_image_transform</item>
         <item name="android:windowSharedElementExitTransition">@transition/change_image_transform</item>
 
+        <item name="android:windowExitTransition">@transition/explode</item>
+
     </style>
 
     <style name="SettingsTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -73,10 +75,10 @@
         <!--<item name="android:windowContentOverlay">@null</item>-->
         <!--<item name="android:background">#33000000</item>-->
 
-        <item name="android:windowContentTransitions">true</item>
+        <!--<item name="android:windowContentTransitions">true</item>-->
 
         <item name="android:windowEnterTransition">@transition/fade_element</item>
-        <item name="android:windowExitTransition">@transition/fade_element</item>
+        <item name="android:windowExitTransition">@transition/slide_element</item>
 
         <!--<item name="android:windowEnterTransition">@android:anim/slide_in_left</item>-->
         <!--<item name="android:windowExitTransition">@android:anim/slide_out_right</item>-->
