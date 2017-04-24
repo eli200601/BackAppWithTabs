@@ -36,7 +36,7 @@
             android:layout_below="@+id/app_icon"
             android:textAlignment="viewStart"
             android:maxLines="1"
-            android:paddingLeft="10dp"
+            android:layout_marginLeft="10dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
             android:text="Title"
@@ -50,8 +50,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/app_name"
-            android:paddingLeft="10dp"
-            android:paddingTop="15dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="15dp"
 
             android:text="APK Size: 12 MB"
             android:textSize="13dp" />
@@ -62,8 +62,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/item_size"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
             android:text="Version: v1.6"
             android:textSize="13dp" />
 
