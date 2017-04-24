@@ -3,31 +3,41 @@ package com.app.random.backApp.Activitys;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.app.random.backApp.R;
 import com.app.random.backApp.Recycler.AppDataItem;
+import com.app.random.backApp.Services.DropboxUploadIntentService;
+import com.app.random.backApp.Utils.ConnectionDetector;
+import com.app.random.backApp.Utils.FilesUtils;
+import com.app.random.backApp.Utils.Keys;
+import com.app.random.backApp.Utils.SharedPrefsUtils;
+
+import java.util.ArrayList;
 
 
 public class AppInfoDialogActivity extends AppCompatActivity {
 
     static final String TAG = "AppInfoDialogActiviTAG";
 
-
+    FilesUtils filesUtils;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature( Window.FEATURE_ACTIVITY_TRANSITIONS );
 
         Transition mFadeTransition = TransitionInflater.from(this).inflateTransition(R.transition.fade_element);
         getWindow().setEnterTransition(mFadeTransition);
-//        getWindow().setExitTransition(new Explode());
+        getWindow().setExitTransition(mFadeTransition);
 //        supportPostponeEnterTransition();
         super.onCreate(savedInstanceState);
 //        Fade fade = new Fade();
@@ -37,13 +47,13 @@ public class AppInfoDialogActivity extends AppCompatActivity {
 //        getWindow().setEnterTransition(fade);
 
         setContentView(R.layout.activity_app_info_dialog);
-
+        filesUtils = FilesUtils.getInstance(getApplicationContext());
 
         int x,y;
         Intent intent = getIntent();
 
         Bundle bundle = intent.getBundleExtra("bundleAppInfo");
-        AppDataItem app = (AppDataItem) bundle.getSerializable("AppInfo");
+        final AppDataItem app = (AppDataItem) bundle.getSerializable("AppInfo");
 
         x = intent.getIntExtra("x", 0);
         y = intent.getIntExtra("y", 0);
@@ -57,12 +67,27 @@ public class AppInfoDialogActivity extends AppCompatActivity {
 
         ImageView appIcon = (ImageView) findViewById(R.id.app_icon);
         TextView appTitle = (TextView) findViewById(R.id.app_name);
-        TextView appVersion = (TextView) findViewById(R.id.item_size);
-        TextView appSize = (TextView) findViewById(R.id.item_version);
+        TextView appSize = (TextView) findViewById(R.id.item_size);
+        TextView appVersion = (TextView) findViewById(R.id.item_version);
 
+        Button shareAPK = (Button) findViewById((R.id.share_apk_card_action));
+        Button downloadAPK = (Button) findViewById((R.id.download_apk_card_action));
+        Button deleteAPK = (Button) findViewById((R.id.delete_apk_card_action));
+        Button done = (Button) findViewById(R.id.done_share_apk_dialog);
+
+        String verStr;
+        if (!app.getAppVersion().contains("v")) {
+            verStr = "Version: v" + app.getAppVersion();
+        }
+        else {
+            verStr = "Version: " + app.getAppVersion();
+        }
         appTitle.setText(app.getName());
-        appVersion.setText(app.getAppVersion());
-        appSize.setText(app.getApkSize());
+        appSize.setText("APK Size: " + app.getApkSize());
+        appVersion.setText(verStr);
+        shareAPK.setText(R.string.device_info_card_action);
+        downloadAPK.setText(R.string.device_upload_card_action);
+        deleteAPK.setText(R.string.device_uninstall_card_action);
 
         try {
             appIcon.setImageDrawable(getApplicationContext().getPackageManager().getApplicationIcon(app.getPackageName()));
@@ -73,10 +98,71 @@ public class AppInfoDialogActivity extends AppCompatActivity {
             appIcon.setImageResource(R.mipmap.ic_main);
         }
 
-//        screenOverlay.setVisibility(View.INVISIBLE);
-//        dialog.setVisibility(View.INVISIBLE);
-//        appIcon.setVisibility(View.INVISIBLE);
+        // Listeners
+        shareAPK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finishAfterTransition();
+            }
+        });
 
+        downloadAPK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Download Apk button clicked
+                if (new ConnectionDetector(getApplicationContext()).isConnectedToInternet()) {
+                    Log.d(TAG, "There is connection...");
+
+                    ArrayList<AppDataItem> itemsToUpload = new ArrayList<>();
+
+
+                    itemsToUpload.add(app);
+                    long totalUploadSize = filesUtils.getFileSizeFromListArray(itemsToUpload);
+                    long cloudFreeSpace = SharedPrefsUtils.getLongPreference(getApplicationContext(), Keys.DROPBOX_FREE_SPACE_LONG, totalUploadSize);
+                    if ((cloudFreeSpace - totalUploadSize) < 0) {
+                        Log.e(TAG, "There is no free space on cloud...");
+//                        Snackbar.make(getCurrentFocus(), "Upload failed. There is no free space on cloud...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                    }
+                    else {
+//                        Snackbar.make(getCurrentFocus(), "Starting to upload " + String.valueOf(itemsToUpload.size()) + " applications...", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable(Keys.APPS_UPLOAD_ARRAYLIST, itemsToUpload);
+
+                        Intent intent = new Intent(getApplicationContext(), DropboxUploadIntentService.class);
+                        intent.putExtras(bundle);
+
+                        Log.d(TAG, "Starting the intent....");
+
+                        startService(intent);
+
+//                        mAdapter.clearSelectedList();
+//                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+                else {
+                    Log.d(TAG, "There is no connection...");
+//                    Snackbar.make(getCurrentFocus(), "No connection to internet, Turn on your WiFi/3G", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                }
+            }
+        });
+
+        deleteAPK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Uninstall apk clicked
+                ArrayList<AppDataItem> uninstallList = new ArrayList<>();
+                uninstallList.add(app);
+                filesUtils.uninstallAppFromList(uninstallList);
+            }
+        });
+
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Done Clicked
+                finishAfterTransition();
+            }
+        });
 
     }
 

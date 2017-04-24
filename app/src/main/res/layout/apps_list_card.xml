@@ -48,8 +48,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="15dp"
-                    android:textAlignment="viewStart"
-
+                    android:textAlignment="center"
+                    android:maxLines="1"
                     android:text="Example Header"
 
 
@@ -120,6 +120,7 @@
                 android:paddingBottom="5dp">
                 <Button
                     android:id="@+id/share_apk_card_action"
+                    android:transitionName="AppShare"
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -134,6 +135,7 @@
 
                 <Button
                     android:id="@+id/download_apk_card_action"
+                    android:transitionName="AppDownload"
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -147,6 +149,7 @@
 
                 <Button
                     android:id="@+id/delete_apk_card_action"
+                    android:transitionName="AppDelete"
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

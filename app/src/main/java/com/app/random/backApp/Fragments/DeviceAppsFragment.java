@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Rect;
+import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -27,6 +28,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -447,7 +449,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
     public void onFileUploadProgress(final int percentage, long bytes, long total, final AppDataItem app) {
         Log.d(TAG, "Starting onFileUploadProgress");
 //        mAdapter.updateUploadProgress(percentage,bytes,total,app);
-        if (getActivity() != null) {
+        if (getActivity() != null && mAdapter.getSelectedAppsListSize() > 0) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -524,10 +526,14 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 
         ImageView childImageView;
         TextView childTextView;
+        Button childButtonView;
 
         View app_icon = null;
         View app_name = null;
         View app_size = null;
+        View appShareAPK = null;
+        View appUploadAPK = null;
+        View appDeleteAPK = null;
         View app_version = null;
 
         // Getting the item x,y
@@ -540,29 +546,44 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
         for (View child : allViewsWithinMyTopView) {
             if (child instanceof ImageView) {
                 childImageView = (ImageView) child;
-
                 if (childImageView.getId() == R.id.app_icon) {
                     found = true;
-                    app_icon = childImageView;
-//                    break;
+                    app_icon = child;
                 }
-            }
-            if (child instanceof TextView) {
-                childTextView = (TextView) child;
-                switch (childTextView.getId()){
-                    case R.id.app_name: {
-                        app_name = childTextView;
-//                        break;
-                    }
-                    case R.id.item_size: {
-                        app_size = childTextView;
-//                        break;
-                    }
-                    case R.id.item_version: {
-                        app_version = childTextView;
-//                        break;
-                    }
+            } else {
+                if (child instanceof TextView) {
+                    childTextView = (TextView) child;
+                    if (childTextView.getId() == R.id.app_name) {
+                        app_name = child;
+                        Log.d(TAG, "Found App name = " + childTextView.getText());
+                    } else {
+                        if (childTextView.getId() == R.id.item_size) {
+                            app_size = child;
+                            Log.d(TAG, "Found Size = " + childTextView.getText());
+                        } else {
+                            if (childTextView.getId() == R.id.item_version) {
+                                app_version = child;
+                                Log.d(TAG, "Found App Version = " + childTextView.getText());
+                            } else {
+                                childButtonView = (Button) child;
+                                if (childButtonView.getId() == R.id.share_apk_card_action) {
+                                    appShareAPK = child;
+                                    Log.d(TAG, "Found Share button");
+                                } else {
+                                    if (childButtonView.getId() == R.id.download_apk_card_action) {
+                                        appUploadAPK = child;
+                                        Log.d(TAG, "Found Download button");
+                                    } else {
+                                        if (childButtonView.getId() == R.id.delete_apk_card_action) {
+                                            appDeleteAPK = child;
+                                            Log.d(TAG, "Found Uninstall button");
+                                        }
+                                    }
+                                }
+                            }
 
+                        }
+                    }
                 }
             }
         }
@@ -590,7 +611,13 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
             Pair<View, String> namePair = Pair.create(app_name, "AppName");
             Pair<View, String> sizePair = Pair.create(app_size, "AppSize");
             Pair<View, String> versionPair = Pair.create(app_version, "AppVersion");
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), iconPair, namePair, sizePair, versionPair);
+
+            Pair<View, String> sharePair = Pair.create(appShareAPK, "AppShare");
+            Pair<View, String> uploadPair = Pair.create(appUploadAPK, "AppDownload");
+            Pair<View, String> deletePair = Pair.create(appDeleteAPK, "AppDelete");
+
+
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), iconPair, namePair, sizePair, versionPair, sharePair, uploadPair, deletePair);
 //            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(), app_icon, "AppIcon");
 
             this.startActivity(dialogActivity, options.toBundle());

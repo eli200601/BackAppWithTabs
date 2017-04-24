@@ -34,9 +34,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/app_icon"
+            android:textAlignment="viewStart"
+            android:maxLines="1"
+            android:paddingLeft="10dp"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
-            android:gravity="center"
             android:text="Title"
             android:textColor="@android:color/background_dark"
             android:textSize="22dp"
@@ -50,6 +52,7 @@
             android:layout_below="@+id/app_name"
             android:paddingLeft="10dp"
             android:paddingTop="15dp"
+
             android:text="APK Size: 12 MB"
             android:textSize="13dp" />
 
@@ -64,20 +67,64 @@
             android:text="Version: v1.6"
             android:textSize="13dp" />
 
-        <!--<Button-->
-            <!--android:id="@+id/done_share_apk_dialog"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginRight="10dp"-->
-            <!--android:layout_marginLeft="10dp"-->
-            <!--android:layout_marginTop="5dp"-->
-            <!--android:layout_marginBottom="10dp"-->
-            <!--android:layout_below="@+id/share_url_button_dialog"-->
-            <!--android:text="Done"-->
-            <!--android:textColor="@color/cardview_light_background"-->
-            <!--android:background="@color/colorPrimary"-->
-            <!--android:shadowColor="@color/cardview_dark_background"-->
-            <!--android:onClick="doneShareClicked" />-->
+        <Button
+            android:id="@+id/share_apk_card_action"
+            android:transitionName="AppShare"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="70dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:textAlignment="viewEnd"
+            android:text="@string/cloud_share_card_action"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            />
+
+        <Button
+            android:id="@+id/download_apk_card_action"
+            android:transitionName="AppDownload"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/share_apk_card_action"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="15dp"
+            android:textAlignment="viewEnd"
+            android:text="@string/cloud_download_card_action"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/delete_apk_card_action"
+            android:transitionName="AppDelete"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="viewEnd"
+            android:layout_below="@+id/download_apk_card_action"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="15dp"
+            android:text="@string/cloud_delete_card_action"
+            android:textColor="@color/colorRed"
+            android:textStyle="bold"
+            />
+
+        <Button
+            android:id="@+id/done_share_apk_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_alignParentBottom="true"
+            android:text="Done"
+            android:textColor="@color/cardview_light_background"
+            android:background="@color/colorPrimary"
+            android:shadowColor="@color/cardview_dark_background"
+            />
 
     </RelativeLayout>
 
