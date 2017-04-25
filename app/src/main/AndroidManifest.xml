@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.BATTERY_STATS"/>
 
 
 
@@ -108,6 +109,15 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="9b1db7c71433d6e8faeaef73b88db01bd223bf13" />
+
+        <receiver android:name="com.app.random.backApp.Receiver.ChargingReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+            </intent-filter>
+        </receiver>
     </application>
+
+
 
 </manifest>

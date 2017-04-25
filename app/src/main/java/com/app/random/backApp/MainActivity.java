@@ -13,11 +13,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.ChangeBounds;
 import android.transition.Transition;
-import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 import android.view.animation.DecelerateInterpolator;
 
 import com.app.random.backApp.Activitys.DBAccountInfoActivity;
@@ -25,12 +23,17 @@ import com.app.random.backApp.Activitys.SettingsActivity;
 import com.app.random.backApp.Activitys.SplashScreenActivity;
 import com.app.random.backApp.Dropbox.DropBoxManager;
 import com.app.random.backApp.Dropbox.DropboxCallBackListener;
+import com.app.random.backApp.Receiver.MessageEvent;
 import com.app.random.backApp.Recycler.AppDataItem;
 import com.app.random.backApp.Utils.ConnectionDetector;
 import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 import com.crashlytics.android.Crashlytics;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
@@ -46,6 +49,8 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
      */
     private static final String TAG = "MainActivity";
     private SectionsPagerAdapter mSectionsPagerAdapter;
+
+    private EventBus eventBus = EventBus.getDefault();
 
     private DropBoxManager dropBoxManager = null;
     private FilesUtils filesUtils;
@@ -223,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
     protected void onPause() {
         super.onPause();
         dropBoxManager.removeDropboxListener(TAG);
+        eventBus.unregister(this);
 
     }
 
@@ -230,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
     public void onResume() {
         super.onResume();
         Log.d(TAG, "Adding " + TAG + " TO Listener List");
+        eventBus.register(this);
         dropBoxManager.addDropboxListener(this, TAG);
         dropBoxManager.onResumeManager();
         invalidateOptionsMenu();
@@ -343,6 +350,14 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
     @Override
     public void onFileUploadProgress(int percentage, long bytes, long total, AppDataItem app) {
 
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(MessageEvent messageEvent) {
+        if (messageEvent instanceof MessageEvent.OnChargingDischargingEvent) {
+            String message = ((MessageEvent.OnChargingDischargingEvent) messageEvent).getStatus();
+            Log.d(TAG, "On Event occur, " + message);
+        }
     }
 
     /**
