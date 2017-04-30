@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.animation.DecelerateInterpolator;
 
+import com.app.random.backApp.Activitys.AboutActivity;
 import com.app.random.backApp.Activitys.DBAccountInfoActivity;
 import com.app.random.backApp.Activitys.SettingsActivity;
 import com.app.random.backApp.Activitys.SplashScreenActivity;
@@ -319,6 +320,10 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
             }
             case R.id.action_account_info: {
                 startActivity(new Intent(this, DBAccountInfoActivity.class));
+            }
+            case R.id.action_about: {
+                startActivity(new Intent(this, AboutActivity.class));
+                break;
             }
         }
         return super.onOptionsItemSelected(item);

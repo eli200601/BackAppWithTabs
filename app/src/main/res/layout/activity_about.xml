@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.app.random.backApp.Activitys.AboutActivity">
+
+    <RelativeLayout
+        android:id="@+id/splash_title_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/splash"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="50dp"
+            android:background="@mipmap/ic_main" />
+
+        <TextView
+            android:id="@+id/splash_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Back-App application"
+
+
+            android:layout_below="@id/splash"
+            android:layout_centerHorizontal="true"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="@color/colorPrimary"/>
+
+        <RelativeLayout
+            android:id="@+id/text_container"
+            android:layout_below="@id/splash_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="35dp">
+
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorBlack"
+                android:textAlignment="center"
+                android:text="Extract Apk &amp; Restore to your own \nDropbox account. Never lose your data again!"/>
+
+            <TextView
+                android:id="@+id/credits"
+                android:layout_below="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorBlack"
+                android:text="Icons made by Freepik from www.flaticon.com"/>
+
+            <TextView
+                android:id="@+id/author"
+                android:layout_below="@+id/credits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorBlack"
+                android:text="This app created by Eliran Alon"/>
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_below="@+id/author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorBlack"
+                android:text="eli200601@gmail.com"/>
+
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/rate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true">
+
+        </RelativeLayout>
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+
+            android:background="@color/colorPrimary"
+            android:shadowColor="@color/cardview_dark_background"
+            android:text="Done"
+            android:textColor="@color/cardview_light_background"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="200dp"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
+
+
+
+</LinearLayout>
