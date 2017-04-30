@@ -449,7 +449,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
     public void onFileUploadProgress(final int percentage, long bytes, long total, final AppDataItem app) {
         Log.d(TAG, "Starting onFileUploadProgress");
 //        mAdapter.updateUploadProgress(percentage,bytes,total,app);
-        if (getActivity() != null && mAdapter.getSelectedAppsListSize() > 0) {
+        if (getActivity() != null && mAdapter.getItemCount() > 0) {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

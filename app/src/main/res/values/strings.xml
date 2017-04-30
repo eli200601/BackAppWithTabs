@@ -19,7 +19,7 @@
     <string name="unselected_all">Unselect All</string>
     <string name="action_refresh">Refresh</string>
     <string name="action_delete_marked">Delete marked</string>
-
+    <string name="menu_action_about">About</string>
 
     <!-- SharedPreferences Key's -->
     <string name="name_sharedPref">Settings</string>
