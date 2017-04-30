@@ -10,6 +10,7 @@ import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.app.random.backApp.R;
@@ -27,6 +28,8 @@ public class AboutFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_about, container, false);
         TextView email = (TextView) view.findViewById(R.id.email);
+        Button done = (Button) view.findViewById(R.id.button);
+
         email.setClickable(true);
         SpannableString string = new SpannableString("eli200601@gmail.com");
         string.setSpan(new UnderlineSpan(), 0, string.length(), 0);
@@ -39,7 +42,12 @@ public class AboutFragment extends Fragment {
                 startActivity(Intent.createChooser(emailIntent, "Send feedback"));
             }
         });
-
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
         return view;
     }
 }
