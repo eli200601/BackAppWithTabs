@@ -31,12 +31,25 @@ import com.app.random.backApp.Utils.FilesUtils;
 import com.app.random.backApp.Utils.Keys;
 import com.app.random.backApp.Utils.SharedPrefsUtils;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+
+//import com.google.android.gms.ads.AdListener;
+//// [SNIPPET load_banner_ad]
+//// Load an ad into the AdView.
+//// [START load_banner_ad]
+//import com.google.android.gms.ads.AdRequest;
+//import com.google.android.gms.ads.AdView;
+//// [START_EXCLUDE]
+//import com.google.android.gms.ads.InterstitialAd;
 
 public class MainActivity extends AppCompatActivity implements DropboxCallBackListener {
 
@@ -61,21 +74,54 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
     private ViewPager mViewPager;
     private Toolbar toolbar;
     private TabLayout tabLayout;
+    AdView mAdView;
+    AdRequest adRequest;
+    AdListener adListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //        requestWindowFeature( Window.FEATURE_ACTIVITY_TRANSITIONS );
         super.onCreate(savedInstanceState);
-//        String origin = savedInstanceState.getString("origin");
-//        TransitionInflater inflater = TransitionInflater.from(this);
-//        Transition transition = inflater.inflateTransition(R.transition.transition_main_activity);
-//        getWindow().setExitTransition(transition);
-//        getWindow().setEnterTransition(transition);
-//        getWindow().setSharedElementEnterTransition(enterTransition());
-//        getWindow().setSharedElementReturnTransition(returnTransition());
-
-
         setContentView(R.layout.activity_main);
+        adListener = new AdListener() {
+            @Override
+            public void onAdClosed() {
+                super.onAdClosed();
+                Log.d(TAG, "onAdClosed");
+            }
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                Log.d(TAG, "onAdFailedToLoad");
+            }
+
+            @Override
+            public void onAdLeftApplication() {
+                super.onAdLeftApplication();
+                Log.d(TAG, "onAdLeftApplication");
+            }
+
+            @Override
+            public void onAdOpened() {
+                super.onAdOpened();
+                Log.d(TAG, "onAdOpened");
+            }
+
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                Log.d(TAG, "onAdLoaded");
+            }
+        };
+
+        mAdView = new AdView(this);
+        mAdView.setAdSize(AdSize.SMART_BANNER);
+        mAdView.setAdListener(adListener);
+        mAdView.setAdUnitId("ca-app-pub-9908355189846572/1764017445");
+        adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
 
         mViewPager = (ViewPager) findViewById(R.id.container);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -242,6 +288,9 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         dropBoxManager.onResumeManager();
         invalidateOptionsMenu();
         // More Actions...
+        if (mAdView != null) {
+            mAdView.resume();
+        }
     }
 
     public void setTabPaging(int page) {
@@ -249,7 +298,13 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
     }
 
-
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mAdView != null) {
+            mAdView.destroy();
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
