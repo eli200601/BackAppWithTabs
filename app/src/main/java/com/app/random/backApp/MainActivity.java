@@ -16,6 +16,9 @@ import android.transition.Transition;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 
 import com.app.random.backApp.Activitys.AboutActivity;
@@ -35,6 +38,9 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -68,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
     private DropBoxManager dropBoxManager = null;
     private FilesUtils filesUtils;
+
+    private FirebaseAnalytics mFirebaseAnalytics;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -77,12 +85,16 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
     AdView mAdView;
     AdRequest adRequest;
     AdListener adListener;
+    InterstitialAd mInterstitial;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //        requestWindowFeature( Window.FEATURE_ACTIVITY_TRANSITIONS );
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MobileAds.initialize(getApplicationContext(), "ca-app-pub-9908355189846572~1764017445");
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
         adListener = new AdListener() {
             @Override
             public void onAdClosed() {
@@ -112,16 +124,40 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
             public void onAdLoaded() {
                 super.onAdLoaded();
                 Log.d(TAG, "onAdLoaded");
+                Animation anim_slide = AnimationUtils.loadAnimation(getApplicationContext() ,R.anim.banner_anim);
+                anim_slide.reset();
+                mAdView.startAnimation(anim_slide);
+                mAdView.setVisibility(View.VISIBLE);
+                Bundle params = new Bundle();
+                mFirebaseAnalytics.logEvent("banner_ad_main_screen", params);
             }
         };
 
-        mAdView = new AdView(this);
-        mAdView.setAdSize(AdSize.SMART_BANNER);
-        mAdView.setAdListener(adListener);
-        mAdView.setAdUnitId("ca-app-pub-9908355189846572/1764017445");
-        adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
 
+        mInterstitial = new InterstitialAd(this);
+        mInterstitial.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                Log.d(TAG, "Starting to display interstitial");
+                mInterstitial.show();
+
+            }
+        });
+        mInterstitial.setAdUnitId("ca-app-pub-9908355189846572/3660736242");
+
+        mAdView = (AdView) findViewById(R.id.adView);
+//        mAdView.setAdSize(AdSize.BANNER);
+        mAdView.setAdListener(adListener);
+        mAdView.setVisibility(View.INVISIBLE);
+//        mAdView.setAdUnitId("ca-app-pub-9908355189846572/3240750649");
+        adRequest = new AdRequest.Builder()
+                .addTestDevice("TEST_DEVICE_ID")
+//                .addTestDevice("3EBD101ECF40235E879DEC9A5791380A") // Galaxy S6
+//                .addTestDevice("CBB0D5315C3B905007D97BC471EA1351") // Galaxy Note 4
+                .build();
+        mAdView.loadAd(adRequest);
+        mInterstitial.loadAd(adRequest);
 
         mViewPager = (ViewPager) findViewById(R.id.container);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -138,6 +174,8 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
             return;
         }
         else {
+            Bundle params = new Bundle();
+            mFirebaseAnalytics.logEvent("open_app", params);
             Log.d(TAG, "Checking if there is permission");
             isStoragePermissionGranted();
         }
@@ -276,12 +314,16 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         super.onPause();
         dropBoxManager.removeDropboxListener(TAG);
         eventBus.unregister(this);
+        mAdView.pause();
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+
+
         Log.d(TAG, "Adding " + TAG + " TO Listener List");
         eventBus.register(this);
         dropBoxManager.addDropboxListener(this, TAG);
@@ -375,6 +417,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
             }
             case R.id.action_account_info: {
                 startActivity(new Intent(this, DBAccountInfoActivity.class));
+                break;
             }
             case R.id.action_about: {
                 startActivity(new Intent(this, AboutActivity.class));
@@ -386,7 +429,9 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
     @Override
     public void onUserNameReceived() {
-        Crashlytics.setUserName(SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.DROPBOX_USER_NAME + " " + Keys.DROPBOX_LAST_NAME));
+        String user_name = SharedPrefsUtils.getStringPreference(getApplicationContext(), Keys.DROPBOX_USER_NAME + " " + Keys.DROPBOX_LAST_NAME);
+        Crashlytics.setUserName(user_name);
+        mFirebaseAnalytics.setUserProperty("account_name", user_name);
         invalidateOptionsMenu();
     }
 
@@ -399,6 +444,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 
     @Override
     public void onFinishGeneratingCloudList(ArrayList<AppDataItem> arrayList) {
+        Log.d(TAG, "Starting to display ad");
 
     }
 

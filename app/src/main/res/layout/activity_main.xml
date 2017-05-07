@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -45,8 +44,10 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:id="@+id/container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/appbar"/>
+            android:layout_height="0dp"
+            android:layout_weight="9"
+
+            />
 
             <!--android:layout_alignParentBottom="true"-->
             <!--android:layout_alignParentStart="true"-->
@@ -65,12 +66,12 @@
         <!--android:layout_margin="@dimen/fab_margin"-->
         <!--app:srcCompat="@android:drawable/ic_dialog_email" />-->
     <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        ads:adUnitId="ca-app-pub-9908355189846572"
-        android:id="@+id/adView"/>
+        android:layout_gravity="bottom"
+        ads:adSize="BANNER"
+        ads:adUnitId="ca-app-pub-9908355189846572/3240750649" />
 
-</RelativeLayout>
+</LinearLayout>

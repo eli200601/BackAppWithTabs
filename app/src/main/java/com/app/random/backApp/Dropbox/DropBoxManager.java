@@ -161,8 +161,7 @@ public class DropBoxManager {
         // apk file contain appName_appPackageName_version.apk
         String separator = "_";
         cloudAppsList.clear();
-        String listenTo = "CloudMainFragment";
-        String listenToo = "DeviceAppsFragment";
+
 
         if (cloudFilesList == null) {
             // generate empty state list
@@ -218,12 +217,17 @@ public class DropBoxManager {
             cloudAppsList.add(appItem);
         }
 
-
+        String listenTo = "CloudMainFragment";
+        String listenToo = "DeviceAppsFragment";
+        String listenTooo = "MainActivity";
         if (dropboxCallBackListenerHashMap.get(listenTo) != null ) {
             dropboxCallBackListenerHashMap.get(listenTo).onFinishGeneratingCloudList(cloudAppsList);
         }
         if (dropboxCallBackListenerHashMap.get(listenToo) != null) {
             dropboxCallBackListenerHashMap.get(listenToo).onFinishGeneratingCloudList(cloudAppsList);
+        }
+        if (dropboxCallBackListenerHashMap.get(listenTooo) != null) {
+            dropboxCallBackListenerHashMap.get(listenTooo).onFinishGeneratingCloudList(cloudAppsList);
         }
 
     }
