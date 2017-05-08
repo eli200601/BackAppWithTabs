@@ -8,8 +8,7 @@
   "client": [
     {
       "client_info": {
-//        "mobilesdk_app_id": "ca-app-pub-9908355189846572~1764017445",
-        "mobilesdk_app_id": "1:185069615516:android:c252138f672bc40c",
+        "mobilesdk_app_id": "1:185069615516:android:2c8af3d995009737",
         "android_client_info": {
           "package_name": "com.app.random.backapp"
         }

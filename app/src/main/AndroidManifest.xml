@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.app.random.backApp">
+    package="com.app.random.backapp">
 
     <uses-permission android:name="android.permission.GET_PACKAGE_SIZE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -116,16 +116,18 @@
         </provider>
 
         <service
-            android:name=".Services.DropboxUploadIntentService"
-            android:exported="false" />
-        <service android:enabled="true" android:name=".Services.DropboxDownloadService" />
+            android:name="com.app.random.backapp.Services.DropboxUploadIntentService"
+            android:enabled="true" />
+        <service
+            android:name="com.app.random.backapp.Services.DropboxDownloadService"
+            android:enabled="true" />
 
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="9b1db7c71433d6e8faeaef73b88db01bd223bf13" />
 
-        <receiver android:name="com.app.random.backApp.Receiver.ChargingReceiver">
+        <receiver android:name=".Receiver.ChargingReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
