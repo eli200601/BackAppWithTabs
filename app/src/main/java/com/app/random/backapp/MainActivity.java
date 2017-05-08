@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.RelativeLayout;
 
 import com.app.random.backapp.Activitys.AboutActivity;
 import com.app.random.backapp.Activitys.DBAccountInfoActivity;
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
     AdRequest adRequest;
     AdListener adListener;
     InterstitialAd mInterstitial;
+    RelativeLayout bannerContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
             public void onAdFailedToLoad(int i) {
                 super.onAdFailedToLoad(i);
                 Log.d(TAG, "onAdFailedToLoad");
+//                bannerContainer.setVisibility(View.GONE);
             }
 
             @Override
@@ -126,7 +129,8 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
                 Animation anim_slide = AnimationUtils.loadAnimation(getApplicationContext() ,R.anim.banner_anim);
                 anim_slide.reset();
                 mAdView.startAnimation(anim_slide);
-                mAdView.setVisibility(View.VISIBLE);
+//                mAdView.setVisibility(View.VISIBLE);
+                bannerContainer.setVisibility(View.VISIBLE);
                 Bundle params = new Bundle();
                 mFirebaseAnalytics.logEvent("banner_ad_main_screen", params);
             }
@@ -146,9 +150,12 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
         mInterstitial.setAdUnitId("ca-app-pub-9908355189846572/3660736242");
 
         mAdView = (AdView) findViewById(R.id.adView);
+
 //        mAdView.setAdSize(AdSize.BANNER);
         mAdView.setAdListener(adListener);
-        mAdView.setVisibility(View.INVISIBLE);
+//        mAdView.setVisibility(View.INVISIBLE);
+        bannerContainer = (RelativeLayout) findViewById(R.id.banner_container);
+        bannerContainer.setVisibility(View.GONE);
 //        mAdView.setAdUnitId("ca-app-pub-9908355189846572/3240750649");
         adRequest = new AdRequest.Builder()
                 .addTestDevice("TEST_DEVICE_ID")
