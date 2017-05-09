@@ -4,16 +4,19 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.text.format.Formatter;
 import android.util.Log;
 
+import com.app.random.backapp.R;
 import com.app.random.backapp.Recycler.AppDataItem;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 
 
@@ -23,6 +26,8 @@ public class AppsDataUtils {
     private ArrayList<ApplicationInfo> appsListInfo = new ArrayList<>();
     private ArrayList<AppDataItem> appsListData = new ArrayList<>();
     private ArrayList<AppDataItem> folderAppsList = new ArrayList<>();
+
+    public HashMap<String, Drawable> iconList;
 
 
 
@@ -41,6 +46,7 @@ public class AppsDataUtils {
         this.sortType = SharedPrefsUtils.getIntegerPreference(context, Keys.SORT_TYPE_INSTALLED_APPS, 0);
         this.packageManager = context.getPackageManager();
         this.PACKAGE_NAME = context.getPackageName();
+        this.iconList = new HashMap<>();
 
     }
 
@@ -183,7 +189,36 @@ public class AppsDataUtils {
         return appsListInfo.size();
     }
 
+    public void generateIconsList() {
+//        iconList.clear();
+        Drawable icon = null;
+        String packageName;
 
+        for (AppDataItem app: appsListData){
+            packageName = app.getPackageName();
+            try {
+                icon = packageManager.getApplicationIcon(packageName);
+            } catch (PackageManager.NameNotFoundException e) {
+                icon = context.getDrawable(R.mipmap.ic_launcher);
+            }
+            iconList.put(packageName, icon);
+        }
+    }
+
+    public Drawable getAppIcon(String packageName) {
+        Drawable icon;
+        if (iconList == null) {
+            icon = context.getDrawable(R.mipmap.ic_launcher);
+        } else {
+            if (iconList.containsKey(packageName)) {
+                icon = iconList.get(packageName);
+            }
+            else {
+                icon = context.getDrawable(R.mipmap.ic_launcher);
+            }
+        }
+        return icon;
+    }
 
     public ArrayList<ApplicationInfo> filterApplicationList(ArrayList<ApplicationInfo> appsListInfo) {
 //        This method filter all system apps and this app package name

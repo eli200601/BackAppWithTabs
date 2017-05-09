@@ -35,6 +35,7 @@ import com.app.random.backapp.Activitys.AppInfoDialogActivity;
 import com.app.random.backapp.Dropbox.DropBoxManager;
 import com.app.random.backapp.Dropbox.DropboxCallBackListener;
 import com.app.random.backapp.R;
+import com.app.random.backapp.Receiver.MessageEvent;
 import com.app.random.backapp.Recycler.AppDataItem;
 import com.app.random.backapp.Recycler.MyRecyclerAdapter;
 import com.app.random.backapp.Recycler.UpdateBottomBar;
@@ -45,6 +46,8 @@ import com.app.random.backapp.Utils.FilesUtils;
 import com.app.random.backapp.Utils.Keys;
 import com.app.random.backapp.Utils.SharedPrefsUtils;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -54,6 +57,9 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
 //    private LocalBroadcastManager localBroadcastManager;
     private ArrayList<ApplicationInfo> appsListInfo =  new ArrayList<>();
     private ArrayList<AppDataItem> appsListData;
+
+    private EventBus bus = EventBus.getDefault();
+    private MessageEvent.OnFinishLoadinfIcons event;
 
     HashSet<String> cloudAppsList;
 
@@ -477,6 +483,7 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
             appsListData = new ArrayList<>();
             appsListInfo = appsDataUtils.getAppInfoList();
             appsListData = appsDataUtils.getAppDataList();
+            appsDataUtils.generateIconsList();
             Log.d(TAG,"appsListData = " + String.valueOf(appsListData.size()) + "appsListInfo = " + String.valueOf(appsListInfo.size()));
 
 //            updateBottomBar();
@@ -498,6 +505,13 @@ public class DeviceAppsFragment  extends Fragment implements SearchView.OnQueryT
             if (dropBoxManager.cloudAppsList.size() > 0) {
                 onFinishGeneratingCloudList(dropBoxManager.cloudAppsList);
             }
+
+
+            Log.d("EventBus", "Sending undate request to cloud");
+
+            event = new MessageEvent.OnFinishLoadinfIcons("Done");
+            bus.post(event);
+
             mAdapter.notifyDataSetChanged();
             Log.d(TAG, "LoadApplications Started appsListData = " + String.valueOf(appsListData.size()));
             super.onPostExecute(result);

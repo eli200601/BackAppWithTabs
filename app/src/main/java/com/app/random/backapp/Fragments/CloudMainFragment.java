@@ -36,6 +36,7 @@ import android.widget.Toast;
 import com.app.random.backapp.Dropbox.DropBoxManager;
 import com.app.random.backapp.Dropbox.DropboxCallBackListener;
 import com.app.random.backapp.R;
+import com.app.random.backapp.Receiver.MessageEvent;
 import com.app.random.backapp.Recycler.AppDataItem;
 import com.app.random.backapp.Recycler.MyRecyclerAdapter;
 import com.app.random.backapp.Recycler.UpdateBottomBar;
@@ -47,6 +48,10 @@ import com.app.random.backapp.Utils.FilesUtils;
 import com.app.random.backapp.Utils.Keys;
 import com.app.random.backapp.Utils.SharedPrefsUtils;
 import com.dropbox.client2.DropboxAPI;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -68,6 +73,8 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
 
 //    private LocalBroadcastManager localBroadcastManager;
     private static final String TAG = "CloudMainFragment";
+
+    private EventBus eventBus = EventBus.getDefault();
 
     private DropBoxManager dropBoxManager = null;
 
@@ -367,6 +374,8 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
         super.onPause();
         dropBoxManager.removeDropboxListener(TAG);
         getActivity().unregisterReceiver(onFinishUploadReceiver);
+
+        eventBus.unregister(this);
 //        localBroadcastManager.unregisterReceiver(onFinishUploadReceiver);
 
     }
@@ -379,9 +388,19 @@ public class CloudMainFragment extends Fragment implements DropboxCallBackListen
 //        localBroadcastManager.registerReceiver(onFinishUploadReceiver, new IntentFilter(Keys.BC_ON_FINISH_UPLOAD));
         getActivity().registerReceiver(onFinishUploadReceiver, new IntentFilter(Keys.BC_ON_FINISH_UPLOAD));
 
+
+        eventBus.register(this);
     }
 
-
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(MessageEvent messageEvent) {
+        Log.d("EventBus", "Cloud Fragment, found event ");
+        if (messageEvent instanceof MessageEvent.OnFinishLoadinfIcons) {
+            String message = ((MessageEvent.OnFinishLoadinfIcons) messageEvent).getStatus();
+            mAdapter.notifyDataSetChanged();
+            Log.d(TAG, "On Event occur, " + message);
+        }
+    }
 
     @Override
     public void onUserNameReceived() {

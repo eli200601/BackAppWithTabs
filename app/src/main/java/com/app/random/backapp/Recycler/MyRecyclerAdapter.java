@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.app.random.backapp.R;
 import com.app.random.backapp.Services.DropboxUploadIntentService;
+import com.app.random.backapp.Utils.AppsDataUtils;
 import com.app.random.backapp.Utils.Keys;
 import com.app.random.backapp.Utils.SharedPrefsUtils;
 
@@ -26,6 +27,10 @@ import java.util.HashSet;
 
 
 public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
+
+    private static String TAG = "MyRecyclerAdapter";
+
+
     Context context;
     public ArrayList<AppDataItem> appsListData;
 
@@ -36,9 +41,9 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
     private String origin;
     public MyViewHolder mHolder;
 
+    private AppsDataUtils appsDataUtils;
 
 
-    private static String TAG = "MyRecyclerAdapter";
 
     UpdateBottomBar updateBottomBar;
 
@@ -83,7 +88,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
 //    Initialize Holder
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
+        appsDataUtils = AppsDataUtils.getInstance(context);
         String viewTypePref = getViewType();
         View view = null;
         switch (viewTypePref) {
@@ -108,7 +113,7 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
         holder.uploadProgress.setVisibility(View.GONE);
         holder.cancelProgress.setVisibility(View.GONE);
 
-
+        Log.d(TAG, "List size is: " + appsListData.size());
         return holder;
     }
 
@@ -151,18 +156,22 @@ public class MyRecyclerAdapter extends RecyclerView.Adapter<MyViewHolder> {
             holder.apkSize.setText(apkSizeInit + apkSize);
             holder.version.setText(apkVersionInit + version);
         }
-        try {
+
+//        try {
             if (origin.equals(Keys.ORIGIN_DOWNLOADFOLDERFRAGMENT)) {
                 holder.appIcon.setImageResource(R.mipmap.ic_folder_icon);
             }
             else {
-                holder.appIcon.setImageDrawable(packageManager.getApplicationIcon(appsListData.get(holder.getAdapterPosition()).getPackageName()));
+                holder.appIcon.setImageDrawable(appsDataUtils.getAppIcon(appsListData.get(holder.getAdapterPosition()).getPackageName()));
+//                holder.appIcon.setImageDrawable(packageManager.getApplicationIcon(appsListData.get(holder.getAdapterPosition()).getPackageName()));
             }
-        }
-        catch (PackageManager.NameNotFoundException error) {
-            Log.e(TAG, error.getMessage());
-            holder.appIcon.setImageResource(R.mipmap.ic_main);
-        }
+//        }
+//        catch (PackageManager.NameNotFoundException error) {
+//            Log.e(TAG, error.getMessage());
+//            holder.appIcon.setImageResource(R.mipmap.ic_main);
+//        }
+
+
         // Display Success icon on item only on DeviceAppsFragment
         if (origin.equals(Keys.ORIGIN_DEVICEAPPSFRAGMENT)) {
             if (cloudSavedlist.contains(appsListData.get(holder.getAdapterPosition()).getPackageName())) {
