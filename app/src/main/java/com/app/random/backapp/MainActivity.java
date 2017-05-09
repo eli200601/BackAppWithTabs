@@ -162,8 +162,7 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
 //                .addTestDevice("3EBD101ECF40235E879DEC9A5791380A") // Galaxy S6
 //                .addTestDevice("CBB0D5315C3B905007D97BC471EA1351") // Galaxy Note 4
                 .build();
-        mAdView.loadAd(adRequest);
-        mInterstitial.loadAd(adRequest);
+
 
         mViewPager = (ViewPager) findViewById(R.id.container);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -184,6 +183,12 @@ public class MainActivity extends AppCompatActivity implements DropboxCallBackLi
             mFirebaseAnalytics.logEvent("open_app", params);
             Log.d(TAG, "Checking if there is permission");
             isStoragePermissionGranted();
+            mAdView.loadAd(adRequest);
+            // Display intestitial only if connected to drupbox
+            if (SharedPrefsUtils.getStringPreference(getApplicationContext(),Keys.DROPBOX_USER_NAME) != null) {
+                mInterstitial.loadAd(adRequest);
+            }
+
         }
 
 
