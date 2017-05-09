@@ -81,6 +81,16 @@
                 android:textColor="@color/colorPrimary"
                 android:text="eli200601@gmail.com"/>
 
+            <TextView
+                android:id="@+id/privacy_policy"
+                android:layout_below="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimary"
+                android:text="Privacy Policy"/>
+
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/rate"
